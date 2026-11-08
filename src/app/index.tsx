@@ -1,3 +1,4 @@
+import { Link } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -10,13 +11,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Frasco } from "@/components/frasco/Frasco";
 import { previsualizarGasto, registrarGasto, registrarIngreso } from "@/db";
 import { useResumen } from "@/features/resumen/useResumen";
 import type { NivelAlerta } from "@/lib/alertas";
 import { formatearLempiras, parsearLempiras } from "@/lib/formato";
 import type { EstadoFrasco } from "@/lib/frasco";
 import type { Centavos } from "@/lib/money";
-import { colors, fontSizes, palette, radii, spacing } from "@/theme";
+import { colors, fonts, fontSizes, palette, radii, spacing } from "@/theme";
 
 const ESTADO: Record<EstadoFrasco, { texto: string; color: string }> = {
   ok: { texto: "Vas bien", color: palette.lima },
@@ -110,13 +112,20 @@ export default function Inicio() {
   return (
     <SafeAreaView style={styles.pantalla}>
       <View style={styles.panel}>
-        <Text style={styles.etiquetaPanel}>Libre</Text>
-        <Text style={[styles.libre, { color: estado.color }]}>
-          {formatearLempiras(resumen.libre)}
-        </Text>
-        <Text style={styles.estado}>
-          {estado.texto} · {Math.round(resumen.porcentaje * 100)} %
-        </Text>
+        <View style={styles.panelTextos}>
+          <Text style={styles.etiquetaPanel}>LIBRE</Text>
+          <Text
+            style={[styles.libre, { color: estado.color }]}
+            adjustsFontSizeToFit
+            numberOfLines={1}
+          >
+            {formatearLempiras(resumen.libre)}
+          </Text>
+          <Text style={styles.estado}>
+            {estado.texto} · {Math.round(resumen.porcentaje * 100)} %
+          </Text>
+        </View>
+        <Frasco estado={resumen.estado} porcentaje={resumen.porcentaje} />
       </View>
 
       <View style={styles.tarjeta}>
@@ -145,6 +154,10 @@ export default function Inicio() {
       </View>
 
       {aviso && <Text style={styles.aviso}>{aviso}</Text>}
+
+      <Link href="/frasco" style={styles.enlace}>
+        Ver galería del frasco
+      </Link>
     </SafeAreaView>
   );
 }
@@ -200,30 +213,60 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     backgroundColor: colors.fondo,
   },
-  error: { color: colors.peligro, fontSize: fontSizes.md, textAlign: "center" },
+  error: {
+    color: colors.peligro,
+    fontFamily: fonts.body,
+    fontSize: fontSizes.md,
+    textAlign: "center",
+  },
   panel: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: spacing.sm,
     backgroundColor: colors.panel,
     borderRadius: radii.lg,
     padding: spacing.xl,
-    gap: spacing.xs,
   },
-  etiquetaPanel: { color: colors.textoSobrePanel, fontSize: fontSizes.sm },
-  libre: { fontSize: fontSizes.xxl, fontWeight: "700" },
-  estado: { color: colors.textoSobrePanel, fontSize: fontSizes.sm },
+  panelTextos: { flex: 1, gap: spacing.xs },
+  etiquetaPanel: {
+    color: "rgba(246,241,231,0.74)",
+    fontFamily: fonts.bodySemiBold,
+    fontSize: fontSizes.xs,
+    letterSpacing: 1.2,
+  },
+  libre: { fontFamily: fonts.display, fontSize: fontSizes.xxl },
+  estado: {
+    color: "rgba(246,241,231,0.74)",
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+  },
   tarjeta: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFFDF8",
+    borderColor: "#EAE2D0",
+    borderWidth: 1,
     borderRadius: radii.md,
     padding: spacing.lg,
     gap: spacing.sm,
   },
   fila: { flexDirection: "row", justifyContent: "space-between" },
-  filaEtiqueta: { color: colors.texto, fontSize: fontSizes.md },
-  filaValor: { color: colors.texto, fontSize: fontSizes.md, fontWeight: "600" },
+  filaEtiqueta: {
+    color: colors.texto,
+    fontFamily: fonts.body,
+    fontSize: fontSizes.md,
+  },
+  filaValor: {
+    color: colors.texto,
+    fontFamily: fonts.display,
+    fontSize: fontSizes.md,
+  },
   input: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFFDF8",
+    borderColor: "#EAE2D0",
+    borderWidth: 1,
     borderRadius: radii.md,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
+    fontFamily: fonts.body,
     fontSize: fontSizes.lg,
     color: colors.texto,
   },
@@ -236,7 +279,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.acento,
   },
   botonOscuro: { backgroundColor: colors.panel },
-  botonTexto: { color: colors.texto, fontSize: fontSizes.md, fontWeight: "600" },
+  botonTexto: {
+    color: colors.texto,
+    fontFamily: fonts.bodySemiBold,
+    fontSize: fontSizes.md,
+  },
   botonTextoOscuro: { color: colors.textoSobrePanel },
-  aviso: { color: colors.texto, fontSize: fontSizes.md, textAlign: "center" },
+  aviso: {
+    color: colors.texto,
+    fontFamily: fonts.body,
+    fontSize: fontSizes.md,
+    textAlign: "center",
+  },
+  enlace: {
+    color: colors.texto,
+    fontFamily: fonts.bodyMedium,
+    fontSize: fontSizes.sm,
+    textAlign: "center",
+    textDecorationLine: "underline",
+  },
 });

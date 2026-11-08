@@ -38,6 +38,22 @@
   },
   "private": true,
   "jest": {
-    "preset": "jest-expo"
+    "projects": [
+      {
+        "displayName": "app",
+        "preset": "jest-expo",
+        "testPathIgnorePatterns": [
+          "/node_modules/",
+          "<rootDir>/src/db/"
+        ]
+      },
+      {
+        "displayName": "db",
+        "preset": "jest-expo/node",
+        "testMatch": [
+          "<rootDir>/src/db/**/*.test.ts"
+        ]
+      }
+    ]
   }
 }

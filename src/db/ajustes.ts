@@ -8,6 +8,7 @@ import type { Db } from "./tipos";
 export type Ajustes = {
   umbrales: Umbrales;
   horaRecordatorio: string;
+  recordatorioActivo: boolean;
   avisarPendientes: boolean;
 };
 
@@ -26,6 +27,7 @@ export async function leerAjustes(db: Db): Promise<Ajustes> {
   return {
     umbrales: sonUmbralesValidos(umbrales) ? umbrales : UMBRALES_POR_DEFECTO,
     horaRecordatorio: mapa.get("hora_recordatorio") ?? "21:00",
+    recordatorioActivo: mapa.get("recordatorio_activo") !== "0",
     avisarPendientes: mapa.get("avisar_pendientes") !== "0",
   };
 }
@@ -56,6 +58,13 @@ export async function guardarHoraRecordatorio(
 ): Promise<void> {
   if (!RE_HORA.test(hora)) throw new Error(`Hora inválida: "${hora}".`);
   await guardar(db, "hora_recordatorio", hora);
+}
+
+export async function guardarRecordatorioActivo(
+  db: Db,
+  activo: boolean,
+): Promise<void> {
+  await guardar(db, "recordatorio_activo", activo ? "1" : "0");
 }
 
 export async function guardarAvisarPendientes(

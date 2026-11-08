@@ -1,6 +1,7 @@
 import {
   guardarAvisarPendientes,
   guardarHoraRecordatorio,
+  guardarRecordatorioActivo,
   guardarUmbrales,
   leerAjustes,
 } from "./ajustes";
@@ -19,6 +20,7 @@ describe("ajustes", () => {
     expect(await leerAjustes(db)).toEqual({
       umbrales: { moderacion: 30, casiCero: 10 },
       horaRecordatorio: "21:00",
+      recordatorioActivo: true,
       avisarPendientes: true,
     });
   });
@@ -27,10 +29,12 @@ describe("ajustes", () => {
     await guardarUmbrales(db, { moderacion: 40, casiCero: 15 });
     await guardarHoraRecordatorio(db, "22:30");
     await guardarAvisarPendientes(db, false);
+    await guardarRecordatorioActivo(db, false);
 
     expect(await leerAjustes(db)).toEqual({
       umbrales: { moderacion: 40, casiCero: 15 },
       horaRecordatorio: "22:30",
+      recordatorioActivo: false,
       avisarPendientes: false,
     });
   });

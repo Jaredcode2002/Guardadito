@@ -66,6 +66,45 @@ export const MIGRACIONES: readonly string[] = [
     ('hora_recordatorio', '21:00'),
     ('avisar_pendientes', '1');
   `,
+  `
+  CREATE TABLE categoria (
+    id        INTEGER PRIMARY KEY,
+    tipo      TEXT NOT NULL CHECK (tipo IN ('gasto', 'ingreso')),
+    nombre    TEXT NOT NULL CHECK (length(trim(nombre)) > 0),
+    orden     INTEGER NOT NULL DEFAULT 0,
+    creado_en TEXT NOT NULL,
+    UNIQUE (tipo, nombre)
+  );
+
+  INSERT INTO categoria (tipo, nombre, orden, creado_en) VALUES
+    ('gasto',   'Comida de la calle', 1, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    ('gasto',   'Ocio',               2, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    ('gasto',   'Transporte extra',   3, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    ('gasto',   'Otro',               4, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    ('ingreso', 'Sueldo',             1, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    ('ingreso', 'Ganancia extra',     2, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    ('ingreso', 'Otro',               3, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'));
+
+  INSERT OR IGNORE INTO categoria (tipo, nombre, orden, creado_en)
+    SELECT DISTINCT tipo, trim(categoria), 100, strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+    FROM movimiento
+    WHERE categoria IS NOT NULL AND length(trim(categoria)) > 0;
+
+  ALTER TABLE movimiento
+    ADD COLUMN categoria_id INTEGER REFERENCES categoria(id) ON DELETE SET NULL;
+
+  UPDATE movimiento SET categoria_id = (
+    SELECT c.id FROM categoria c
+    WHERE c.tipo = movimiento.tipo AND c.nombre = trim(movimiento.categoria)
+  )
+  WHERE categoria IS NOT NULL;
+
+  ALTER TABLE movimiento DROP COLUMN categoria;
+
+  CREATE INDEX idx_movimiento_categoria ON movimiento(categoria_id);
+
+  INSERT OR IGNORE INTO ajuste (clave, valor) VALUES ('recordatorio_activo', '1');
+  `,
 ];
 
 export async function migrar(

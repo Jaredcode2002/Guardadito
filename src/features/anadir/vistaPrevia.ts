@@ -1,11 +1,6 @@
 import type { EstadoFrasco } from "@/lib/frasco";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import type { Simulacion, TipoMovimientoNuevo } from "@/lib/simulacion";
-
-export const CATEGORIAS: Record<TipoMovimientoNuevo, readonly string[]> = {
-  gasto: ["Comida de la calle", "Ocio", "Transporte extra", "Otro"],
-  ingreso: ["Sueldo", "Ganancia extra", "Otro"],
-};
+import type { Simulacion } from "@/lib/simulacion";
 
 export const TONO_VISTA_PREVIA: Record<
   EstadoFrasco,

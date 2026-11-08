@@ -21,7 +21,7 @@ import { gastosPorCategoria, totalGastado } from "@/features/graficos/logica";
 import { useHistorico } from "@/features/historico/useHistorico";
 import { mesDe, nombreMes } from "@/lib/fechas";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { colors, fonts, palette } from "@/theme";
+import { ANCHO_CONTENIDO, colors, fonts, palette } from "@/theme";
 
 type Vista = "barras" | "pastel";
 
@@ -64,7 +64,10 @@ export default function Graficos() {
     <View style={styles.pantalla}>
       <StatusBar style="light" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}
+        contentContainerStyle={[
+          styles.columna,
+          { paddingBottom: 40 + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.panel, { paddingTop: insets.top + 14 }]}>
@@ -128,6 +131,7 @@ export default function Graficos() {
 }
 
 const styles = StyleSheet.create({
+  columna: { width: "100%", maxWidth: ANCHO_CONTENIDO, alignSelf: "center" },
   pantalla: { flex: 1, backgroundColor: colors.fondo },
   centro: {
     flex: 1,

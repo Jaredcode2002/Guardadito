@@ -16,6 +16,10 @@ export const radii = {
 
 export const TABLET_BREAKPOINT = 600;
 
+export const ANCHO_CONTENIDO = 760;
+export const ANCHO_HOJA = 600;
+export const ANCHO_AVISO = 520;
+
 export const durations = {
   fast: 150,
   normal: 220,

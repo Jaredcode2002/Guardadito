@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { BORDE, Chip, GRIS, PAPEL } from "@/components/formulario";
-import { Icono, type NombreIcono } from "@/components/Icono";
+import { Chip, GRIS } from "@/components/formulario";
+import { Icono } from "@/components/Icono";
 import { SelectorMeses } from "@/components/SelectorMeses";
 import { momentoActual } from "@/db";
 import {
@@ -21,29 +21,15 @@ import {
   categoriasDelMes,
   filtrarPorCategoria,
   resumenDelFiltro,
-  signoDe,
   totalesDelMes,
-  type FilaHistorico,
-  type TipoFila,
 } from "@/features/historico/logica";
+import { ListaDias } from "@/features/historico/ListaDias";
 import { useHistorico } from "@/features/historico/useHistorico";
 import { mesDe, nombreMes, type MesId } from "@/lib/fechas";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { colors, fonts, palette } from "@/theme";
+import { ANCHO_CONTENIDO, colors, fonts, palette } from "@/theme";
 
 const TEXTO_SUAVE = "rgba(246,241,231,0.74)";
-const VERDE = "#1F7A52";
-
-const ICONO_FILA: Record<
-  TipoFila,
-  { icono: NombreIcono; fondo: string; trazo: string }
-> = {
-  gasto: { icono: "bajar", fondo: BORDE, trazo: palette.tinta },
-  pendiente: { icono: "bajar", fondo: BORDE, trazo: palette.tinta },
-  ingreso: { icono: "subir", fondo: palette.lima, trazo: palette.tinta },
-  alAhorro: { icono: "mas", fondo: palette.panel, trazo: palette.lima },
-};
-
 function nombreDelMes(mes: MesId): string {
   return nombreMes(mes).split(" ")[0].toLowerCase();
 }
@@ -62,7 +48,7 @@ export default function Historico() {
       totales: totalesDelMes(movimientos),
       categorias: categoriasDelMes(movimientos),
       filtradas,
-      dias: agruparPorDia(filtradas),
+      dias: agruparPorDia(filtradas, momentoActual().hoy),
     };
   }, [movimientos, categoriaId]);
 
@@ -88,7 +74,10 @@ export default function Historico() {
     <View style={styles.pantalla}>
       <StatusBar style="light" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}
+        contentContainerStyle={[
+          styles.columna,
+          { paddingBottom: 40 + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.panel, { paddingTop: insets.top + 14 }]}>
@@ -179,16 +168,7 @@ export default function Historico() {
               </Text>
             </View>
           ) : (
-            vista.dias.map((d) => (
-              <View key={d.fecha}>
-                <Text style={styles.dia}>{d.titulo}</Text>
-                <View style={styles.tarjeta}>
-                  {d.filas.map((f, i) => (
-                    <Fila key={f.id} fila={f} primera={i === 0} />
-                  ))}
-                </View>
-              </View>
-            ))
+            <ListaDias dias={vista.dias} />
           )}
         </View>
       </ScrollView>
@@ -205,47 +185,8 @@ function Total({ etiqueta, monto }: { etiqueta: string; monto: number }) {
   );
 }
 
-function Fila({ fila, primera }: { fila: FilaHistorico; primera: boolean }) {
-  const icono = ICONO_FILA[fila.tipo];
-  const signo = signoDe(fila.tipo);
-  return (
-    <View
-      style={[styles.fila, !primera && styles.divisor]}
-      accessible
-      accessibilityLabel={`${fila.titulo}, ${fila.subtitulo}, ${signo === "+" ? "más" : "menos"} ${L(fila.monto)}${fila.etiqueta ? `, ${fila.etiqueta}` : ""}`}
-    >
-      <View style={[styles.filaIcono, { backgroundColor: icono.fondo }]}>
-        <Icono nombre={icono.icono} color={icono.trazo} tamano={20} />
-      </View>
-      <View style={styles.filaTextos}>
-        <View style={styles.filaTituloLinea}>
-          <Text style={styles.filaTitulo} numberOfLines={1}>
-            {fila.titulo}
-          </Text>
-          {fila.etiqueta && (
-            <View style={styles.etiqueta}>
-              <Text style={styles.etiquetaTexto}>{fila.etiqueta}</Text>
-            </View>
-          )}
-        </View>
-        <Text style={styles.filaSub} numberOfLines={1}>
-          {fila.subtitulo}
-        </Text>
-      </View>
-      <Text
-        style={[
-          styles.filaMonto,
-          fila.tipo === "ingreso" && { color: VERDE },
-        ]}
-      >
-        {signo}
-        {L(fila.monto)}
-      </Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
+  columna: { width: "100%", maxWidth: ANCHO_CONTENIDO, alignSelf: "center" },
   pantalla: { flex: 1, backgroundColor: colors.fondo },
   centro: {
     flex: 1,
@@ -330,62 +271,6 @@ const styles = StyleSheet.create({
     color: palette.tinta,
     fontFamily: fonts.bodySemiBold,
     fontSize: 14,
-  },
-  dia: {
-    marginTop: 16,
-    marginBottom: 8,
-    marginLeft: 4,
-    color: GRIS,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 13,
-  },
-  tarjeta: {
-    paddingVertical: 2,
-    paddingHorizontal: 16,
-    borderRadius: 28,
-    borderWidth: 1,
-    borderColor: BORDE,
-    backgroundColor: PAPEL,
-  },
-  fila: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    minHeight: 64,
-  },
-  divisor: { borderTopWidth: 1, borderTopColor: BORDE },
-  filaIcono: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  filaTextos: { flex: 1, paddingVertical: 10 },
-  filaTituloLinea: { flexDirection: "row", alignItems: "center", gap: 6 },
-  filaTitulo: {
-    flexShrink: 1,
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 15,
-  },
-  etiqueta: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
-    backgroundColor: palette.panel,
-  },
-  etiquetaTexto: {
-    color: palette.lima,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 11,
-  },
-  filaSub: { color: GRIS, fontFamily: fonts.body, fontSize: 13 },
-  filaMonto: {
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 15,
-    fontVariant: ["tabular-nums"],
   },
   vacio: {
     alignItems: "center",

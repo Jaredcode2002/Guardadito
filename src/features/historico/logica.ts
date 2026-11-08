@@ -118,14 +118,21 @@ export function filtrarPorCategoria(
     : filas.filter((f) => f.categoriaId === categoriaId);
 }
 
-export function agruparPorDia(filas: readonly FilaHistorico[]): DiaHistorico[] {
+export function agruparPorDia(
+  filas: readonly FilaHistorico[],
+  hoy?: Fecha,
+): DiaHistorico[] {
   const dias: DiaHistorico[] = [];
   for (const f of filas) {
     const ultimo = dias[dias.length - 1];
     if (ultimo && ultimo.fecha === f.fecha) {
       ultimo.filas.push(f);
     } else {
-      dias.push({ fecha: f.fecha, titulo: fechaLarga(f.fecha), filas: [f] });
+      dias.push({
+        fecha: f.fecha,
+        titulo: f.fecha === hoy ? "Hoy" : fechaLarga(f.fecha),
+        filas: [f],
+      });
     }
   }
   return dias;

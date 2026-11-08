@@ -37,7 +37,7 @@ import type { Umbrales } from "@/lib/alertas";
 import { hexDeColor } from "@/lib/colores";
 import { formatearLempirasCompacto } from "@/lib/formato";
 import { cambiarHora } from "@/lib/notificaciones";
-import { colors, fonts, palette } from "@/theme";
+import { ANCHO_CONTENIDO, colors, fonts, palette } from "@/theme";
 
 const TIPOS = [
   { valor: "gasto", texto: "De gasto" },
@@ -96,7 +96,10 @@ export default function Ajustes() {
     <View style={styles.pantalla}>
       <StatusBar style="light" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 40 + insets.bottom }}
+        contentContainerStyle={[
+          styles.columna,
+          { paddingBottom: 40 + insets.bottom },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.panel, { paddingTop: insets.top + 14 }]}>
@@ -355,6 +358,7 @@ function BotonPunteado({
 }
 
 const styles = StyleSheet.create({
+  columna: { width: "100%", maxWidth: ANCHO_CONTENIDO, alignSelf: "center" },
   filaHora: {
     flexDirection: "row",
     alignItems: "center",

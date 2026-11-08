@@ -15,14 +15,22 @@ const ACCESOS: { icono: NombreIcono; nombre: string; ruta: RutaAcceso }[] = [
 export function BarraInferior({
   onAnadir,
   onAcceso,
+  incrustada = false,
 }: {
   onAnadir: () => void;
   onAcceso: (ruta: RutaAcceso) => void;
+  incrustada?: boolean;
 }) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.barra, { bottom: 24 + insets.bottom }]}>
+    <View
+      style={
+        incrustada
+          ? [styles.barra, styles.incrustada]
+          : [styles.barra, styles.flotante, { bottom: 24 + insets.bottom }]
+      }
+    >
       <View style={styles.accesos}>
         {ACCESOS.map((a) => (
           <Pressable
@@ -54,9 +62,6 @@ export function BarraInferior({
 
 const styles = StyleSheet.create({
   barra: {
-    position: "absolute",
-    left: 20,
-    right: 20,
     height: 68,
     borderRadius: 34,
     backgroundColor: palette.panel,
@@ -65,6 +70,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: 14,
     paddingRight: 8,
+  },
+  flotante: { position: "absolute", left: 20, right: 20 },
+  incrustada: {
+    backgroundColor: "transparent",
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   accesos: { flexDirection: "row", gap: 2 },
   acceso: {

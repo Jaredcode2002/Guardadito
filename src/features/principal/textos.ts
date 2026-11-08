@@ -20,6 +20,14 @@ export const COLOR_LIBRE: Record<EstadoFrasco, string> = {
   roto: palette.coral,
 };
 
+export function chipDelPanel(d: {
+  estado: EstadoFrasco;
+  libre: Centavos;
+}): { texto: string; color: string } {
+  if (d.estado === "roto" && d.libre < 0) return { texto: "En negativo", color: palette.coral };
+  return CHIP_ESTADO[d.estado];
+}
+
 export type DatosPanel = {
   estado: EstadoFrasco;
   libre: Centavos;
@@ -34,9 +42,13 @@ export function textosPanel(d: DatosPanel): {
 } {
   const debajo = d.libre < 0 ? `Estás ${L(-d.libre)} por debajo de cero` : null;
 
+  if (d.estado === "roto" && debajo) {
+    return { detalle: debajo, aviso: "Se repone con tu próximo ingreso" };
+  }
+
   if (d.estado === "roto") {
     return {
-      detalle: debajo ?? "Tu ahorro cubrió lo que faltaba",
+      detalle: "Tu ahorro cubrió lo que faltaba",
       aviso: `Tu ahorro quedó en ${L(d.saldoAhorro)}`,
     };
   }

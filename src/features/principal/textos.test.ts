@@ -1,4 +1,9 @@
-import { resumenPendientes, textosPanel, type DatosPanel } from "./textos";
+import {
+  chipDelPanel,
+  resumenPendientes,
+  textosPanel,
+  type DatosPanel,
+} from "./textos";
 
 const datos = (d: Partial<DatosPanel>): DatosPanel => ({
   estado: "ok",
@@ -34,11 +39,15 @@ describe("textosPanel", () => {
     ).toBe("Sin ahorro: lo que gastes quedará en negativo");
   });
 
-  it("con Libre negativo dice cuánto falta", () => {
+  it("roto en negativo dice cuánto falta y cuándo se repone", () => {
     expect(
-      textosPanel(datos({ estado: "zero", libre: -70_000, porcentaje: 0 }))
-        .detalle,
-    ).toBe("Estás L 700 por debajo de cero");
+      textosPanel(
+        datos({ estado: "roto", libre: -70_000, porcentaje: 0, saldoAhorro: 0 }),
+      ),
+    ).toEqual({
+      detalle: "Estás L 700 por debajo de cero",
+      aviso: "Se repone con tu próximo ingreso",
+    });
   });
 
   it("roto muestra cómo quedó el ahorro", () => {
@@ -58,5 +67,17 @@ describe("resumenPendientes", () => {
     expect(resumenPendientes([450_000, 60_000, 120_000, 200_000])).toBe(
       "4 por pagar · L 8,300",
     );
+  });
+});
+
+describe("chipDelPanel", () => {
+  it("usa el chip del estado", () => {
+    expect(chipDelPanel({ estado: "roto", libre: 0 }).texto).toBe("Ahorro tocado");
+    expect(chipDelPanel({ estado: "ok", libre: 170_000 }).texto).toBe("En orden");
+  });
+
+  it("en negativo dice En negativo aunque no se haya tocado ahorro", () => {
+    expect(chipDelPanel({ estado: "roto", libre: -1 }).texto).toBe("En negativo");
+    expect(chipDelPanel({ estado: "zero", libre: -1 }).texto).toBe("En cero");
   });
 });

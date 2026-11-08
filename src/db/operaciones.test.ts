@@ -253,7 +253,7 @@ describe("gastos y ahorro", () => {
       libre: -100_000,
       saldoAhorro: 0,
       ahorroTocadoSinReponer: false,
-      estado: "zero",
+      estado: "roto",
     });
     expect(await listarMovimientosDelMes(db, NOV)).toHaveLength(2);
   });

@@ -7,7 +7,7 @@ import { nombreMes } from "@/lib/fechas";
 import { formatearLempirasCompacto, formatearNumero } from "@/lib/formato";
 import { colors, fonts, palette, spacing } from "@/theme";
 
-import { CHIP_ESTADO, COLOR_LIBRE, textosPanel } from "./textos";
+import { chipDelPanel, COLOR_LIBRE, textosPanel } from "./textos";
 
 const TEXTO_SUAVE = "rgba(246,241,231,0.74)";
 
@@ -19,7 +19,7 @@ export function PanelLibre({
   onMantenerFrasco?: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const chip = CHIP_ESTADO[resumen.estado];
+  const chip = chipDelPanel(resumen);
   const { detalle, aviso } = textosPanel(resumen);
 
   return (

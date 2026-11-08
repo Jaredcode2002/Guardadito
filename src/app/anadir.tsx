@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
-import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { useCallback, useState } from "react";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
 
 import {
   BotonPrincipal,
@@ -21,6 +21,8 @@ import {
   type Categoria,
 } from "@/db";
 import { useCategorias } from "@/features/ajustes/useAjustes";
+import { requiereConfirmacion } from "@/features/anadir/confirmacion";
+import { ConfirmarGasto } from "@/features/anadir/ConfirmarGasto";
 import {
   descripcionMovimiento,
   lineasVistaPrevia,
@@ -30,6 +32,7 @@ import { avisoDeGasto } from "@/features/avisos/mensajes";
 import { mostrarAviso } from "@/features/avisos/store";
 import { useResumen } from "@/features/resumen/useResumen";
 import { formatearLempirasCompacto, parsearLempiras } from "@/lib/formato";
+import type { PlanDeGasto } from "@/lib/money";
 import { simularMovimiento, type TipoMovimientoNuevo } from "@/lib/simulacion";
 import { fonts } from "@/theme";
 
@@ -46,6 +49,8 @@ export default function Anadir() {
   const [categoria, setCategoria] = useState<Categoria | null>(null);
   const [nota, setNota] = useState("");
   const [guardando, setGuardando] = useState(false);
+  const [confirmando, setConfirmando] = useState<PlanDeGasto | null>(null);
+  const cancelarConfirmacion = useCallback(() => setConfirmando(null), []);
 
   const monto = parsearLempiras(texto);
   const simulacion =
@@ -110,83 +115,81 @@ export default function Anadir() {
       return;
     }
     const plan = await previsualizarGasto(db, monto);
-    if (plan.desdeAhorro === 0 && plan.enNegativo === 0) {
+    if (!requiereConfirmacion(plan)) {
       guardarGasto(monto, resumen.mes);
       return;
     }
-    const lineas: string[] = [];
-    if (plan.desdeAhorro > 0) {
-      lineas.push(
-        `Este gasto tocará ${formatearLempirasCompacto(plan.desdeAhorro)} de tu ahorro.`,
-      );
-    }
-    if (plan.enNegativo > 0) {
-      lineas.push(
-        `Quedarás ${formatearLempirasCompacto(plan.enNegativo)} en negativo.`,
-      );
-    }
-    Alert.alert("¿Seguro?", lineas.join("\n"), [
-      { text: "Gastar igual", onPress: () => guardarGasto(monto, resumen.mes) },
-      { text: "Mejor no gastar", style: "cancel" },
-    ]);
+    Keyboard.dismiss();
+    setConfirmando(plan);
   }
 
   return (
-    <HojaInferior>
-      <Selector opciones={TIPOS} valor={tipo} onCambiar={cambiarTipo} />
+    <>
+      <HojaInferior>
+        <Selector opciones={TIPOS} valor={tipo} onCambiar={cambiarTipo} />
 
-      <Etiqueta>MONTO</Etiqueta>
-      <CampoMonto value={texto} onChangeText={setTexto} autoFocus />
+        <Etiqueta>MONTO</Etiqueta>
+        <CampoMonto value={texto} onChangeText={setTexto} autoFocus />
 
-      {simulacion && tono && (
-        <View style={[styles.vistaPrevia, { backgroundColor: tono.fondo }]}>
-          <Frasco
-            estado={simulacion.estado}
-            porcentaje={simulacion.porcentaje}
-            ancho={28}
-            tema="claro"
-          />
-          <View style={styles.vistaPreviaTextos}>
-            {lineasVistaPrevia(simulacion).map((l) => (
-              <Text
-                key={l}
-                style={[styles.vistaPreviaTexto, { color: tono.texto }]}
-              >
-                {l}
-              </Text>
-            ))}
+        {simulacion && tono && (
+          <View style={[styles.vistaPrevia, { backgroundColor: tono.fondo }]}>
+            <Frasco
+              estado={simulacion.estado}
+              porcentaje={simulacion.porcentaje}
+              ancho={28}
+              tema="claro"
+            />
+            <View style={styles.vistaPreviaTextos}>
+              {lineasVistaPrevia(simulacion).map((l) => (
+                <Text
+                  key={l}
+                  style={[styles.vistaPreviaTexto, { color: tono.texto }]}
+                >
+                  {l}
+                </Text>
+              ))}
+            </View>
           </View>
+        )}
+
+        <Etiqueta>CATEGORÍA</Etiqueta>
+        <View style={styles.categorias}>
+          {categorias.map((c) => (
+            <Chip
+              key={c.id}
+              texto={c.nombre}
+              activo={categoria?.id === c.id}
+              onPress={() => setCategoria(categoria?.id === c.id ? null : c)}
+            />
+          ))}
         </View>
+
+        <Etiqueta>NOTA (OPCIONAL)</Etiqueta>
+        <CampoTexto
+          value={nota}
+          onChangeText={setNota}
+          placeholder={
+            tipo === "gasto" ? "Ej. tacos con amigos" : "Ej. pago de quincena"
+          }
+          accessibilityLabel="Nota"
+        />
+
+        <BotonPrincipal
+          texto={tipo === "gasto" ? "Guardar gasto" : "Guardar ingreso"}
+          onPress={guardar}
+          activo={puedeGuardar}
+        />
+      </HojaInferior>
+      {confirmando && resumen && (
+        <ConfirmarGasto
+          plan={confirmando}
+          saldoAhorro={resumen.saldoAhorro}
+          ocupado={guardando}
+          onCancelar={cancelarConfirmacion}
+          onConfirmar={() => guardarGasto(confirmando.gasto, resumen.mes)}
+        />
       )}
-
-      <Etiqueta>CATEGORÍA</Etiqueta>
-      <View style={styles.categorias}>
-        {categorias.map((c) => (
-          <Chip
-            key={c.id}
-            texto={c.nombre}
-            activo={categoria?.id === c.id}
-            onPress={() => setCategoria(categoria?.id === c.id ? null : c)}
-          />
-        ))}
-      </View>
-
-      <Etiqueta>NOTA (OPCIONAL)</Etiqueta>
-      <CampoTexto
-        value={nota}
-        onChangeText={setNota}
-        placeholder={
-          tipo === "gasto" ? "Ej. tacos con amigos" : "Ej. pago de quincena"
-        }
-        accessibilityLabel="Nota"
-      />
-
-      <BotonPrincipal
-        texto={tipo === "gasto" ? "Guardar gasto" : "Guardar ingreso"}
-        onPress={guardar}
-        activo={puedeGuardar}
-      />
-    </HojaInferior>
+    </>
   );
 }
 

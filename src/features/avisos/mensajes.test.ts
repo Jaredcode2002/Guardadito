@@ -74,7 +74,7 @@ describe("avisoDeGasto", () => {
   it("negativo sin ahorro", () => {
     const a = avisoDeGasto(
       { monto: 45_000, ahorroUsado: 0, enNegativo: 15_000, alerta: null },
-      situacion({ libre: -15_000, porcentaje: 0, estado: "zero", saldoAhorro: 0 }),
+      situacion({ libre: -15_000, porcentaje: 0, estado: "roto", saldoAhorro: 0 }),
     );
     expect(a).toMatchObject({
       titulo: "Quedaste en negativo",

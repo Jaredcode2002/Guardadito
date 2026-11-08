@@ -16,6 +16,7 @@ export function estadoFrasco({
   ahorroTocadoSinReponer,
   umbrales = UMBRALES_POR_DEFECTO,
 }: EntradaFrasco): EstadoFrasco {
+  if (libre < 0 && libre < libreInicial) return 'roto';
   if (libre <= 0) return ahorroTocadoSinReponer ? 'roto' : 'zero';
   if (bajoUmbral(libre, libreInicial, umbrales.casiCero)) return 'crit';
   if (bajoUmbral(libre, libreInicial, umbrales.moderacion)) return 'mod';

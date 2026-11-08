@@ -1,8 +1,9 @@
 export const fonts = {
-  display: 'BricolageGrotesque',
-  displayBold: 'BricolageGrotesque-Bold',
-  body: 'DMSans',
-  bodyMedium: 'DMSans-Medium',
+  display: "BricolageGrotesque_700Bold",
+  displayMedium: "BricolageGrotesque_500Medium",
+  body: "DMSans_400Regular",
+  bodyMedium: "DMSans_500Medium",
+  bodySemiBold: "DMSans_600SemiBold",
 } as const;
 
 export const fontSizes = {

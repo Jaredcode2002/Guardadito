@@ -1,26 +1,25 @@
 import type { Db } from "./tipos";
 
 export const MIGRACIONES: readonly string[] = [
-  // v1: esquema inicial.
   `
   CREATE TABLE mes (
-    id                 TEXT PRIMARY KEY,                -- 'YYYY-MM'
-    libre_inicial_base INTEGER NOT NULL,                -- Libre al abrir el mes (puede ser < 0)
-    alertas_disparadas TEXT NOT NULL DEFAULT '[]',      -- JSON de NivelAlerta[]
+    id                 TEXT PRIMARY KEY,
+    libre_inicial_base INTEGER NOT NULL,
+    alertas_disparadas TEXT NOT NULL DEFAULT '[]',
     abierto_en         TEXT NOT NULL,
-    cerrado_en         TEXT                             -- NULL = mes en curso
+    cerrado_en         TEXT
   );
 
   CREATE TABLE movimiento (
     id          INTEGER PRIMARY KEY,
     tipo        TEXT NOT NULL CHECK (tipo IN ('ingreso', 'gasto')),
-    monto       INTEGER NOT NULL CHECK (monto > 0),     -- centavos; el signo lo da el tipo
+    monto       INTEGER NOT NULL CHECK (monto > 0),
     descripcion TEXT NOT NULL DEFAULT '',
     categoria   TEXT,
     origen      TEXT NOT NULL DEFAULT 'normal'
                 CHECK (origen IN ('normal', 'ahorro', 'pendiente', 'sobrante')),
-    fecha       TEXT NOT NULL,                          -- 'YYYY-MM-DD' local
-    creado_en   TEXT NOT NULL                           -- ISO UTC, para ordenar
+    fecha       TEXT NOT NULL,
+    creado_en   TEXT NOT NULL
   );
   CREATE INDEX idx_movimiento_fecha ON movimiento(fecha);
 
@@ -37,10 +36,10 @@ export const MIGRACIONES: readonly string[] = [
     id            INTEGER PRIMARY KEY,
     plantilla_id  INTEGER REFERENCES plantilla_pendiente(id) ON DELETE SET NULL,
     mes_id        TEXT NOT NULL REFERENCES mes(id),
-    nombre        TEXT NOT NULL,                        -- copia de la plantilla
+    nombre        TEXT NOT NULL,
     monto         INTEGER NOT NULL CHECK (monto > 0),
     fecha_vence   TEXT NOT NULL,
-    pagado_en     TEXT,                                 -- NULL = sin pagar
+    pagado_en     TEXT,
     movimiento_id INTEGER REFERENCES movimiento(id) ON DELETE SET NULL,
     UNIQUE (plantilla_id, mes_id)
   );
@@ -48,7 +47,7 @@ export const MIGRACIONES: readonly string[] = [
 
   CREATE TABLE ahorro_movimiento (
     id            INTEGER PRIMARY KEY,
-    monto         INTEGER NOT NULL CHECK (monto <> 0),  -- + entra al ahorro, − sale
+    monto         INTEGER NOT NULL CHECK (monto <> 0),
     motivo        TEXT NOT NULL
                   CHECK (motivo IN ('saldo_inicial', 'sobrante', 'gasto', 'deposito', 'retiro')),
     movimiento_id INTEGER REFERENCES movimiento(id) ON DELETE CASCADE,

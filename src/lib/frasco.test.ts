@@ -1,6 +1,6 @@
 import { estadoFrasco } from './frasco';
 
-const INICIAL = 1_000_000; // L 10,000.00
+const INICIAL = 1_000_000;
 
 function estado(libre: number, ahorroTocadoSinReponer = false) {
   return estadoFrasco({ libre, libreInicial: INICIAL, ahorroTocadoSinReponer });
@@ -9,12 +9,12 @@ function estado(libre: number, ahorroTocadoSinReponer = false) {
 describe('estadoFrasco', () => {
   it('ok con 30 % o más', () => {
     expect(estado(INICIAL)).toBe('ok');
-    expect(estado(300_000)).toBe('ok'); // justo 30 %
+    expect(estado(300_000)).toBe('ok');
   });
 
   it('mod por debajo de 30 %', () => {
     expect(estado(299_999)).toBe('mod');
-    expect(estado(100_000)).toBe('mod'); // justo 10 %
+    expect(estado(100_000)).toBe('mod');
   });
 
   it('crit por debajo de 10 %', () => {

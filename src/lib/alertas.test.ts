@@ -1,6 +1,6 @@
-import { evaluarAlertas, nivelesActivos } from './alertas';
+import { evaluarAlertas, nivelesActivos, sonUmbralesValidos } from './alertas';
 
-const INICIAL = 1_000_000; // L 10,000.00
+const INICIAL = 1_000_000;
 
 describe('nivelesActivos', () => {
   it('ninguno con el Libre arriba de 30 %', () => {
@@ -44,13 +44,25 @@ describe('evaluarAlertas', () => {
   });
 
   it('un ingreso parcial re-arma solo los umbrales que superó', () => {
-    // De 0 a 20 %: sigue bajo 30 %, pero ya está sobre 10 % y sobre 0.
     const r = evaluarAlertas(['moderacion', 'casiCero', 'cero'], 200_000, INICIAL);
     expect(r.mostrar).toBeNull();
     expect(r.disparadas).toEqual(['moderacion']);
 
-    // Si luego baja de 10 %, "casiCero" se dispara de nuevo.
     const despues = evaluarAlertas(r.disparadas, 50_000, INICIAL);
     expect(despues.mostrar).toBe('casiCero');
+  });
+});
+
+describe("sonUmbralesValidos", () => {
+  it("acepta los de por defecto y otros ordenados", () => {
+    expect(sonUmbralesValidos({ moderacion: 30, casiCero: 10 })).toBe(true);
+    expect(sonUmbralesValidos({ moderacion: 50, casiCero: 20 })).toBe(true);
+  });
+
+  it("rechaza casiCero ≥ moderacion, fuera de rango o decimales", () => {
+    expect(sonUmbralesValidos({ moderacion: 10, casiCero: 10 })).toBe(false);
+    expect(sonUmbralesValidos({ moderacion: 30, casiCero: 0 })).toBe(false);
+    expect(sonUmbralesValidos({ moderacion: 120, casiCero: 10 })).toBe(false);
+    expect(sonUmbralesValidos({ moderacion: 30, casiCero: 7.5 })).toBe(false);
   });
 });

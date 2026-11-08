@@ -1,15 +1,12 @@
 import { bajoUmbral, type Centavos } from './money';
 
-/** Umbrales editables, en % enteros. */
 export type Umbrales = { moderacion: number; casiCero: number };
 
 export const UMBRALES_POR_DEFECTO: Umbrales = { moderacion: 30, casiCero: 10 };
 
-/** De menos a más grave. */
 export const NIVELES = ['moderacion', 'casiCero', 'cero'] as const;
 export type NivelAlerta = (typeof NIVELES)[number];
 
-/** ¿Qué niveles se cumplen ahora mismo? */
 export function nivelesActivos(
   libre: Centavos,
   libreInicial: Centavos,
@@ -23,18 +20,10 @@ export function nivelesActivos(
 }
 
 export type ResultadoAlertas = {
-  /** Niveles ya disparados; esto es lo que se guarda para la próxima vez. */
   disparadas: NivelAlerta[];
-  /** La alerta a mostrar ahora (la más grave recién cruzada) o null. */
   mostrar: NivelAlerta | null;
 };
 
-/**
- * Cada alerta se dispara UNA vez al cruzar su umbral. Si el Libre vuelve a
- * subir por encima (p. ej. llega un ingreso), se quita de `disparadas`
- * (se "re-arma") y podrá dispararse otra vez. Si un gasto cruza varios
- * umbrales a la vez, se muestra solo la más grave para no apilar toasts.
- */
 export function evaluarAlertas(
   disparadasAntes: readonly NivelAlerta[],
   libre: Centavos,
@@ -47,4 +36,14 @@ export function evaluarAlertas(
     disparadas: activos,
     mostrar: nuevas.length > 0 ? nuevas[nuevas.length - 1] : null,
   };
+}
+
+export function sonUmbralesValidos({ moderacion, casiCero }: Umbrales): boolean {
+  return (
+    Number.isInteger(moderacion) &&
+    Number.isInteger(casiCero) &&
+    casiCero > 0 &&
+    moderacion <= 100 &&
+    casiCero < moderacion
+  );
 }

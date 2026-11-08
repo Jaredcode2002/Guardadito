@@ -6,10 +6,6 @@ export type EstadoFrasco = 'ok' | 'mod' | 'crit' | 'zero' | 'roto';
 export type EntradaFrasco = {
   libre: Centavos;
   libreInicial: Centavos;
-  /**
-   * true si se usó ahorro y todavía no ha entrado un ingreso que lo reponga.
-   * Lo calcula la capa de datos. (Regla de persistencia "por confirmar".)
-   */
   ahorroTocadoSinReponer: boolean;
   umbrales?: Umbrales;
 };

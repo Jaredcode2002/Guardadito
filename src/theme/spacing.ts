@@ -1,4 +1,3 @@
-/** Escala de espaciado en múltiplos de 4 dp. */
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -15,10 +14,8 @@ export const radii = {
   pill: 999,
 } as const;
 
-/** Ancho a partir del cual usamos el diseño de tablet (dos columnas). */
 export const TABLET_BREAKPOINT = 600;
 
-/** Duraciones de animación (CLAUDE.md: 150–300 ms). */
 export const durations = {
   fast: 150,
   normal: 220,

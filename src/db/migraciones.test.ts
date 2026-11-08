@@ -71,9 +71,9 @@ describe('migrar', () => {
     await expect(migrar(otra, migraciones)).rejects.toThrow();
 
     const fila = await otra.getFirstAsync<{ user_version: number }>('PRAGMA user_version', []);
-    expect(fila?.user_version).toBe(1); // la v1 sí quedó
+    expect(fila?.user_version).toBe(1);
     const b = await otra.getFirstAsync(`SELECT name FROM sqlite_master WHERE name = 'b'`, []);
-    expect(b).toBeNull(); // la tabla b de la v2 rota no quedó a medias
+    expect(b).toBeNull();
     otra.cerrar();
   });
 

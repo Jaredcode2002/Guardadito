@@ -73,3 +73,15 @@ export async function guardarAvisarPendientes(
 ): Promise<void> {
   await guardar(db, "avisar_pendientes", avisar ? "1" : "0");
 }
+
+export async function permisoNotificacionesPedido(db: Db): Promise<boolean> {
+  const fila = await db.getFirstAsync<{ valor: string }>(
+    "SELECT valor FROM ajuste WHERE clave = ?",
+    ["permiso_notificaciones_pedido"],
+  );
+  return fila?.valor === "1";
+}
+
+export async function marcarPermisoNotificacionesPedido(db: Db): Promise<void> {
+  await guardar(db, "permiso_notificaciones_pedido", "1");
+}

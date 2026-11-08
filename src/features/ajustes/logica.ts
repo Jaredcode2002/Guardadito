@@ -30,3 +30,10 @@ export function parsearDiaDelMes(texto: string): number | null {
   const dia = Number(texto.trim());
   return dia >= 1 && dia <= 31 ? dia : null;
 }
+
+export function partesHora(hora24: string): { hora: string; minutos: string } {
+  const [h, m] = hora24.split(":").map(Number);
+  const sufijo = h < 12 ? "a. m." : "p. m.";
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return { hora: `${h12} ${sufijo}`, minutos: `:${String(m).padStart(2, "0")}` };
+}

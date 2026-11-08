@@ -14,9 +14,12 @@ import { useCallback, useEffect, useState } from "react";
 import { Bienvenida } from "@/components/Bienvenida";
 import { Toast } from "@/components/Toast";
 import { inicializarDb } from "@/db/inicializar";
+import { GestorNotificaciones } from "@/features/notificaciones/GestorNotificaciones";
+import { configurarNotificaciones } from "@/features/notificaciones/programar";
 import { colors } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
+configurarNotificaciones();
 
 const HOJAS = ["anadir", "pendiente", "categoria", "ahorro"] as const;
 
@@ -63,6 +66,7 @@ export default function RootLayout() {
         ))}
       </Stack>
       <Toast />
+      <GestorNotificaciones activo={introLista} />
       {!introLista && <Bienvenida onTerminar={terminarIntro} />}
     </SQLiteProvider>
   );

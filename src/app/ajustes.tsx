@@ -19,19 +19,23 @@ import { Paso } from "@/components/Paso";
 import {
   cambiarPendienteFijoActivo,
   guardarAvisarPendientes,
+  guardarHoraRecordatorio,
   guardarRecordatorioActivo,
   guardarUmbrales,
   type TipoMovimiento,
 } from "@/db";
 import {
   formatearHora,
+  partesHora,
   siguienteUmbral,
   textoDiaDelMes,
 } from "@/features/ajustes/logica";
 import { useAjustes } from "@/features/ajustes/useAjustes";
 import { mostrarAviso } from "@/features/avisos/store";
+import { usePermiso } from "@/features/notificaciones/usePermiso";
 import type { Umbrales } from "@/lib/alertas";
 import { formatearLempirasCompacto } from "@/lib/formato";
+import { cambiarHora } from "@/lib/notificaciones";
 import { colors, fonts, palette } from "@/theme";
 
 const TIPOS = [
@@ -45,6 +49,7 @@ export default function Ajustes() {
   const { db, datos, error, recargar } = useAjustes();
   const insets = useSafeAreaInsets();
   const [tipoCategoria, setTipoCategoria] = useState<TipoMovimiento>("gasto");
+  const { permiso, pedir } = usePermiso();
 
   async function intentar(accion: () => Promise<unknown>) {
     try {
@@ -79,6 +84,12 @@ export default function Ajustes() {
     const nuevos = siguienteUmbral(umbrales, campo, direccion);
     return nuevos ? () => intentar(() => guardarUmbrales(db, nuevos)) : null;
   };
+  const { horaRecordatorio } = datos.ajustes;
+  const hora = partesHora(horaRecordatorio);
+  const moverHora = (campo: "hora" | "minuto", direccion: 1 | -1) => () =>
+    intentar(() =>
+      guardarHoraRecordatorio(db, cambiarHora(horaRecordatorio, campo, direccion)),
+    );
 
   return (
     <View style={styles.pantalla}>
@@ -216,6 +227,26 @@ export default function Ajustes() {
           </View>
 
           <Text style={styles.seccion}>Alertas</Text>
+          {permiso && !permiso.concedido && (
+            <View style={styles.permiso}>
+              <View style={styles.filaTextos}>
+                <Text style={styles.filaTitulo}>Notificaciones apagadas</Text>
+                <Text style={styles.permisoTexto}>
+                  Sin permiso no te llegan el recordatorio ni los avisos de
+                  pendientes.
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => intentar(pedir)}
+                accessibilityRole="button"
+                style={styles.permisoBoton}
+              >
+                <Text style={styles.permisoBotonTexto}>
+                  {permiso.puedePedir ? "Permitir" : "Abrir ajustes"}
+                </Text>
+              </Pressable>
+            </View>
+          )}
           <View style={styles.tarjeta}>
             <View style={styles.fila}>
               <View style={styles.filaTextos}>
@@ -247,8 +278,7 @@ export default function Ajustes() {
               <View style={styles.filaTextos}>
                 <Text style={styles.filaTitulo}>Recordatorio nocturno</Text>
                 <Text style={styles.filaSub}>
-                  Todos los días a las{" "}
-                  {formatearHora(datos.ajustes.horaRecordatorio)}
+                  Todos los días a las {formatearHora(horaRecordatorio)}
                 </Text>
               </View>
               <Interruptor
@@ -259,10 +289,34 @@ export default function Ajustes() {
                 }
               />
             </View>
+            {datos.ajustes.recordatorioActivo && (
+              <>
+                <View style={styles.filaHora}>
+                  <Text style={styles.filaSub}>Hora</Text>
+                  <Paso
+                    texto={hora.hora}
+                    etiqueta="hora del recordatorio"
+                    onBajar={moverHora("hora", -1)}
+                    onSubir={moverHora("hora", 1)}
+                  />
+                </View>
+                <View style={styles.filaHora}>
+                  <Text style={styles.filaSub}>Minutos</Text>
+                  <Paso
+                    texto={hora.minutos}
+                    etiqueta="minutos del recordatorio"
+                    onBajar={moverHora("minuto", -1)}
+                    onSubir={moverHora("minuto", 1)}
+                  />
+                </View>
+              </>
+            )}
             <View style={[styles.fila, styles.divisor]}>
               <View style={styles.filaTextos}>
                 <Text style={styles.filaTitulo}>Aviso de pendientes</Text>
-                <Text style={styles.filaSub}>Un día antes de cada pago</Text>
+                <Text style={styles.filaSub}>
+                  Un día antes de cada pago, a las 9:00 a. m.
+                </Text>
               </View>
               <Interruptor
                 valor={datos.ajustes.avisarPendientes}
@@ -297,6 +351,40 @@ function BotonPunteado({
 }
 
 const styles = StyleSheet.create({
+  filaHora: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: 10,
+    paddingLeft: 12,
+  },
+  permiso: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 22,
+    backgroundColor: "#FFE1DB",
+  },
+  permisoTexto: {
+    color: "#8A2A1B",
+    fontFamily: fonts.body,
+    fontSize: 13,
+  },
+  permisoBoton: {
+    height: 44,
+    justifyContent: "center",
+    paddingHorizontal: 16,
+    borderRadius: 22,
+    backgroundColor: palette.panel,
+  },
+  permisoBotonTexto: {
+    color: palette.crema,
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 14,
+  },
   pantalla: { flex: 1, backgroundColor: colors.fondo },
   centro: {
     flex: 1,

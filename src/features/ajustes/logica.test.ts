@@ -1,6 +1,7 @@
 import {
   formatearHora,
   parsearDiaDelMes,
+  partesHora,
   siguienteUmbral,
   textoDiaDelMes,
 } from "./logica";
@@ -59,5 +60,15 @@ describe("día del mes", () => {
     expect(parsearDiaDelMes("32")).toBeNull();
     expect(parsearDiaDelMes("1.5")).toBeNull();
     expect(parsearDiaDelMes("")).toBeNull();
+  });
+});
+
+describe("partesHora", () => {
+  it.each([
+    ["21:00", "9 p. m.", ":00"],
+    ["00:45", "12 a. m.", ":45"],
+    ["12:15", "12 p. m.", ":15"],
+  ])("%s → %s %s", (hora24, hora, minutos) => {
+    expect(partesHora(hora24)).toEqual({ hora, minutos });
   });
 });

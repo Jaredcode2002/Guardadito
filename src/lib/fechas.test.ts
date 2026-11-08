@@ -1,10 +1,13 @@
 import {
+  abreviaturaMes,
+  diaDe,
   fechaLocal,
   fechaVence,
   mesAnterior,
   mesDe,
   mesesPorAbrir,
   mesSiguiente,
+  nombreMes,
   ultimaFechaDelMes,
   ultimoDiaDelMes,
 } from './fechas';
@@ -78,5 +81,22 @@ describe('mesesPorAbrir', () => {
 
   it('si el reloj del teléfono retrocede, no abre nada', () => {
     expect(mesesPorAbrir('2026-11', '2026-10')).toEqual([]);
+  });
+});
+
+describe("nombreMes, abreviaturaMes y diaDe", () => {
+  it("nombre completo con año", () => {
+    expect(nombreMes("2026-11")).toBe("Noviembre 2026");
+    expect(nombreMes("2027-01")).toBe("Enero 2027");
+  });
+
+  it("abreviatura de tres letras en mayúsculas para la ficha", () => {
+    expect(abreviaturaMes("2026-11-10")).toBe("NOV");
+    expect(abreviaturaMes("2026-09-01")).toBe("SEP");
+  });
+
+  it("día del mes sin cero a la izquierda", () => {
+    expect(diaDe("2026-11-05")).toBe(5);
+    expect(diaDe("2026-11-30")).toBe(30);
   });
 });

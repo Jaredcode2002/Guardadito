@@ -1,4 +1,9 @@
-import { formatearLempiras, parsearLempiras } from "./formato";
+import {
+  formatearLempiras,
+  formatearLempirasCompacto,
+  formatearNumero,
+  parsearLempiras,
+} from "./formato";
 
 describe("formatearLempiras", () => {
   it.each([
@@ -29,4 +34,16 @@ describe("parsearLempiras", () => {
       expect(parsearLempiras(texto)).toBeNull();
     },
   );
+});
+
+describe("formatearNumero y formatearLempirasCompacto", () => {
+  it.each([
+    [1_000_000, "10,000", "L 10,000"],
+    [123_450, "1,234.50", "L 1,234.50"],
+    [0, "0", "L 0"],
+    [-70_000, "−700", "−L 700"],
+  ])("%i centavos → %s / %s", (centavos, numero, compacto) => {
+    expect(formatearNumero(centavos)).toBe(numero);
+    expect(formatearLempirasCompacto(centavos)).toBe(compacto);
+  });
 });

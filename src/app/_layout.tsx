@@ -14,6 +14,7 @@ import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 
+import { Toast } from "@/components/Toast";
 import { inicializarDb } from "@/db/inicializar";
 import { colors } from "@/theme";
 
@@ -47,7 +48,17 @@ export default function RootLayout() {
           headerShown: false,
           contentStyle: { backgroundColor: colors.fondo },
         }}
-      />
+      >
+        <Stack.Screen
+          name="anadir"
+          options={{
+            presentation: "transparentModal",
+            animation: "fade",
+            contentStyle: { backgroundColor: "transparent" },
+          }}
+        />
+      </Stack>
+      <Toast />
     </SQLiteProvider>
   );
 }

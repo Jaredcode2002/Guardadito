@@ -20,15 +20,16 @@ import Svg, {
 } from "react-native-svg";
 
 import type { EstadoFrasco } from "@/lib/frasco";
-import { durations, palette } from "@/theme";
+import { durations } from "@/theme";
 
 import {
   caminoOla,
-  COLOR_LIQUIDO,
   colorRasgo,
   CUERPO,
   nivelSegunEstado,
+  TEMAS_FRASCO,
   tieneLiquido,
+  type TemaFrasco,
   VIEWBOX,
   ZONA_BOCA,
   ZONA_GOTA,
@@ -49,9 +50,16 @@ type Props = {
   estado: EstadoFrasco;
   porcentaje: number;
   ancho?: number;
+  tema?: TemaFrasco;
 };
 
-export function Frasco({ estado, porcentaje, ancho = 124 }: Props) {
+export function Frasco({
+  estado,
+  porcentaje,
+  ancho = 124,
+  tema = "panel",
+}: Props) {
+  const colores = TEMAS_FRASCO[tema];
   const reducir = useReducedMotion();
   const idRecorte = `frasco${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const liquido = tieneLiquido(estado);
@@ -102,8 +110,8 @@ export function Frasco({ estado, porcentaje, ancho = 124 }: Props) {
     translateY: caida.get() * 4,
   }));
 
-  const ojos = colorRasgo(nivelFinal, ZONA_OJOS);
-  const boca = colorRasgo(nivelFinal, ZONA_BOCA);
+  const ojos = colorRasgo(nivelFinal, ZONA_OJOS, tema);
+  const boca = colorRasgo(nivelFinal, ZONA_BOCA, tema);
 
   return (
     <View
@@ -134,14 +142,18 @@ export function Frasco({ estado, porcentaje, ancho = 124 }: Props) {
           width={CUERPO.ancho}
           height={CUERPO.alto}
           rx={CUERPO.radio}
-          fill="rgba(246,241,231,0.07)"
-          stroke="rgba(246,241,231,0.42)"
+          fill={colores.cuerpoRelleno}
+          stroke={colores.cuerpoBorde}
           strokeWidth={3}
         />
 
         {liquido && (
           <G clipPath={`url(#${idRecorte})`}>
-            <AnimatedPath animatedProps={propsOla} fill={COLOR_LIQUIDO[estado]} />
+            <AnimatedPath
+              animatedProps={propsOla}
+              fill={colores.liquido[estado]}
+              fillOpacity={colores.opacidadLiquido}
+            />
           </G>
         )}
 
@@ -151,7 +163,7 @@ export function Frasco({ estado, porcentaje, ancho = 124 }: Props) {
           width={56}
           height={17}
           rx={6}
-          fill={palette.crema}
+          fill={colores.tapa}
           rotation={estado === "roto" ? -14 : 0}
           originX={60}
           originY={14}
@@ -188,7 +200,7 @@ export function Frasco({ estado, porcentaje, ancho = 124 }: Props) {
             <Ellipse cx={60} cy={100} rx={6} ry={8} stroke={boca} {...TRAZO} />
             <Path
               d="M92 58 q6 9 0 13 q-6 -4 0 -13z"
-              fill={colorRasgo(nivelFinal, ZONA_GOTA)}
+              fill={colorRasgo(nivelFinal, ZONA_GOTA, tema)}
             />
           </>
         )}
@@ -204,7 +216,7 @@ export function Frasco({ estado, porcentaje, ancho = 124 }: Props) {
           <>
             <Path
               d="M92 22 L84 42 L96 56 L84 76 L94 96"
-              stroke={palette.crema}
+              stroke={colores.grieta}
               {...TRAZO}
               strokeWidth={3}
             />
@@ -213,25 +225,25 @@ export function Frasco({ estado, porcentaje, ancho = 124 }: Props) {
                 cx={98}
                 cy={150}
                 r={6}
-                fill={palette.lima}
-                stroke={palette.tinta}
+                fill={colores.moneda}
+                stroke={colores.bordeMoneda}
                 strokeWidth={1.5}
               />
               <Circle
                 cx={112}
                 cy={141}
                 r={4.5}
-                fill={palette.lima}
-                stroke={palette.tinta}
+                fill={colores.moneda}
+                stroke={colores.bordeMoneda}
                 strokeWidth={1.5}
               />
             </AnimatedG>
             <Path
               d="M41 75 l10 10 M51 75 l-10 10 M69 75 l10 10 M79 75 l-10 10"
-              stroke={palette.crema}
+              stroke={ojos}
               {...TRAZO}
             />
-            <Path d="M47 101 q4 -6 8 0 t8 0 t8 0" stroke={palette.crema} {...TRAZO} />
+            <Path d="M47 101 q4 -6 8 0 t8 0 t8 0" stroke={boca} {...TRAZO} />
           </>
         )}
       </Svg>

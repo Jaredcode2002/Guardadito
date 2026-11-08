@@ -72,6 +72,21 @@ describe("colorRasgo", () => {
     expect(colorRasgo(nivelLiquido(0.28), ZONA_OJOS)).toBe(palette.crema);
   });
 
+  it("en el tema claro los rasgos siempre son oscuros", () => {
+    expect(colorRasgo(nivelLiquido(0.28), ZONA_OJOS, "claro")).toBe(
+      palette.tinta,
+    );
+    expect(colorRasgo(nivelLiquido(0.9), ZONA_OJOS, "claro")).toBe(
+      palette.tinta,
+    );
+  });
+
+  it("en el tema toast los rasgos se aclaran sobre el líquido oscuro", () => {
+    expect(colorRasgo(nivelLiquido(0.9), ZONA_OJOS, "toast")).toBe(
+      palette.crema,
+    );
+  });
+
   it("al 45 % toda la cara está fuera; al 55 % la boca ya queda en el líquido", () => {
     const nivel = nivelLiquido(0.45);
     expect(colorRasgo(nivel, ZONA_OJOS)).toBe(palette.crema);

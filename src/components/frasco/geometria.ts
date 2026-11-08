@@ -40,6 +40,65 @@ export function caminoOla(nivelY: number, desfase: number): string {
   return `${d} V${VIEWBOX.alto} H${x} Z`;
 }
 
-export function colorRasgo(nivelY: number, yRasgo: number): string {
-  return nivelY < yRasgo ? palette.tinta : palette.crema;
+export type TemaFrasco = "panel" | "claro" | "toast";
+
+export type ColoresFrasco = {
+  cuerpoRelleno: string;
+  cuerpoBorde: string;
+  tapa: string;
+  rasgoSobreVidrio: string;
+  rasgoSobreLiquido: string;
+  liquido: Record<EstadoConLiquido, string>;
+  opacidadLiquido: number;
+  grieta: string;
+  moneda: string;
+  bordeMoneda: string;
+};
+
+export const TEMAS_FRASCO: Record<TemaFrasco, ColoresFrasco> = {
+  panel: {
+    cuerpoRelleno: "rgba(246,241,231,0.07)",
+    cuerpoBorde: "rgba(246,241,231,0.42)",
+    tapa: palette.crema,
+    rasgoSobreVidrio: palette.crema,
+    rasgoSobreLiquido: palette.tinta,
+    liquido: COLOR_LIQUIDO,
+    opacidadLiquido: 1,
+    grieta: palette.crema,
+    moneda: palette.lima,
+    bordeMoneda: palette.tinta,
+  },
+  claro: {
+    cuerpoRelleno: "rgba(23,35,28,0.05)",
+    cuerpoBorde: "rgba(23,35,28,0.42)",
+    tapa: palette.panel,
+    rasgoSobreVidrio: palette.tinta,
+    rasgoSobreLiquido: palette.tinta,
+    liquido: COLOR_LIQUIDO,
+    opacidadLiquido: 1,
+    grieta: palette.tinta,
+    moneda: palette.lima,
+    bordeMoneda: palette.tinta,
+  },
+  toast: {
+    cuerpoRelleno: "none",
+    cuerpoBorde: palette.tinta,
+    tapa: palette.tinta,
+    rasgoSobreVidrio: palette.tinta,
+    rasgoSobreLiquido: palette.crema,
+    liquido: { ok: palette.tinta, mod: palette.tinta, crit: palette.tinta },
+    opacidadLiquido: 0.85,
+    grieta: palette.tinta,
+    moneda: palette.tinta,
+    bordeMoneda: "none",
+  },
+};
+
+export function colorRasgo(
+  nivelY: number,
+  yRasgo: number,
+  tema: TemaFrasco = "panel",
+): string {
+  const colores = TEMAS_FRASCO[tema];
+  return nivelY < yRasgo ? colores.rasgoSobreLiquido : colores.rasgoSobreVidrio;
 }

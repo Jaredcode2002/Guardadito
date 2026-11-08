@@ -6,6 +6,7 @@ export * from "./meses";
 export * from "./inicializar";
 export * from "./migraciones";
 export * from "./movimientos";
+export * from "./notificaciones";
 export * from "./operaciones";
 export * from "./pendientes";
 export * from "./reloj";

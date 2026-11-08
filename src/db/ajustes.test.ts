@@ -4,6 +4,8 @@ import {
   guardarRecordatorioActivo,
   guardarUmbrales,
   leerAjustes,
+  marcarPermisoNotificacionesPedido,
+  permisoNotificacionesPedido,
 } from "./ajustes";
 import { prepararDb } from "./pruebas/prepararDb";
 
@@ -60,5 +62,13 @@ describe("ajustes", () => {
       moderacion: 30,
       casiCero: 10,
     });
+  });
+});
+
+describe("permiso de notificaciones", () => {
+  it("se recuerda que ya se pidió", async () => {
+    expect(await permisoNotificacionesPedido(db)).toBe(false);
+    await marcarPermisoNotificacionesPedido(db);
+    expect(await permisoNotificacionesPedido(db)).toBe(true);
   });
 });

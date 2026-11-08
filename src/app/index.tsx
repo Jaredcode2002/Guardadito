@@ -18,6 +18,7 @@ import {
   type PendienteMes,
 } from "@/db";
 import { mostrarAviso } from "@/features/avisos/store";
+import { reprogramar } from "@/features/notificaciones/programar";
 import { BarraInferior } from "@/features/principal/BarraInferior";
 import { PanelLibre } from "@/features/principal/PanelLibre";
 import { TarjetaPendiente } from "@/features/principal/TarjetaPendiente";
@@ -43,6 +44,7 @@ export default function Inicio() {
       await pagarPendiente(db, p.id);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       await recargar();
+      reprogramar(db);
       mostrarAviso({
         tono: "oscuro",
         texto: `${p.nombre} pagado · −${formatearLempirasCompacto(p.monto)}`,
@@ -53,6 +55,7 @@ export default function Inicio() {
             try {
               await deshacerPago(db, p.id);
               await recargar();
+              reprogramar(db);
             } catch (e) {
               mostrarAviso({ tono: "coral", texto: mensajeDeError(e) });
             }

@@ -12,6 +12,7 @@ import {
   type Plantilla,
   type TipoMovimiento,
 } from "@/db";
+import { reprogramar } from "@/features/notificaciones/programar";
 import type { Centavos } from "@/lib/money";
 
 export type DatosAjustes = {
@@ -42,6 +43,7 @@ export function useAjustes() {
         saldoAhorro: saldo,
       });
       setError(null);
+      reprogramar(db);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }

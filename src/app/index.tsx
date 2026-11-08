@@ -110,7 +110,7 @@ export default function Inicio() {
             <View style={styles.vacio}>
               <Text style={styles.vacioTitulo}>Nada pendiente</Text>
               <Text style={styles.vacioTexto}>
-                Tus gastos fijos del mes aparecerán aquí.
+                Agrega tus gastos fijos en Ajustes.
               </Text>
             </View>
           ) : (
@@ -131,12 +131,16 @@ export default function Inicio() {
 
       <BarraInferior
         onAnadir={() => router.push("/anadir")}
-        onAcceso={(nombre) =>
+        onAcceso={(nombre) => {
+          if (nombre === "Configuración") {
+            router.push("/ajustes");
+            return;
+          }
           mostrarAviso({
             tono: "oscuro",
             texto: `${nombre} llega en un próximo paso.`,
-          })
-        }
+          });
+        }}
       />
     </View>
   );

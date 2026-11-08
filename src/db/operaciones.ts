@@ -29,7 +29,7 @@ import type { Db } from "./tipos";
 export type DatosMovimiento = {
   monto: Centavos;
   descripcion?: string;
-  categoria?: string | null;
+  categoriaId?: number | null;
   fecha?: Fecha;
 };
 

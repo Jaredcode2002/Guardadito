@@ -10,7 +10,7 @@ export type NuevoMovimiento = {
   monto: Centavos;
   fecha: Fecha;
   descripcion?: string;
-  categoria?: string | null;
+  categoriaId?: number | null;
   origen?: OrigenMovimiento;
 };
 
@@ -20,13 +20,16 @@ export type Movimiento = {
   monto: Centavos;
   fecha: Fecha;
   descripcion: string;
+  categoriaId: number | null;
   categoria: string | null;
   origen: OrigenMovimiento;
   creadoEn: string;
 };
 
-const COLUMNAS = `id, tipo, monto, fecha, descripcion, categoria, origen,
-  creado_en AS creadoEn`;
+const SELECT_MOVIMIENTO = `SELECT m.id, m.tipo, m.monto, m.fecha, m.descripcion,
+  m.categoria_id AS categoriaId, c.nombre AS categoria, m.origen,
+  m.creado_en AS creadoEn
+  FROM movimiento m LEFT JOIN categoria c ON c.id = m.categoria_id`;
 
 export function asegurarMonto(monto: number): void {
   if (!esMontoValido(monto)) {
@@ -44,13 +47,13 @@ export async function insertarMovimiento(
   asegurarMonto(m.monto);
   const r = await db.runAsync(
     `INSERT INTO movimiento
-       (tipo, monto, descripcion, categoria, origen, fecha, creado_en)
+       (tipo, monto, descripcion, categoria_id, origen, fecha, creado_en)
      VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [
       m.tipo,
       m.monto,
       m.descripcion ?? "",
-      m.categoria ?? null,
+      m.categoriaId ?? null,
       m.origen ?? "normal",
       m.fecha,
       creadoEn,
@@ -68,7 +71,7 @@ export async function obtenerMovimiento(
   id: number,
 ): Promise<Movimiento | null> {
   return db.getFirstAsync<Movimiento>(
-    `SELECT ${COLUMNAS} FROM movimiento WHERE id = ?`,
+    `${SELECT_MOVIMIENTO} WHERE m.id = ?`,
     [id],
   );
 }
@@ -78,9 +81,9 @@ export async function listarMovimientosDelMes(
   mes: MesId,
 ): Promise<Movimiento[]> {
   return db.getAllAsync<Movimiento>(
-    `SELECT ${COLUMNAS} FROM movimiento
-     WHERE fecha BETWEEN ? AND ?
-     ORDER BY fecha DESC, id DESC`,
+    `${SELECT_MOVIMIENTO}
+     WHERE m.fecha BETWEEN ? AND ?
+     ORDER BY m.fecha DESC, m.id DESC`,
     [`${mes}-01`, ultimaFechaDelMes(mes)],
   );
 }

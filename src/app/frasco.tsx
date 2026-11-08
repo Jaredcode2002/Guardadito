@@ -1,13 +1,10 @@
 import { router } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Frasco } from "@/components/frasco/Frasco";
-import { cargarPendientesDeEjemplo } from "@/db";
-import { mostrarAviso } from "@/features/avisos/store";
 import { estadoFrasco, type EstadoFrasco } from "@/lib/frasco";
 import { colors, fonts, fontSizes, palette, radii, spacing } from "@/theme";
 
@@ -22,7 +19,6 @@ const MUESTRAS: { estado: EstadoFrasco; porcentaje: number }[] = [
 const PORCENTAJES = [1, 0.68, 0.35, 0.28, 0.08, 0];
 
 export default function Galeria() {
-  const db = useSQLiteContext();
   const [porcentaje, setPorcentaje] = useState(0.68);
   const [roto, setRoto] = useState(false);
   const estado = estadoFrasco({
@@ -30,24 +26,6 @@ export default function Galeria() {
     libreInicial: 10_000,
     ahorroTocadoSinReponer: roto,
   });
-
-  async function cargarEjemplo() {
-    try {
-      const creadas = await cargarPendientesDeEjemplo(db);
-      mostrarAviso({
-        tono: "oscuro",
-        texto:
-          creadas > 0
-            ? `Se cargaron ${creadas} pendientes de ejemplo`
-            : "Los pendientes de ejemplo ya estaban cargados",
-      });
-    } catch (e) {
-      mostrarAviso({
-        tono: "coral",
-        texto: e instanceof Error ? e.message : String(e),
-      });
-    }
-  }
 
   return (
     <SafeAreaView style={styles.pantalla}>
@@ -86,10 +64,6 @@ export default function Galeria() {
             </View>
           ))}
         </View>
-
-        <Pressable onPress={cargarEjemplo} style={styles.ejemplo}>
-          <Text style={styles.ejemploTexto}>Cargar pendientes de ejemplo</Text>
-        </Pressable>
 
         <Pressable onPress={() => router.back()} style={styles.volver}>
           <Text style={styles.volverTexto}>Volver</Text>
@@ -162,19 +136,6 @@ const styles = StyleSheet.create({
     color: colors.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: fontSizes.sm,
-  },
-  ejemplo: {
-    alignItems: "center",
-    paddingVertical: spacing.md,
-    borderRadius: radii.pill,
-    borderWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: "#4A5850",
-  },
-  ejemploTexto: {
-    color: colors.texto,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: fontSizes.md,
   },
   volver: {
     alignItems: "center",

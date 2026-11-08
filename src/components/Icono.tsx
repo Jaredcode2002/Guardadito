@@ -13,6 +13,7 @@ const ICONOS = {
     trazos: ["M7 3h7l5 5v13H7z", "M14 3v5h5M10 13h6M10 17h6"],
     circulos: [],
   },
+  atras: { trazos: ["M15 6l-6 6 6 6"], circulos: [] },
   mas: { trazos: ["M12 5v14M5 12h14"], circulos: [] },
   menos: { trazos: ["M6 12h12"], circulos: [] },
   flecha: { trazos: ["M5 12h14M13 6l6 6-6 6"], circulos: [] },

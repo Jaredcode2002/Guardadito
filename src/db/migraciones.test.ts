@@ -25,7 +25,7 @@ async function insertarMovimiento(tipo: string, monto: number) {
 }
 
 describe('migrar', () => {
-  it('crea las 6 tablas', async () => {
+  it('crea las 7 tablas', async () => {
     const tablas = await db.getAllAsync<{ name: string }>(
       `SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name`,
       [],
@@ -33,6 +33,7 @@ describe('migrar', () => {
     expect(tablas.map((t) => t.name)).toEqual([
       'ahorro_movimiento',
       'ajuste',
+      'categoria',
       'mes',
       'movimiento',
       'pendiente_mes',
@@ -52,6 +53,7 @@ describe('migrar', () => {
     expect(ajustes).toEqual([
       { clave: 'avisar_pendientes', valor: '1' },
       { clave: 'hora_recordatorio', valor: '21:00' },
+      { clave: 'recordatorio_activo', valor: '1' },
       { clave: 'umbral_casi_cero', valor: '10' },
       { clave: 'umbral_moderacion', valor: '30' },
     ]);
@@ -61,7 +63,7 @@ describe('migrar', () => {
     await migrar(db);
     expect(await version()).toBe(MIGRACIONES.length);
     const n = await db.getFirstAsync<{ n: number }>('SELECT COUNT(*) AS n FROM ajuste', []);
-    expect(n?.n).toBe(4);
+    expect(n?.n).toBe(5);
   });
 
   it('si una migración falla, se deshace entera y la versión no avanza', async () => {
@@ -137,5 +139,62 @@ describe('reglas del esquema', () => {
 
     const n = await db.getFirstAsync<{ n: number }>('SELECT COUNT(*) AS n FROM ahorro_movimiento', []);
     expect(n?.n).toBe(0);
+  });
+});
+
+describe('migración v2: categorías', () => {
+  it('una base v1 con categorías de texto las pasa a la tabla sin perder nada', async () => {
+    const vieja = crearDbEnMemoria();
+    await migrar(vieja, MIGRACIONES.slice(0, 1));
+    const insertar = (tipo: string, categoria: string | null) =>
+      vieja.runAsync(
+        `INSERT INTO movimiento (tipo, monto, categoria, fecha, creado_en)
+         VALUES (?, 1000, ?, '2026-11-07', ?)`,
+        [tipo, categoria, AHORA],
+      );
+    await insertar('gasto', 'Ocio');
+    await insertar('gasto', '  Mi categoría  ');
+    await insertar('ingreso', 'Sueldo');
+    await insertar('gasto', null);
+
+    await migrar(vieja);
+
+    const filas = await vieja.getAllAsync<{ tipo: string; nombre: string | null }>(
+      `SELECT m.tipo, c.nombre FROM movimiento m
+       LEFT JOIN categoria c ON c.id = m.categoria_id ORDER BY m.id`,
+      [],
+    );
+    expect(filas).toEqual([
+      { tipo: 'gasto', nombre: 'Ocio' },
+      { tipo: 'gasto', nombre: 'Mi categoría' },
+      { tipo: 'ingreso', nombre: 'Sueldo' },
+      { tipo: 'gasto', nombre: null },
+    ]);
+    const columnas = await vieja.getAllAsync<{ name: string }>(
+      'PRAGMA table_info(movimiento)',
+      [],
+    );
+    expect(columnas.map((c) => c.name)).not.toContain('categoria');
+    vieja.cerrar();
+  });
+
+  it('borrar una categoría deja sus movimientos sin categoría', async () => {
+    const { lastInsertRowId: id } = await db.runAsync(
+      `INSERT INTO categoria (tipo, nombre, creado_en) VALUES ('gasto', 'Temporal', ?)`,
+      [AHORA],
+    );
+    await db.runAsync(
+      `INSERT INTO movimiento (tipo, monto, categoria_id, fecha, creado_en)
+       VALUES ('gasto', 1000, ?, '2026-11-07', ?)`,
+      [id, AHORA],
+    );
+
+    await db.runAsync('DELETE FROM categoria WHERE id = ?', [id]);
+
+    const fila = await db.getFirstAsync<{ categoria_id: number | null }>(
+      'SELECT categoria_id FROM movimiento',
+      [],
+    );
+    expect(fila?.categoria_id).toBeNull();
   });
 });

@@ -20,6 +20,14 @@ import { colors } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
 
+const HOJAS = ["anadir", "pendiente", "categoria", "ahorro"] as const;
+
+const OPCIONES_HOJA = {
+  presentation: "transparentModal",
+  animation: "fade",
+  contentStyle: { backgroundColor: "transparent" },
+} as const;
+
 export default function RootLayout() {
   const [fuentesListas, errorFuentes] = useFonts({
     BricolageGrotesque_500Medium,
@@ -49,14 +57,9 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: colors.fondo },
         }}
       >
-        <Stack.Screen
-          name="anadir"
-          options={{
-            presentation: "transparentModal",
-            animation: "fade",
-            contentStyle: { backgroundColor: "transparent" },
-          }}
-        />
+        {HOJAS.map((nombre) => (
+          <Stack.Screen key={nombre} name={nombre} options={OPCIONES_HOJA} />
+        ))}
       </Stack>
       <Toast />
     </SQLiteProvider>

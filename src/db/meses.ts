@@ -66,6 +66,17 @@ export async function fijarLibreInicialBase(
   ]);
 }
 
+export async function ajustarLibreInicialBase(
+  db: Db,
+  id: MesId,
+  delta: Centavos,
+): Promise<void> {
+  await db.runAsync(
+    "UPDATE mes SET libre_inicial_base = libre_inicial_base + ? WHERE id = ?",
+    [delta, id],
+  );
+}
+
 export async function cerrarMes(
   db: Db,
   id: MesId,

@@ -134,20 +134,7 @@ export default function Inicio() {
 
       <BarraInferior
         onAnadir={() => router.push("/anadir")}
-        onAcceso={(nombre) => {
-          if (nombre === "Configuración") {
-            router.push("/ajustes");
-            return;
-          }
-          if (nombre === "Histórico") {
-            router.push("/historico");
-            return;
-          }
-          mostrarAviso({
-            tono: "oscuro",
-            texto: `${nombre} llega en un próximo paso.`,
-          });
-        }}
+        onAcceso={(ruta) => router.push(ruta)}
       />
     </View>
   );

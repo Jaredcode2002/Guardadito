@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BORDE, Chip, GRIS, PAPEL } from "@/components/formulario";
 import { Icono, type NombreIcono } from "@/components/Icono";
+import { SelectorMeses } from "@/components/SelectorMeses";
 import { momentoActual } from "@/db";
 import {
   agruparPorDia,
@@ -26,7 +27,7 @@ import {
   type TipoFila,
 } from "@/features/historico/logica";
 import { useHistorico } from "@/features/historico/useHistorico";
-import { mesCorto, mesDe, nombreMes, type MesId } from "@/lib/fechas";
+import { mesDe, nombreMes, type MesId } from "@/lib/fechas";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
 import { colors, fonts, palette } from "@/theme";
 
@@ -104,33 +105,15 @@ export default function Historico() {
             <Text style={styles.tituloPanel}>Histórico</Text>
           </View>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.meses}
-            style={styles.mesesScroll}
-          >
-            {meses.map((m) => {
-              const activo = m === mes;
-              return (
-                <Pressable
-                  key={m}
-                  onPress={() => {
-                    setCategoriaId(null);
-                    elegirMes(m);
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel={nombreMes(m)}
-                  accessibilityState={{ selected: activo }}
-                  style={[styles.mes, activo && styles.mesActivo]}
-                >
-                  <Text style={[styles.mesTexto, activo && styles.mesTextoActivo]}>
-                    {mesCorto(m, mesActual)}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
+          <SelectorMeses
+            meses={meses}
+            mes={mes}
+            mesActual={mesActual}
+            onElegir={(m) => {
+              setCategoriaId(null);
+              elegirMes(m);
+            }}
+          />
 
           <View style={styles.totales}>
             <Total etiqueta="Ingresos" monto={totales.ingresos} />
@@ -303,19 +286,6 @@ const styles = StyleSheet.create({
     fontSize: 34,
     letterSpacing: -0.5,
   },
-  mesesScroll: { marginTop: 14, marginHorizontal: -22 },
-  meses: { gap: 8, paddingHorizontal: 22 },
-  mes: {
-    height: 44,
-    justifyContent: "center",
-    paddingHorizontal: 20,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: "rgba(246,241,231,0.16)",
-  },
-  mesActivo: { borderColor: palette.lima, backgroundColor: palette.lima },
-  mesTexto: { color: palette.crema, fontFamily: fonts.bodyMedium, fontSize: 14 },
-  mesTextoActivo: { color: palette.tinta, fontFamily: fonts.bodySemiBold },
   totales: { flexDirection: "row", gap: 10, marginTop: 16 },
   total: {
     flex: 1,

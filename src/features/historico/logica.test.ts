@@ -21,6 +21,7 @@ function mov(m: Partial<Movimiento>): Movimiento {
     descripcion: "",
     categoriaId: null,
     categoria: null,
+    categoriaColor: null,
     origen: "normal",
     creadoEn: `2026-10-28T12:00:${String(id).padStart(2, "0")}.000Z`,
     ...m,

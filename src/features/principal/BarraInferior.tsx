@@ -4,10 +4,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icono, type NombreIcono } from "@/components/Icono";
 import { fonts, palette } from "@/theme";
 
-const ACCESOS: { icono: NombreIcono; nombre: string }[] = [
-  { icono: "ajustes", nombre: "Configuración" },
-  { icono: "graficos", nombre: "Gráficos" },
-  { icono: "historico", nombre: "Histórico" },
+export type RutaAcceso = "/ajustes" | "/graficos" | "/historico";
+
+const ACCESOS: { icono: NombreIcono; nombre: string; ruta: RutaAcceso }[] = [
+  { icono: "ajustes", nombre: "Configuración", ruta: "/ajustes" },
+  { icono: "graficos", nombre: "Gráficos", ruta: "/graficos" },
+  { icono: "historico", nombre: "Histórico", ruta: "/historico" },
 ];
 
 export function BarraInferior({
@@ -15,7 +17,7 @@ export function BarraInferior({
   onAcceso,
 }: {
   onAnadir: () => void;
-  onAcceso: (nombre: string) => void;
+  onAcceso: (ruta: RutaAcceso) => void;
 }) {
   const insets = useSafeAreaInsets();
 
@@ -25,7 +27,7 @@ export function BarraInferior({
         {ACCESOS.map((a) => (
           <Pressable
             key={a.icono}
-            onPress={() => onAcceso(a.nombre)}
+            onPress={() => onAcceso(a.ruta)}
             accessibilityRole="button"
             accessibilityLabel={a.nombre}
             style={({ pressed }) => [

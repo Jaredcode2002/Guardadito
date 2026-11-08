@@ -1,0 +1,3 @@
+# Solo instala versiones publicadas hace al menos 24 h (1440 min).
+# Protege contra paquetes comprometidos que se retiran pronto.
+minimumReleaseAge: 1440

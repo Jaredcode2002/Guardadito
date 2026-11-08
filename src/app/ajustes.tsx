@@ -34,6 +34,7 @@ import { useAjustes } from "@/features/ajustes/useAjustes";
 import { mostrarAviso } from "@/features/avisos/store";
 import { usePermiso } from "@/features/notificaciones/usePermiso";
 import type { Umbrales } from "@/lib/alertas";
+import { hexDeColor } from "@/lib/colores";
 import { formatearLempirasCompacto } from "@/lib/formato";
 import { cambiarHora } from "@/lib/notificaciones";
 import { colors, fonts, palette } from "@/theme";
@@ -208,6 +209,9 @@ export default function Ajustes() {
                 accessibilityHint="Editar categoría"
                 style={styles.categoria}
               >
+                <View
+                  style={[styles.punto, { backgroundColor: hexDeColor(c.color) }]}
+                />
                 <Text style={styles.categoriaTexto}>{c.nombre}</Text>
               </Pressable>
             ))}
@@ -543,6 +547,7 @@ const styles = StyleSheet.create({
     borderColor: GRIS,
     backgroundColor: "transparent",
   },
+  punto: { width: 10, height: 10, borderRadius: 5, marginRight: 4 },
   categoriaTexto: {
     color: palette.tinta,
     fontFamily: fonts.bodyMedium,

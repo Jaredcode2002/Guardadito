@@ -22,12 +22,13 @@ export type Movimiento = {
   descripcion: string;
   categoriaId: number | null;
   categoria: string | null;
+  categoriaColor: string | null;
   origen: OrigenMovimiento;
   creadoEn: string;
 };
 
 const SELECT_MOVIMIENTO = `SELECT m.id, m.tipo, m.monto, m.fecha, m.descripcion,
-  m.categoria_id AS categoriaId, c.nombre AS categoria, m.origen,
+  m.categoria_id AS categoriaId, c.nombre AS categoria, c.color AS categoriaColor, m.origen,
   m.creado_en AS creadoEn
   FROM movimiento m LEFT JOIN categoria c ON c.id = m.categoria_id`;
 

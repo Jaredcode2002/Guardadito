@@ -105,6 +105,28 @@ export const MIGRACIONES: readonly string[] = [
 
   INSERT OR IGNORE INTO ajuste (clave, valor) VALUES ('recordatorio_activo', '1');
   `,
+  `
+  ALTER TABLE categoria ADD COLUMN color TEXT NOT NULL DEFAULT 'azul'
+    CHECK (color IN ('azul', 'naranja', 'aqua', 'amarillo', 'rosa', 'verde', 'violeta', 'rojo'));
+
+  UPDATE categoria SET color = (
+    SELECT CASE (r.n - 1) % 8
+      WHEN 0 THEN 'azul'
+      WHEN 1 THEN 'naranja'
+      WHEN 2 THEN 'aqua'
+      WHEN 3 THEN 'amarillo'
+      WHEN 4 THEN 'rosa'
+      WHEN 5 THEN 'verde'
+      WHEN 6 THEN 'violeta'
+      WHEN 7 THEN 'rojo'
+    END
+    FROM (
+      SELECT id, ROW_NUMBER() OVER (PARTITION BY tipo ORDER BY orden, id) AS n
+      FROM categoria
+    ) r
+    WHERE r.id = categoria.id
+  );
+  `,
 ];
 
 export async function migrar(

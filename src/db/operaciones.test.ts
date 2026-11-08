@@ -1,5 +1,5 @@
 import { insertarMovimientoAhorro, saldoAhorro } from "./ahorro";
-import { obtenerMes } from "./meses";
+import { listarMeses, obtenerMes } from "./meses";
 import { listarMovimientosDelMes } from "./movimientos";
 import {
   abrirMesesPendientes,
@@ -382,5 +382,14 @@ describe("cierre de mes", () => {
       saldoAhorro: 1_900_000,
       estado: "ok",
     });
+  });
+});
+
+describe("listarMeses", () => {
+  it("devuelve los meses abiertos del más reciente al más antiguo", async () => {
+    await abrirMesesPendientes(db, el("2026-10-03"));
+    await abrirMesesPendientes(db, el("2026-12-01"));
+
+    expect(await listarMeses(db)).toEqual(["2026-12", "2026-11", "2026-10"]);
   });
 });

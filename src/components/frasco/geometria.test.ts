@@ -3,9 +3,11 @@ import { palette } from "@/theme";
 import {
   caminoOla,
   colorRasgo,
+  ALTURA_OJOS,
   FONDO_CUERPO,
   nivelLiquido,
   nivelSegunEstado,
+  porcentajeParaNivel,
   tieneLiquido,
   ZONA_BOCA,
   ZONA_OJOS,
@@ -92,5 +94,23 @@ describe("colorRasgo", () => {
     expect(colorRasgo(nivel, ZONA_OJOS)).toBe(palette.crema);
     expect(colorRasgo(nivel, ZONA_BOCA)).toBe(palette.crema);
     expect(colorRasgo(nivelLiquido(0.55), ZONA_BOCA)).toBe(palette.tinta);
+  });
+});
+
+describe("porcentajeParaNivel", () => {
+  it("es el inverso de nivelLiquido", () => {
+    for (const p of [0, 0.08, 0.28, 0.5, 0.68, 1]) {
+      expect(porcentajeParaNivel(nivelLiquido(p))).toBeCloseTo(p, 10);
+    }
+  });
+
+  it("a la altura de los ojos el líquido llena un 56 %", () => {
+    expect(nivelLiquido(porcentajeParaNivel(ALTURA_OJOS))).toBeCloseTo(80, 10);
+    expect(Math.round(porcentajeParaNivel(ALTURA_OJOS) * 100)).toBe(56);
+  });
+
+  it("se limita entre 0 y 1 fuera del cuerpo", () => {
+    expect(porcentajeParaNivel(0)).toBe(1);
+    expect(porcentajeParaNivel(200)).toBe(0);
   });
 });

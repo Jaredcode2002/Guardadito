@@ -98,3 +98,11 @@ export async function guardarAlertasDisparadas(
     id,
   ]);
 }
+
+export async function listarMeses(db: Db): Promise<MesId[]> {
+  const filas = await db.getAllAsync<{ id: MesId }>(
+    "SELECT id FROM mes ORDER BY id DESC",
+    [],
+  );
+  return filas.map((f) => f.id);
+}

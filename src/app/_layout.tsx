@@ -1,19 +1,17 @@
-import {
-  BricolageGrotesque_500Medium,
-  BricolageGrotesque_700Bold,
-} from "@expo-google-fonts/bricolage-grotesque";
-import {
-  DMSans_400Regular,
-  DMSans_500Medium,
-  DMSans_600SemiBold,
-} from "@expo-google-fonts/dm-sans";
+import { Baloo2_800ExtraBold } from "@expo-google-fonts/baloo-2/800ExtraBold";
+import { BricolageGrotesque_500Medium } from "@expo-google-fonts/bricolage-grotesque/500Medium";
+import { BricolageGrotesque_700Bold } from "@expo-google-fonts/bricolage-grotesque/700Bold";
+import { DMSans_400Regular } from "@expo-google-fonts/dm-sans/400Regular";
+import { DMSans_500Medium } from "@expo-google-fonts/dm-sans/500Medium";
+import { DMSans_600SemiBold } from "@expo-google-fonts/dm-sans/600SemiBold";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { Bienvenida } from "@/components/Bienvenida";
 import { Toast } from "@/components/Toast";
 import { inicializarDb } from "@/db/inicializar";
 import { colors } from "@/theme";
@@ -30,6 +28,7 @@ const OPCIONES_HOJA = {
 
 export default function RootLayout() {
   const [fuentesListas, errorFuentes] = useFonts({
+    Baloo2_800ExtraBold,
     BricolageGrotesque_500Medium,
     BricolageGrotesque_700Bold,
     DMSans_400Regular,
@@ -37,6 +36,8 @@ export default function RootLayout() {
     DMSans_600SemiBold,
   });
   const listo = fuentesListas || errorFuentes !== null;
+  const [introLista, setIntroLista] = useState(false);
+  const terminarIntro = useCallback(() => setIntroLista(true), []);
 
   useEffect(() => {
     if (listo) SplashScreen.hideAsync();
@@ -62,6 +63,7 @@ export default function RootLayout() {
         ))}
       </Stack>
       <Toast />
+      {!introLista && <Bienvenida onTerminar={terminarIntro} />}
     </SQLiteProvider>
   );
 }

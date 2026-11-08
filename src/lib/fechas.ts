@@ -84,3 +84,16 @@ export function abreviaturaMes(fecha: Fecha): string {
 export function diaDe(fecha: Fecha): number {
   return Number(fecha.slice(8, 10));
 }
+
+export function fechaLarga(fecha: Fecha): string {
+  const { mes } = partesMes(mesDe(fecha));
+  return `${diaDe(fecha)} de ${MESES[mes - 1].toLowerCase()}`;
+}
+
+export function mesCorto(mes: MesId, mesActual: MesId): string {
+  const { anio, mes: m } = partesMes(mes);
+  const nombre = MESES[m - 1].slice(0, 3);
+  return anio === partesMes(mesActual).anio
+    ? nombre
+    : `${nombre} ${String(anio).slice(2)}`;
+}

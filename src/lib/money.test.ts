@@ -4,10 +4,13 @@ import {
   calcularDinero,
   calcularLibre,
   calcularLibreInicial,
+  esMontoValido,
   planificarGasto,
   porcentajeRestante,
   sumar,
 } from './money';
+
+const MUCHO_AHORRO = 10_000_000;
 
 describe('sumar', () => {
   it('una lista vacía suma 0', () => {
@@ -15,7 +18,6 @@ describe('sumar', () => {
   });
 
   it('suma centavos sin errores de punto flotante', () => {
-    // En lempiras con decimales, 0.1 + 0.2 daría 0.30000000000000004.
     expect(sumar([10, 20])).toBe(30);
   });
 });
@@ -67,7 +69,7 @@ describe('porcentajeRestante', () => {
 });
 
 describe('bajoUmbral', () => {
-  it('justo en el umbral NO está por debajo (es "<", no "≤")', () => {
+  it('justo en el umbral NO está por debajo', () => {
     expect(bajoUmbral(300_000, 1_000_000, 30)).toBe(false);
   });
 
@@ -76,46 +78,92 @@ describe('bajoUmbral', () => {
   });
 });
 
-describe('ahorroQueToca: X = gasto − max(Libre, 0)', () => {
+describe('ahorroQueToca', () => {
   it('gasto menor al Libre → no toca ahorro', () => {
-    expect(ahorroQueToca(100_000, 500_000)).toBe(0);
+    expect(ahorroQueToca(100_000, 500_000, MUCHO_AHORRO)).toBe(0);
   });
 
   it('gasto exacto al Libre → no toca ahorro', () => {
-    expect(ahorroQueToca(500_000, 500_000)).toBe(0);
+    expect(ahorroQueToca(500_000, 500_000, MUCHO_AHORRO)).toBe(0);
   });
 
   it('gasto mayor al Libre → toca solo la diferencia', () => {
-    expect(ahorroQueToca(800_000, 500_000)).toBe(300_000);
+    expect(ahorroQueToca(800_000, 500_000, MUCHO_AHORRO)).toBe(300_000);
   });
 
   it('Libre en 0 → el gasto entero sale del ahorro', () => {
-    expect(ahorroQueToca(80_000, 0)).toBe(80_000);
+    expect(ahorroQueToca(80_000, 0, MUCHO_AHORRO)).toBe(80_000);
   });
 
-  it('Libre negativo cuenta como 0 (no cobra la deuda al ahorro)', () => {
-    expect(ahorroQueToca(80_000, -200_000)).toBe(80_000);
+  it('Libre negativo cuenta como 0', () => {
+    expect(ahorroQueToca(80_000, -200_000, MUCHO_AHORRO)).toBe(80_000);
+  });
+
+  it('nunca toca más ahorro del que hay', () => {
+    expect(ahorroQueToca(800_000, 500_000, 100_000)).toBe(100_000);
+  });
+
+  it('sin ahorro no toca nada', () => {
+    expect(ahorroQueToca(800_000, 500_000, 0)).toBe(0);
+    expect(ahorroQueToca(800_000, 500_000, -5_000)).toBe(0);
   });
 });
 
 describe('planificarGasto', () => {
-  it('gasto exacto al Libre → solo el gasto', () => {
-    expect(planificarGasto(500_000, 500_000)).toEqual({ tocaAhorro: false, gasto: 500_000 });
-  });
-
-  it('gasto mayor al Libre → ingreso desde ahorro por X y movimiento de −X', () => {
-    expect(planificarGasto(800_000, 500_000)).toEqual({
-      tocaAhorro: true,
-      gasto: 800_000,
-      ingresoDesdeAhorro: 300_000,
-      movimientoAhorro: -300_000,
+  it('gasto exacto al Libre → todo sale del Libre', () => {
+    expect(planificarGasto(500_000, 500_000, MUCHO_AHORRO)).toEqual({
+      gasto: 500_000,
+      desdeLibre: 500_000,
+      desdeAhorro: 0,
+      enNegativo: 0,
     });
   });
 
-  it('después de aplicar el plan, el Libre queda exactamente en 0', () => {
+  it('gasto mayor al Libre con ahorro suficiente → el ahorro cubre la diferencia', () => {
+    expect(planificarGasto(800_000, 500_000, MUCHO_AHORRO)).toEqual({
+      gasto: 800_000,
+      desdeLibre: 500_000,
+      desdeAhorro: 300_000,
+      enNegativo: 0,
+    });
+  });
+
+  it('si el ahorro no alcanza, se vacía y el resto queda en negativo', () => {
+    expect(planificarGasto(800_000, 500_000, 100_000)).toEqual({
+      gasto: 800_000,
+      desdeLibre: 500_000,
+      desdeAhorro: 100_000,
+      enNegativo: 200_000,
+    });
+  });
+
+  it('con Libre negativo y sin ahorro, todo el gasto queda en negativo', () => {
+    expect(planificarGasto(80_000, -20_000, 0)).toEqual({
+      gasto: 80_000,
+      desdeLibre: 0,
+      desdeAhorro: 0,
+      enNegativo: 80_000,
+    });
+  });
+
+  it('las tres partes siempre suman el gasto y el Libre queda en −enNegativo', () => {
     const libre = 500_000;
-    const plan = planificarGasto(800_000, libre);
-    if (!plan.tocaAhorro) throw new Error('debía tocar ahorro');
-    expect(libre - plan.gasto + plan.ingresoDesdeAhorro).toBe(0);
+    const p = planificarGasto(800_000, libre, 100_000);
+    expect(p.desdeLibre + p.desdeAhorro + p.enNegativo).toBe(p.gasto);
+    expect(libre - p.gasto + p.desdeAhorro).toBe(-p.enNegativo);
+  });
+});
+
+describe('esMontoValido', () => {
+  it('acepta enteros positivos de centavos', () => {
+    expect(esMontoValido(1)).toBe(true);
+    expect(esMontoValido(2_000_000)).toBe(true);
+  });
+
+  it('rechaza 0, negativos, decimales y NaN', () => {
+    expect(esMontoValido(0)).toBe(false);
+    expect(esMontoValido(-100)).toBe(false);
+    expect(esMontoValido(10.5)).toBe(false);
+    expect(esMontoValido(Number.NaN)).toBe(false);
   });
 });

@@ -1,8 +1,3 @@
-/**
- * Paleta de Guardadito (ver CLAUDE.md).
- * `palette` son los colores crudos; `colors` les da un nombre según su uso,
- * así las pantallas dicen "fondo" o "texto" y no un hex suelto.
- */
 export const palette = {
   crema: '#F6F1E7',
   tinta: '#17231C',

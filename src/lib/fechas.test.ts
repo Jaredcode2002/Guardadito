@@ -11,7 +11,6 @@ import {
 
 describe('fechaLocal y mesDe', () => {
   it('usa la fecha local, con ceros a la izquierda', () => {
-    // Date(año, mesBase0, día) se crea en hora local.
     expect(fechaLocal(new Date(2026, 0, 5, 23, 59))).toBe('2026-01-05');
   });
 
@@ -25,7 +24,7 @@ describe('ultimoDiaDelMes', () => {
     ['2026-01', 31],
     ['2026-04', 30],
     ['2026-02', 28],
-    ['2028-02', 29], // bisiesto
+    ['2028-02', 29],
     ['2026-12', 31],
   ])('%s tiene %i días', (mes, dias) => {
     expect(ultimoDiaDelMes(mes)).toBe(dias);

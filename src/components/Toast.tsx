@@ -1,5 +1,11 @@
 import { useEffect, useSyncExternalStore } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import Animated, { FadeOut, SlideInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -10,7 +16,14 @@ import {
   suscribirAvisos,
   type TonoAviso,
 } from "@/features/avisos/store";
-import { durations, fonts, fontSizes, palette, spacing } from "@/theme";
+import {
+  ANCHO_AVISO,
+  durations,
+  fonts,
+  fontSizes,
+  palette,
+  spacing,
+} from "@/theme";
 
 import { Frasco } from "./frasco/Frasco";
 import { Icono } from "./Icono";
@@ -29,6 +42,8 @@ const COLORES: Record<
 export function Toast() {
   const aviso = useSyncExternalStore(suscribirAvisos, leerAviso);
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const margen = Math.max(spacing.lg, (width - ANCHO_AVISO) / 2);
 
   useEffect(() => {
     if (!aviso) return;
@@ -53,7 +68,12 @@ export function Toast() {
       style={[
         styles.toast,
         conTitulo ? styles.toastGrande : styles.toastSimple,
-        { bottom: ALTURA_BARRA + insets.bottom, backgroundColor: colores.fondo },
+        {
+          bottom: ALTURA_BARRA + insets.bottom,
+          left: margen,
+          right: margen,
+          backgroundColor: colores.fondo,
+        },
       ]}
     >
       {aviso.frasco && (
@@ -104,8 +124,6 @@ export function Toast() {
 const styles = StyleSheet.create({
   toast: {
     position: "absolute",
-    left: spacing.lg,
-    right: spacing.lg,
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,

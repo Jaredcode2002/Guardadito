@@ -1,0 +1,15 @@
+{
+  "cli": {
+    "appVersionSource": "local"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "node": "22.20.0",
+      "pnpm": "10.18.2",
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  }
+}

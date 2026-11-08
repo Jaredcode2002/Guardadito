@@ -3,13 +3,14 @@
     "name": "Guardadito",
     "slug": "guardadito",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "guardadito",
     "userInterfaceStyle": "light",
     "android": {
+      "package": "com.guardadito.app",
       "adaptiveIcon": {
-        "backgroundColor": "#F6F1E7",
+        "backgroundColor": "#14231B",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -23,7 +24,7 @@
         {
           "backgroundColor": "#F6F1E7",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 140
         }
       ],
       "expo-sqlite",

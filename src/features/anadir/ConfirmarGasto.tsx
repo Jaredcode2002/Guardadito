@@ -136,6 +136,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   tarjeta: {
+    width: "100%",
+    maxWidth: 440,
+    alignSelf: "center",
     alignItems: "center",
     padding: 24,
     borderRadius: 36,

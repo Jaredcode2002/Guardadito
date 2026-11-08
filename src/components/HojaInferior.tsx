@@ -10,7 +10,7 @@ import {
 import Animated, { SlideInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { durations, palette } from "@/theme";
+import { ANCHO_HOJA, durations, palette } from "@/theme";
 
 export function HojaInferior({ children }: { children: ReactNode }) {
   const insets = useSafeAreaInsets();
@@ -43,6 +43,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(20,35,27,0.55)",
   },
   hoja: {
+    width: "100%",
+    maxWidth: ANCHO_HOJA,
+    alignSelf: "center",
     maxHeight: "92%",
     backgroundColor: palette.crema,
     borderTopLeftRadius: 36,

@@ -136,6 +136,11 @@ describe("agruparPorDia", () => {
       ["15 de octubre", 1],
     ]);
   });
+
+  it("el día de hoy se titula Hoy", () => {
+    const [primero, segundo] = agruparPorDia(armarFilas(MES), "2026-10-31");
+    expect([primero.titulo, segundo.titulo]).toEqual(["Hoy", "28 de octubre"]);
+  });
 });
 
 describe("totalesDelMes", () => {

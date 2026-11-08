@@ -55,3 +55,32 @@ export function mesesPorAbrir(ultimoAbierto: MesId | null, actual: MesId): MesId
   }
   return meses;
 }
+
+const MESES = [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
+];
+
+export function nombreMes(mes: MesId): string {
+  const { anio, mes: m } = partesMes(mes);
+  return `${MESES[m - 1]} ${anio}`;
+}
+
+export function abreviaturaMes(fecha: Fecha): string {
+  const { mes } = partesMes(mesDe(fecha));
+  return MESES[mes - 1].slice(0, 3).toUpperCase();
+}
+
+export function diaDe(fecha: Fecha): number {
+  return Number(fecha.slice(8, 10));
+}

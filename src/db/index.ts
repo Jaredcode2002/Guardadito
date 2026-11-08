@@ -1,6 +1,7 @@
 export * from "./ahorro";
 export * from "./ajustes";
 export * from "./meses";
+export * from "./ejemplo";
 export * from "./inicializar";
 export * from "./migraciones";
 export * from "./movimientos";

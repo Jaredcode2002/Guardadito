@@ -28,6 +28,13 @@ export function nivelLiquido(porcentaje: number): number {
   return CUERPO.y + CUERPO.alto * (1 - p);
 }
 
+export const ALTURA_OJOS = 80;
+
+export function porcentajeParaNivel(nivelY: number): number {
+  const p = (CUERPO.y + CUERPO.alto - nivelY) / CUERPO.alto;
+  return Math.min(1, Math.max(0, p));
+}
+
 export function nivelSegunEstado(estado: EstadoFrasco, porcentaje: number) {
   return tieneLiquido(estado) ? nivelLiquido(porcentaje) : FONDO_CUERPO;
 }

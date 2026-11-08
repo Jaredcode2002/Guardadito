@@ -51,6 +51,7 @@ type Props = {
   porcentaje: number;
   ancho?: number;
   tema?: TemaFrasco;
+  guino?: boolean;
 };
 
 export function Frasco({
@@ -58,6 +59,7 @@ export function Frasco({
   porcentaje,
   ancho = 124,
   tema = "panel",
+  guino = false,
 }: Props) {
   const colores = TEMAS_FRASCO[tema];
   const reducir = useReducedMotion();
@@ -178,7 +180,11 @@ export function Frasco({
 
         {estado === "ok" && (
           <>
-            <Circle cx={46} cy={80} r={4.5} fill={ojos} />
+            {guino ? (
+              <Path d="M40 82 q6 -7 12 0" stroke={ojos} {...TRAZO} />
+            ) : (
+              <Circle cx={46} cy={80} r={4.5} fill={ojos} />
+            )}
             <Circle cx={74} cy={80} r={4.5} fill={ojos} />
             <Path d="M47 94 Q60 107 73 94" stroke={boca} {...TRAZO} />
           </>

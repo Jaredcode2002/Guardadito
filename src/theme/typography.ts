@@ -1,4 +1,5 @@
 export const fonts = {
+  logo: "Baloo2_800ExtraBold",
   display: "BricolageGrotesque_700Bold",
   displayMedium: "BricolageGrotesque_500Medium",
   body: "DMSans_400Regular",

@@ -1,9 +1,11 @@
 import {
   abreviaturaMes,
   diaDe,
+  fechaLarga,
   fechaLocal,
   fechaVence,
   mesAnterior,
+  mesCorto,
   mesDe,
   mesesPorAbrir,
   mesSiguiente,
@@ -98,5 +100,17 @@ describe("nombreMes, abreviaturaMes y diaDe", () => {
   it("día del mes sin cero a la izquierda", () => {
     expect(diaDe("2026-11-05")).toBe(5);
     expect(diaDe("2026-11-30")).toBe(30);
+  });
+});
+
+describe("fechaLarga y mesCorto", () => {
+  it("fecha con día y mes en minúscula", () => {
+    expect(fechaLarga("2026-10-28")).toBe("28 de octubre");
+    expect(fechaLarga("2026-11-05")).toBe("5 de noviembre");
+  });
+
+  it("mes corto sin año si es del año actual", () => {
+    expect(mesCorto("2026-10", "2026-11")).toBe("Oct");
+    expect(mesCorto("2025-12", "2026-01")).toBe("Dic 25");
   });
 });

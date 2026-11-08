@@ -136,6 +136,10 @@ export default function Inicio() {
             router.push("/ajustes");
             return;
           }
+          if (nombre === "Histórico") {
+            router.push("/historico");
+            return;
+          }
           mostrarAviso({
             tono: "oscuro",
             texto: `${nombre} llega en un próximo paso.`,

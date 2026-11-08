@@ -19,6 +19,8 @@ const ICONOS = {
   flecha: { trazos: ["M5 12h14M13 6l6 6-6 6"], circulos: [] },
   check: { trazos: ["M5 12.5l4.5 4.5L19 7.5"], circulos: [] },
   cerrar: { trazos: ["M6 6l12 12M18 6L6 18"], circulos: [] },
+  bajar: { trazos: ["M12 5v14M6 13l6 6 6-6"], circulos: [] },
+  subir: { trazos: ["M12 19V5M6 11l6-6 6 6"], circulos: [] },
 } satisfies Record<
   string,
   { trazos: string[]; circulos: [number, number, number][] }

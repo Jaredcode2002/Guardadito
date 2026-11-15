@@ -74,9 +74,9 @@ function aFila(m: Movimiento, tocaronAhorro: Set<string>): FilaHistorico {
     return {
       ...base,
       tipo: "pendiente",
-      titulo: descripcion || "Pendiente",
-      subtitulo: "Pendiente pagado",
-      etiqueta: "Pendiente",
+      titulo: descripcion || "Gasto fijo",
+      subtitulo: "Pagado",
+      etiqueta: "Gasto fijo",
     };
   }
 

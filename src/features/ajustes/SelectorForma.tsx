@@ -60,9 +60,20 @@ export function SelectorForma() {
                 <Frasco estado="ok" porcentaje={0.68} ancho={44} forma={f} />
               </View>
               <View style={styles.pie}>
-                <Text style={styles.nombre}>{NOMBRES_FORMA[f]}</Text>
-                {activa && <Icono nombre="check" color={tema.texto} tamano={14} />}
+                <Text
+                  style={styles.nombre}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.85}
+                >
+                  {NOMBRES_FORMA[f]}
+                </Text>
               </View>
+              {activa && (
+                <View style={styles.marca}>
+                  <Icono nombre="check" color={tema.sobreAcento} tamano={12} />
+                </View>
+              )}
             </Pressable>
           );
         })}

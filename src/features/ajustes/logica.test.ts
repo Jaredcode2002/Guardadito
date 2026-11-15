@@ -4,6 +4,7 @@ import {
   partesHora,
   siguienteUmbral,
   textoDiaDelMes,
+  textoConfirmarRestaurar,
   textoUltimoRespaldo,
 } from "./logica";
 
@@ -29,6 +30,25 @@ describe("textoUltimoRespaldo", () => {
     );
     expect(textoUltimoRespaldo(iso(2025, 11, 31, 12, 0), ahora)).toBe(
       "Último respaldo: el 31 de diciembre de 2025 a las 12:00 p. m.",
+    );
+  });
+});
+
+describe("textoConfirmarRestaurar", () => {
+  const ahora = new Date(2026, 10, 15, 22, 0);
+
+  it("avisa que reemplaza todo y dice de cuándo es el respaldo", () => {
+    const texto = textoConfirmarRestaurar(
+      new Date(2026, 10, 14, 9, 30).toISOString(),
+      ahora,
+    );
+    expect(texto).toContain("Esto reemplaza todos los datos de este teléfono");
+    expect(texto).toContain("respaldo creado ayer a las 9:30 a. m.");
+  });
+
+  it("con fecha dañada no inventa una", () => {
+    expect(textoConfirmarRestaurar("nunca", ahora)).toContain(
+      "por los del respaldo. No se puede deshacer",
     );
   });
 });

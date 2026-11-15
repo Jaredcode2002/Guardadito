@@ -40,9 +40,19 @@ export function partesHora(hora24: string): { hora: string; minutos: string } {
 }
 
 export function textoUltimoRespaldo(iso: string | null, ahora: Date): string {
-  if (!iso) return "Todavía no has respaldado";
+  const cuando = iso ? cuandoFue(iso, ahora) : null;
+  return cuando ? `Último respaldo: ${cuando}` : "Todavía no has respaldado";
+}
+
+export function textoConfirmarRestaurar(creadoEn: string, ahora: Date): string {
+  const cuando = cuandoFue(creadoEn, ahora);
+  const origen = cuando ? `los del respaldo creado ${cuando}` : "los del respaldo";
+  return `Esto reemplaza todos los datos de este teléfono por ${origen}. No se puede deshacer: si quieres conservar lo de ahora, guarda un respaldo antes.`;
+}
+
+function cuandoFue(iso: string, ahora: Date): string | null {
   const fecha = new Date(iso);
-  if (Number.isNaN(fecha.getTime())) return "Todavía no has respaldado";
+  if (Number.isNaN(fecha.getTime())) return null;
   const hora = formatearHora(
     `${String(fecha.getHours()).padStart(2, "0")}:${String(fecha.getMinutes()).padStart(2, "0")}`,
   );
@@ -53,5 +63,5 @@ export function textoUltimoRespaldo(iso: string | null, ahora: Date): string {
   else if (dia === fechaLocal(ayer)) cuando = "ayer";
   else if (fecha.getFullYear() === ahora.getFullYear()) cuando = `el ${fechaLarga(dia)}`;
   else cuando = `el ${fechaLarga(dia)} de ${fecha.getFullYear()}`;
-  return `Último respaldo: ${cuando} a las ${hora}`;
+  return `${cuando} a las ${hora}`;
 }

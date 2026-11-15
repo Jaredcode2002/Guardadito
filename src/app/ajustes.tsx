@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { ConfirmarAccion } from "@/components/ConfirmarAccion";
 import { Selector } from "@/components/formulario";
 import { Frasco } from "@/components/frasco/Frasco";
 import { Icono } from "@/components/Icono";
@@ -27,6 +28,7 @@ import {
   formatearHora,
   partesHora,
   siguienteUmbral,
+  textoConfirmarRestaurar,
   textoDiaDelMes,
 } from "@/features/ajustes/logica";
 import { Respaldo } from "@/features/ajustes/Respaldo";
@@ -35,6 +37,7 @@ import { SelectorPaleta } from "@/features/ajustes/SelectorPaleta";
 import { useAjustes } from "@/features/ajustes/useAjustes";
 import { mostrarAviso } from "@/features/avisos/store";
 import { usePermiso } from "@/features/notificaciones/usePermiso";
+import { useRestaurar } from "@/features/respaldo/useRestaurar";
 import type { Umbrales } from "@/lib/alertas";
 import { hexDeColor } from "@/lib/colores";
 import { formatearLempirasCompacto } from "@/lib/formato";
@@ -54,6 +57,7 @@ export default function Ajustes() {
   const insets = useSafeAreaInsets();
   const [tipoCategoria, setTipoCategoria] = useState<TipoMovimiento>("gasto");
   const { permiso, pedir } = usePermiso();
+  const restaurar = useRestaurar(recargar);
 
   async function intentar(accion: () => Promise<unknown>) {
     try {
@@ -343,9 +347,22 @@ export default function Ajustes() {
           </View>
 
           <Text style={styles.seccion}>Respaldo</Text>
-          <Respaldo />
+          <Respaldo
+            restaurando={restaurar.ocupado}
+            onRestaurar={restaurar.elegir}
+          />
         </View>
       </ScrollView>
+      {restaurar.elegido && (
+        <ConfirmarAccion
+          titulo="¿Restaurar este respaldo?"
+          mensaje={textoConfirmarRestaurar(restaurar.elegido.creadoEn, new Date())}
+          textoConfirmar="Restaurar"
+          ocupado={restaurar.ocupado === "restaurando"}
+          onCancelar={restaurar.cancelar}
+          onConfirmar={restaurar.confirmar}
+        />
+      )}
     </View>
   );
 }

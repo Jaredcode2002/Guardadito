@@ -1,7 +1,7 @@
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
-import { Keyboard, StyleSheet, Text, View } from "react-native";
+import { Keyboard, Text, View } from "react-native";
 
 import {
   BotonPrincipal,
@@ -34,7 +34,7 @@ import { useResumen } from "@/features/resumen/useResumen";
 import { formatearLempirasCompacto, parsearLempiras } from "@/lib/formato";
 import type { PlanDeGasto } from "@/lib/money";
 import { simularMovimiento, type TipoMovimientoNuevo } from "@/lib/simulacion";
-import { fonts } from "@/theme";
+import { styles } from "@/styles/app/anadir.styles";
 
 const TIPOS = [
   { valor: "gasto", texto: "Gasto" },
@@ -192,19 +192,3 @@ export default function Anadir() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  vistaPrevia: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginTop: 6,
-    paddingVertical: 8,
-    paddingLeft: 12,
-    paddingRight: 14,
-    borderRadius: 22,
-  },
-  vistaPreviaTextos: { flex: 1, gap: 2 },
-  vistaPreviaTexto: { fontFamily: fonts.bodySemiBold, fontSize: 14 },
-  categorias: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
-});

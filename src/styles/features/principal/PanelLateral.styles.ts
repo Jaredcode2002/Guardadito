@@ -1,0 +1,96 @@
+import { StyleSheet } from "react-native";
+
+import { colors, fonts, palette, TEXTO_SUAVE } from "@/theme";
+
+export const styles = StyleSheet.create({
+  panel: {
+    overflow: "hidden",
+    backgroundColor: colors.panel,
+    borderTopRightRadius: 44,
+    borderBottomRightRadius: 44,
+    paddingRight: 32,
+  },
+  decoracion: {
+    position: "absolute",
+    right: -90,
+    top: -110,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "rgba(200,241,89,0.07)",
+  },
+  desplazable: { flex: 1 },
+  contenido: { paddingBottom: 16 },
+  encabezado: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  mes: { color: TEXTO_SUAVE, fontFamily: fonts.bodyMedium, fontSize: 15 },
+  chip: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
+  chipTexto: {
+    color: palette.tinta,
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 13,
+  },
+  etiqueta: {
+    color: TEXTO_SUAVE,
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 13,
+    letterSpacing: 1.3,
+  },
+  etiquetaDinero: { marginTop: 22 },
+  dinero: { flexDirection: "row", alignItems: "baseline", gap: 6 },
+  moneda: { color: TEXTO_SUAVE, fontFamily: fonts.display, fontSize: 30 },
+  dineroNumero: {
+    flexShrink: 1,
+    color: palette.crema,
+    fontFamily: fonts.display,
+    fontSize: 84,
+    lineHeight: 92,
+    letterSpacing: -3,
+    fontVariant: ["tabular-nums"],
+  },
+  libreFila: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 22,
+    marginTop: 26,
+  },
+  libreTextos: { flex: 1, minWidth: 0 },
+  libre: {
+    fontFamily: fonts.display,
+    fontSize: 46,
+    lineHeight: 52,
+    fontVariant: ["tabular-nums"],
+  },
+  detalle: {
+    marginTop: 4,
+    color: TEXTO_SUAVE,
+    fontFamily: fonts.body,
+    fontSize: 14,
+  },
+  aviso: {
+    marginTop: 6,
+    color: palette.coral,
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 14,
+  },
+  pie: { gap: 14 },
+  ahorro: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 28,
+    backgroundColor: palette.panelSecundario,
+  },
+  ahorroTextos: { flex: 1, minWidth: 0 },
+  ahorroMonto: {
+    color: palette.crema,
+    fontFamily: fonts.display,
+    fontSize: 30,
+  },
+});

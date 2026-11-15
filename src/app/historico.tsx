@@ -5,13 +5,12 @@ import {
   ActivityIndicator,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Chip, GRIS } from "@/components/formulario";
+import { Chip } from "@/components/formulario";
 import { Icono } from "@/components/Icono";
 import { SelectorMeses } from "@/components/SelectorMeses";
 import { momentoActual } from "@/db";
@@ -27,9 +26,9 @@ import { ListaDias } from "@/features/historico/ListaDias";
 import { useHistorico } from "@/features/historico/useHistorico";
 import { mesDe, nombreMes, type MesId } from "@/lib/fechas";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { ANCHO_CONTENIDO, colors, fonts, palette } from "@/theme";
+import { styles } from "@/styles/app/historico.styles";
+import { colors, palette } from "@/theme";
 
-const TEXTO_SUAVE = "rgba(246,241,231,0.74)";
 function nombreDelMes(mes: MesId): string {
   return nombreMes(mes).split(" ")[0].toLowerCase();
 }
@@ -184,114 +183,3 @@ function Total({ etiqueta, monto }: { etiqueta: string; monto: number }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  columna: { width: "100%", maxWidth: ANCHO_CONTENIDO, alignSelf: "center" },
-  pantalla: { flex: 1, backgroundColor: colors.fondo },
-  centro: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-    backgroundColor: colors.fondo,
-  },
-  error: { color: colors.peligro, fontFamily: fonts.body, fontSize: 16 },
-  panel: {
-    overflow: "hidden",
-    backgroundColor: colors.panel,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    paddingHorizontal: 22,
-    paddingBottom: 26,
-  },
-  decoracion: {
-    position: "absolute",
-    right: -70,
-    top: -90,
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-    backgroundColor: "rgba(200,241,89,0.07)",
-  },
-  encabezado: { flexDirection: "row", alignItems: "center", gap: 4 },
-  volver: {
-    width: 44,
-    height: 44,
-    marginLeft: -10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tituloPanel: {
-    color: palette.crema,
-    fontFamily: fonts.display,
-    fontSize: 34,
-    letterSpacing: -0.5,
-  },
-  totales: { flexDirection: "row", gap: 10, marginTop: 16 },
-  total: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 22,
-    backgroundColor: palette.panelSecundario,
-  },
-  totalEtiqueta: { color: TEXTO_SUAVE, fontFamily: fonts.body, fontSize: 12 },
-  totalMonto: {
-    marginTop: 2,
-    color: palette.crema,
-    fontFamily: fonts.display,
-    fontSize: 22,
-  },
-  franja: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 22,
-  },
-  franjaGuardado: { backgroundColor: palette.panelSecundario },
-  franjaTexto: {
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 14,
-  },
-  franjaMonto: {
-    color: palette.tinta,
-    fontFamily: fonts.display,
-    fontSize: 24,
-  },
-  contenido: { paddingHorizontal: 20 },
-  categoriasScroll: { marginTop: 16, marginHorizontal: -20 },
-  categorias: { gap: 8, paddingHorizontal: 20 },
-  resumenFiltro: {
-    marginTop: 10,
-    marginLeft: 4,
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 14,
-  },
-  vacio: {
-    alignItems: "center",
-    gap: 4,
-    marginTop: 18,
-    paddingVertical: 28,
-    paddingHorizontal: 20,
-    borderRadius: 26,
-    borderWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: "#C9BFA8",
-  },
-  vacioTitulo: {
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 15,
-  },
-  vacioTexto: {
-    color: GRIS,
-    fontFamily: fonts.body,
-    fontSize: 14,
-    textAlign: "center",
-  },
-});

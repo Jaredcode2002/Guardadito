@@ -1,12 +1,11 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { Text } from "react-native";
 
 import {
   BotonPrincipal,
   CampoMonto,
   Etiqueta,
-  GRIS,
   MensajeError,
   Selector,
   Titulo,
@@ -16,7 +15,7 @@ import { depositarEnAhorro, registrarAhorroExistente } from "@/db";
 import { mostrarAviso } from "@/features/avisos/store";
 import { useResumen } from "@/features/resumen/useResumen";
 import { formatearLempirasCompacto, parsearLempiras } from "@/lib/formato";
-import { fonts } from "@/theme";
+import { styles } from "@/styles/app/ahorro.styles";
 
 type Origen = "libre" | "existente";
 
@@ -93,7 +92,3 @@ export default function Ahorro() {
     </HojaInferior>
   );
 }
-
-const styles = StyleSheet.create({
-  ayuda: { color: GRIS, fontFamily: fonts.body, fontSize: 14, marginTop: 6 },
-});

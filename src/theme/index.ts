@@ -1,4 +1,4 @@
-export { colors, palette } from './colors';
+export { BORDE, colors, GRIS, PAPEL, palette, TEXTO_SUAVE } from './colors';
 export {
   ANCHO_AVISO,
   ANCHO_CONTENIDO,

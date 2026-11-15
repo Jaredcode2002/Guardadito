@@ -1,0 +1,31 @@
+import { StyleSheet } from "react-native";
+
+import { fonts, GRIS, palette } from "@/theme";
+
+export const styles = StyleSheet.create({
+  lista: { gap: 16 },
+  fila: { gap: 6 },
+  textos: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    gap: 12,
+  },
+  nombre: {
+    flexShrink: 1,
+    color: palette.tinta,
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 15,
+  },
+  valor: {
+    color: GRIS,
+    fontFamily: fonts.bodyMedium,
+    fontSize: 14,
+    fontVariant: ["tabular-nums"],
+  },
+  barra: {
+    height: 12,
+    borderTopRightRadius: 4,
+    borderBottomRightRadius: 4,
+  },
+});

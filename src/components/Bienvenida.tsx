@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, View } from "react-native";
 import Animated, {
   FadeInDown,
   useAnimatedStyle,
@@ -14,7 +14,7 @@ import {
   ALTURA_OJOS,
   porcentajeParaNivel,
 } from "@/components/frasco/geometria";
-import { fonts, palette } from "@/theme";
+import { styles } from "@/styles/components/Bienvenida.styles";
 
 const NOMBRE = "Guardadito";
 const NIVEL_OJOS = porcentajeParaNivel(ALTURA_OJOS);
@@ -97,25 +97,3 @@ export function Bienvenida({ onTerminar }: { onTerminar: () => void }) {
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  fondo: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: palette.crema,
-    zIndex: 100,
-    elevation: 100,
-  },
-  toque: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 22,
-  },
-  nombre: { flexDirection: "row" },
-  letra: {
-    color: palette.tinta,
-    fontFamily: fonts.logo,
-    fontSize: 48,
-    lineHeight: 60,
-  },
-});

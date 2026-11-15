@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -8,9 +8,9 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { GRIS } from "@/components/formulario";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { durations, fonts, palette } from "@/theme";
+import { styles } from "@/styles/features/graficos/Barras.styles";
+import { durations } from "@/theme";
 
 import { textoPorcentaje, type GastoCategoria } from "./logica";
 
@@ -70,31 +70,3 @@ function Fila({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  lista: { gap: 16 },
-  fila: { gap: 6 },
-  textos: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "baseline",
-    gap: 12,
-  },
-  nombre: {
-    flexShrink: 1,
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 15,
-  },
-  valor: {
-    color: GRIS,
-    fontFamily: fonts.bodyMedium,
-    fontSize: 14,
-    fontVariant: ["tabular-nums"],
-  },
-  barra: {
-    height: 12,
-    borderTopRightRadius: 4,
-    borderBottomRightRadius: 4,
-  },
-});

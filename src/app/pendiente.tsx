@@ -1,15 +1,15 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Text } from "react-native";
 
+import { ConfirmarAccion } from "@/components/ConfirmarAccion";
 import {
   BotonPeligro,
   BotonPrincipal,
   CampoMonto,
   CampoTexto,
   Etiqueta,
-  GRIS,
   MensajeError,
   Titulo,
 } from "@/components/formulario";
@@ -24,7 +24,7 @@ import { parsearDiaDelMes } from "@/features/ajustes/logica";
 import { mostrarAviso } from "@/features/avisos/store";
 import { formatearNumero, parsearLempiras } from "@/lib/formato";
 import { normalizarNombre } from "@/lib/nombres";
-import { fonts } from "@/theme";
+import { styles } from "@/styles/app/pendiente.styles";
 
 export default function Pendiente() {
   const db = useSQLiteContext();
@@ -35,6 +35,9 @@ export default function Pendiente() {
   const [dia, setDia] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [guardando, setGuardando] = useState(false);
+  const [confirmando, setConfirmando] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
+  const cancelarConfirmacion = useCallback(() => setConfirmando(false), []);
 
   useEffect(() => {
     if (!editando) return;
@@ -83,72 +86,74 @@ export default function Pendiente() {
     }
   }
 
-  function eliminar() {
-    Alert.alert(
-      `¿Eliminar ${nombre}?`,
-      "Si este mes no lo has pagado, se quita de tus pendientes. Lo que ya pagaste queda en el historial.",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Eliminar",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await eliminarPendienteFijo(db, Number(id));
-              mostrarAviso({ tono: "oscuro", texto: `${nombre} eliminado` });
-              router.back();
-            } catch (e) {
-              setError(e instanceof Error ? e.message : String(e));
-            }
-          },
-        },
-      ],
-    );
+  async function eliminar() {
+    setEliminando(true);
+    try {
+      await eliminarPendienteFijo(db, Number(id));
+      mostrarAviso({ tono: "oscuro", texto: `${nombre} eliminado` });
+      router.back();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setConfirmando(false);
+    } finally {
+      setEliminando(false);
+    }
   }
 
   return (
-    <HojaInferior>
-      <Titulo>{editando ? "Editar pendiente" : "Nuevo pendiente fijo"}</Titulo>
+    <>
+      <HojaInferior>
+        <Titulo>{editando ? "Editar pendiente" : "Nuevo pendiente fijo"}</Titulo>
 
-      <Etiqueta>NOMBRE</Etiqueta>
-      <CampoTexto
-        value={nombre}
-        onChangeText={setNombre}
-        placeholder="Ej. Renta"
-        accessibilityLabel="Nombre"
-        autoFocus={!editando}
-      />
+        <Etiqueta>NOMBRE</Etiqueta>
+        <CampoTexto
+          value={nombre}
+          onChangeText={setNombre}
+          placeholder="Ej. Renta"
+          accessibilityLabel="Nombre"
+          autoFocus={!editando}
+        />
 
-      <Etiqueta>MONTO CADA MES</Etiqueta>
-      <CampoMonto value={monto} onChangeText={setMonto} />
+        <Etiqueta>MONTO CADA MES</Etiqueta>
+        <CampoMonto value={monto} onChangeText={setMonto} />
 
-      <Etiqueta>DÍA DE PAGO</Etiqueta>
-      <CampoTexto
-        value={dia}
-        onChangeText={setDia}
-        placeholder="1 a 31"
-        keyboardType="number-pad"
-        maxLength={2}
-        accessibilityLabel="Día de pago"
-      />
-      <Text style={styles.ayuda}>
-        Si el mes es más corto, vence el último día.
-      </Text>
+        <Etiqueta>DÍA DE PAGO</Etiqueta>
+        <CampoTexto
+          value={dia}
+          onChangeText={setDia}
+          placeholder="1 a 31"
+          keyboardType="number-pad"
+          maxLength={2}
+          accessibilityLabel="Día de pago"
+        />
+        <Text style={styles.ayuda}>
+          Si el mes es más corto, vence el último día.
+        </Text>
 
-      {error && <MensajeError>{error}</MensajeError>}
+        {error && <MensajeError>{error}</MensajeError>}
 
-      <BotonPrincipal
-        texto={editando ? "Guardar cambios" : "Agregar pendiente"}
-        onPress={guardar}
-        activo={valido && !guardando}
-      />
-      {editando && (
-        <BotonPeligro texto="Eliminar pendiente" onPress={eliminar} />
+        <BotonPrincipal
+          texto={editando ? "Guardar cambios" : "Agregar pendiente"}
+          onPress={guardar}
+          activo={valido && !guardando}
+        />
+        {editando && (
+          <BotonPeligro
+            texto="Eliminar pendiente"
+            onPress={() => setConfirmando(true)}
+          />
+        )}
+      </HojaInferior>
+      {confirmando && (
+        <ConfirmarAccion
+          titulo={`¿Eliminar ${nombre}?`}
+          mensaje="Si este mes no lo has pagado, se quita de tus pendientes. Lo que ya pagaste queda en el historial."
+          textoConfirmar="Eliminar"
+          ocupado={eliminando}
+          onCancelar={cancelarConfirmacion}
+          onConfirmar={eliminar}
+        />
       )}
-    </HojaInferior>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  ayuda: { color: GRIS, fontFamily: fonts.body, fontSize: 13, marginTop: 6 },
-});

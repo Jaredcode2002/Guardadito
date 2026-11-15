@@ -4,7 +4,34 @@ import {
   partesHora,
   siguienteUmbral,
   textoDiaDelMes,
+  textoUltimoRespaldo,
 } from "./logica";
+
+describe("textoUltimoRespaldo", () => {
+  const ahora = new Date(2026, 10, 15, 22, 0);
+  const iso = (...p: [number, number, number, number, number]) =>
+    new Date(...p).toISOString();
+
+  it("sin respaldo (o con fecha dañada) lo dice", () => {
+    expect(textoUltimoRespaldo(null, ahora)).toBe("Todavía no has respaldado");
+    expect(textoUltimoRespaldo("nunca", ahora)).toBe("Todavía no has respaldado");
+  });
+
+  it("dice hoy, ayer o la fecha", () => {
+    expect(textoUltimoRespaldo(iso(2026, 10, 15, 20, 5), ahora)).toBe(
+      "Último respaldo: hoy a las 8:05 p. m.",
+    );
+    expect(textoUltimoRespaldo(iso(2026, 10, 14, 9, 30), ahora)).toBe(
+      "Último respaldo: ayer a las 9:30 a. m.",
+    );
+    expect(textoUltimoRespaldo(iso(2026, 9, 3, 0, 15), ahora)).toBe(
+      "Último respaldo: el 3 de octubre a las 12:15 a. m.",
+    );
+    expect(textoUltimoRespaldo(iso(2025, 11, 31, 12, 0), ahora)).toBe(
+      "Último respaldo: el 31 de diciembre de 2025 a las 12:00 p. m.",
+    );
+  });
+});
 
 describe("siguienteUmbral", () => {
   const base = { moderacion: 30, casiCero: 10 };

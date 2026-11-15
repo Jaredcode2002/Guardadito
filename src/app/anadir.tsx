@@ -36,11 +36,14 @@ import { formatearLempirasCompacto, parsearLempiras } from "@/lib/formato";
 import type { PlanDeGasto } from "@/lib/money";
 import { simularMovimiento, type TipoMovimientoNuevo } from "@/lib/simulacion";
 import { styles } from "@/styles/app/anadir.styles";
+import { ACENTO_TIPO } from "@/theme";
 
 const TIPOS = [
-  { valor: "gasto", texto: "Gasto" },
-  { valor: "ingreso", texto: "Ingreso" },
+  { valor: "gasto", texto: "Gasto", icono: "bajar" },
+  { valor: "ingreso", texto: "Ingreso", icono: "subir" },
 ] as const;
+
+const SIGNO = { gasto: "−", ingreso: "+" } as const;
 
 export default function Anadir() {
   const { db, resumen } = useResumen();
@@ -53,6 +56,7 @@ export default function Anadir() {
   const [confirmando, setConfirmando] = useState<PlanDeGasto | null>(null);
   const cancelarConfirmacion = useCallback(() => setConfirmando(null), []);
 
+  const acento = ACENTO_TIPO[tipo];
   const monto = parsearLempiras(texto);
   const simulacion =
     resumen && monto !== null ? simularMovimiento(resumen, tipo, monto) : null;
@@ -128,10 +132,26 @@ export default function Anadir() {
   return (
     <>
       <HojaInferior>
-        <Selector opciones={TIPOS} valor={tipo} onCambiar={cambiarTipo} />
+        <Selector
+          opciones={TIPOS}
+          valor={tipo}
+          onCambiar={cambiarTipo}
+          acento={acento.fuerte}
+        />
 
         <Etiqueta>MONTO</Etiqueta>
-        <CampoMonto value={texto} onChangeText={setTexto} autoFocus />
+        <CampoMonto
+          value={texto}
+          onChangeText={setTexto}
+          autoFocus
+          acento={acento}
+          signo={SIGNO[tipo]}
+          accessibilityLabel={
+            tipo === "gasto"
+              ? "Monto del gasto en lempiras"
+              : "Monto del ingreso en lempiras"
+          }
+        />
 
         {simulacion && estadoPrevio && tono && (
           <View style={[styles.vistaPrevia, { backgroundColor: tono.fondo }]}>
@@ -177,9 +197,10 @@ export default function Anadir() {
         />
 
         <BotonPrincipal
-          texto={tipo === "gasto" ? "Guardar gasto" : "Guardar ingreso"}
+          texto={tipo === "gasto" ? "Registrar gasto" : "Registrar ingreso"}
           onPress={guardar}
           activo={puedeGuardar}
+          acento={acento.fuerte}
         />
       </HojaInferior>
       {confirmando && resumen && (

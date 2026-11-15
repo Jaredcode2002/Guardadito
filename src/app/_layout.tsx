@@ -20,7 +20,7 @@ import { TemaProvider, useTema } from "@/theme";
 SplashScreen.preventAutoHideAsync();
 configurarNotificaciones();
 
-const HOJAS = ["anadir", "pendiente", "categoria", "ahorro"] as const;
+const HOJAS = ["anadir", "pendiente", "categoria", "ahorro", "borrar-historial"] as const;
 
 const OPCIONES_HOJA = {
   presentation: "transparentModal",

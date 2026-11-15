@@ -199,6 +199,17 @@ export async function listarPendientesSinPagar(
   );
 }
 
+export async function listarPendientesSinPagarHasta(
+  db: Db,
+  hasta: MesId,
+): Promise<PendienteMes[]> {
+  return db.getAllAsync<PendienteMes>(
+    `SELECT ${COLUMNAS_PENDIENTE} FROM pendiente_mes
+     WHERE pagado_en IS NULL AND mes_id <= ? ORDER BY fecha_vence, id`,
+    [hasta],
+  );
+}
+
 export async function listarPendientesDelMes(
   db: Db,
   mes: MesId,

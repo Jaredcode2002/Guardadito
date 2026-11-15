@@ -9,19 +9,22 @@ export function SelectorMeses({
   mes,
   mesActual,
   onElegir,
+  sobre = "panel",
 }: {
   meses: readonly MesId[];
   mes: MesId;
   mesActual: MesId;
   onElegir: (m: MesId) => void;
+  sobre?: "panel" | "fondo";
 }) {
   const styles = useEstilos(crearEstilos);
+  const fondo = sobre === "fondo";
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.meses}
-      style={styles.scroll}
+      contentContainerStyle={[styles.meses, fondo && styles.mesesFondo]}
+      style={[styles.scroll, fondo && styles.scrollFondo]}
     >
       {meses.map((m) => {
         const activo = m === mes;
@@ -32,9 +35,19 @@ export function SelectorMeses({
             accessibilityRole="button"
             accessibilityLabel={nombreMes(m)}
             accessibilityState={{ selected: activo }}
-            style={[styles.mes, activo && styles.mesActivo]}
+            style={[
+              styles.mes,
+              fondo && styles.mesFondo,
+              activo && styles.mesActivo,
+            ]}
           >
-            <Text style={[styles.texto, activo && styles.textoActivo]}>
+            <Text
+              style={[
+                styles.texto,
+                fondo && styles.textoFondo,
+                activo && styles.textoActivo,
+              ]}
+            >
               {mesCorto(m, mesActual)}
             </Text>
           </Pressable>

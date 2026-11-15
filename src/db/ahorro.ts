@@ -7,7 +7,10 @@ export type MotivoAhorro =
   | "sobrante"
   | "gasto"
   | "deposito"
-  | "retiro";
+  | "retiro"
+  | "arrastre";
+
+export const CLAVE_TOCADO_ARRASTRE = "ahorro_tocado_arrastre";
 
 export type NuevoMovimientoAhorro = {
   monto: Centavos;
@@ -48,14 +51,19 @@ export async function ahorroTocadoSinReponer(db: Db): Promise<boolean> {
   const fila = await db.getFirstAsync<{
     ultimoAhorro: number | null;
     ultimoNormal: number | null;
+    tocadoArrastre: string | null;
   }>(
     `SELECT
        (SELECT MAX(id) FROM movimiento
         WHERE tipo = 'ingreso' AND origen = 'ahorro') AS ultimoAhorro,
        (SELECT MAX(id) FROM movimiento
-        WHERE tipo = 'ingreso' AND origen = 'normal') AS ultimoNormal`,
-    [],
+        WHERE tipo = 'ingreso' AND origen = 'normal') AS ultimoNormal,
+       (SELECT valor FROM ajuste WHERE clave = ?) AS tocadoArrastre`,
+    [CLAVE_TOCADO_ARRASTRE],
   );
-  if (!fila || fila.ultimoAhorro === null) return false;
+  if (!fila) return false;
+  if (fila.ultimoAhorro === null) {
+    return fila.tocadoArrastre === "1" && fila.ultimoNormal === null;
+  }
   return fila.ultimoNormal === null || fila.ultimoAhorro > fila.ultimoNormal;
 }

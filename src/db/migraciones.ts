@@ -127,32 +127,84 @@ export const MIGRACIONES: readonly string[] = [
     WHERE r.id = categoria.id
   );
   `,
+  `
+  CREATE TABLE movimiento_nuevo (
+    id           INTEGER PRIMARY KEY,
+    tipo         TEXT NOT NULL CHECK (tipo IN ('ingreso', 'gasto')),
+    monto        INTEGER NOT NULL CHECK (monto > 0),
+    descripcion  TEXT NOT NULL DEFAULT '',
+    origen       TEXT NOT NULL DEFAULT 'normal'
+                 CHECK (origen IN ('normal', 'ahorro', 'pendiente', 'sobrante', 'arrastre')),
+    fecha        TEXT NOT NULL,
+    creado_en    TEXT NOT NULL,
+    categoria_id INTEGER REFERENCES categoria(id) ON DELETE SET NULL
+  );
+  INSERT INTO movimiento_nuevo
+    (id, tipo, monto, descripcion, origen, fecha, creado_en, categoria_id)
+    SELECT id, tipo, monto, descripcion, origen, fecha, creado_en, categoria_id
+    FROM movimiento;
+  DROP TABLE movimiento;
+  ALTER TABLE movimiento_nuevo RENAME TO movimiento;
+  CREATE INDEX idx_movimiento_fecha ON movimiento(fecha);
+  CREATE INDEX idx_movimiento_categoria ON movimiento(categoria_id);
+
+  CREATE TABLE ahorro_movimiento_nuevo (
+    id            INTEGER PRIMARY KEY,
+    monto         INTEGER NOT NULL CHECK (monto <> 0),
+    motivo        TEXT NOT NULL
+                  CHECK (motivo IN ('saldo_inicial', 'sobrante', 'gasto', 'deposito', 'retiro', 'arrastre')),
+    movimiento_id INTEGER REFERENCES movimiento(id) ON DELETE CASCADE,
+    fecha         TEXT NOT NULL,
+    creado_en     TEXT NOT NULL
+  );
+  INSERT INTO ahorro_movimiento_nuevo
+    (id, monto, motivo, movimiento_id, fecha, creado_en)
+    SELECT id, monto, motivo, movimiento_id, fecha, creado_en
+    FROM ahorro_movimiento;
+  DROP TABLE ahorro_movimiento;
+  ALTER TABLE ahorro_movimiento_nuevo RENAME TO ahorro_movimiento;
+  CREATE INDEX idx_ahorro_movimiento_fecha ON ahorro_movimiento(fecha);
+  `,
 ];
 
 export async function migrar(
   db: Db,
   migraciones: readonly string[] = MIGRACIONES,
 ): Promise<void> {
-  await db.execAsync("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON;");
-
-  const fila = await db.getFirstAsync<{ user_version: number }>(
-    "PRAGMA user_version",
-    [],
-  );
-  const actual = fila?.user_version ?? 0;
-
-  if (actual > migraciones.length) {
-    throw new Error(
-      `La base de datos es de una versión más nueva de la app (v${actual} > v${migraciones.length}).`,
+  await db.execAsync("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = OFF;");
+  try {
+    const fila = await db.getFirstAsync<{ user_version: number }>(
+      "PRAGMA user_version",
+      [],
     );
-  }
+    const actual = fila?.user_version ?? 0;
 
-  for (let version = actual; version < migraciones.length; version++) {
-    const sql = migraciones[version];
-    await db.withTransactionAsync(async () => {
-      await db.execAsync(sql);
+    if (actual > migraciones.length) {
+      throw new Error(
+        `La base de datos es de una versión más nueva de la app (v${actual} > v${migraciones.length}).`,
+      );
+    }
 
-      await db.execAsync(`PRAGMA user_version = ${version + 1}`);
-    });
+    for (let version = actual; version < migraciones.length; version++) {
+      const sql = migraciones[version];
+      await db.withTransactionAsync(async () => {
+        await db.execAsync(sql);
+
+        const rotas = await db.getAllAsync<{ table: string }>(
+          "PRAGMA foreign_key_check",
+          [],
+        );
+        if (rotas.length > 0) {
+          const tablas = [...new Set(rotas.map((r) => r.table))].join(", ");
+          throw new Error(
+            `La migración v${version + 1} rompe llaves foráneas en: ${tablas}.`,
+          );
+        }
+
+        await db.execAsync(`PRAGMA user_version = ${version + 1}`);
+      });
+    }
+  } finally {
+    await db.execAsync("PRAGMA foreign_keys = ON;");
   }
 }

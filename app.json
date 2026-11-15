@@ -32,9 +32,20 @@
       "expo-sharing",
       "expo-status-bar"
     ],
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "bc36e246-ea92-43a5-942d-eed16ca4a0bd"
+      }
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "owner": "pizu-projects"
   }
 }

@@ -29,6 +29,7 @@ import {
   siguienteUmbral,
   textoDiaDelMes,
 } from "@/features/ajustes/logica";
+import { Respaldo } from "@/features/ajustes/Respaldo";
 import { SelectorForma } from "@/features/ajustes/SelectorForma";
 import { SelectorPaleta } from "@/features/ajustes/SelectorPaleta";
 import { useAjustes } from "@/features/ajustes/useAjustes";
@@ -340,6 +341,9 @@ export default function Ajustes() {
               />
             </View>
           </View>
+
+          <Text style={styles.seccion}>Respaldo</Text>
+          <Respaldo />
         </View>
       </ScrollView>
     </View>

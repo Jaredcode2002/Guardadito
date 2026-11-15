@@ -11,5 +11,6 @@ export * from "./notificaciones";
 export * from "./operaciones";
 export * from "./pendientes";
 export * from "./reloj";
+export * from "./respaldo";
 export * from "./resumen";
 export type { Db, ResultadoRun, ValorSql } from "./tipos";

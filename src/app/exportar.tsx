@@ -19,7 +19,11 @@ import {
   type Movimiento,
 } from "@/db";
 import { mostrarAviso } from "@/features/avisos/store";
-import { compartirCsv, guardarEnCarpeta } from "@/features/exportar/archivo";
+import {
+  ARCHIVO_CSV,
+  compartirArchivo,
+  guardarEnCarpeta,
+} from "@/features/exportar/archivo";
 import {
   filasCsv,
   nombreArchivoCsv,
@@ -90,8 +94,8 @@ export default function ExportarPantalla() {
     try {
       const contenido = generarCsv(filasCsv(lista));
       if (como === "compartir") {
-        await compartirCsv(nombre, contenido);
-      } else if (await guardarEnCarpeta(nombre, contenido)) {
+        await compartirArchivo(nombre, contenido, ARCHIVO_CSV);
+      } else if (await guardarEnCarpeta(nombre, contenido, ARCHIVO_CSV)) {
         mostrarAviso({ tono: "oscuro", texto: `Guardado: ${nombre}` });
         router.back();
       }

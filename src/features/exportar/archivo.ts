@@ -3,11 +3,14 @@ import * as Sharing from "expo-sharing";
 
 import { esCancelacion } from "./logica";
 
-const TIPO_CSV = "text/csv";
+export type TipoArchivo = { mime: string; titulo: string };
+
+export const ARCHIVO_CSV: TipoArchivo = { mime: "text/csv", titulo: "Compartir CSV" };
 
 export async function guardarEnCarpeta(
   nombre: string,
   contenido: string,
+  tipo: TipoArchivo,
 ): Promise<boolean> {
   let carpeta: Directory;
   try {
@@ -16,13 +19,14 @@ export async function guardarEnCarpeta(
     if (esCancelacion(e)) return false;
     throw e;
   }
-  carpeta.createFile(nombre, TIPO_CSV).write(contenido);
+  carpeta.createFile(nombre, tipo.mime).write(contenido);
   return true;
 }
 
-export async function compartirCsv(
+export async function compartirArchivo(
   nombre: string,
   contenido: string,
+  tipo: TipoArchivo,
 ): Promise<void> {
   if (!(await Sharing.isAvailableAsync())) {
     throw new Error("Este teléfono no permite compartir archivos.");
@@ -30,7 +34,7 @@ export async function compartirCsv(
   const archivo = new File(Paths.cache, nombre);
   archivo.write(contenido);
   await Sharing.shareAsync(archivo.uri, {
-    mimeType: TIPO_CSV,
-    dialogTitle: "Compartir CSV",
+    mimeType: tipo.mime,
+    dialogTitle: tipo.titulo,
   });
 }

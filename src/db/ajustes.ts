@@ -3,6 +3,11 @@ import {
   UMBRALES_POR_DEFECTO,
   type Umbrales,
 } from "../lib/alertas";
+import {
+  esClavePaleta,
+  PALETA_POR_DEFECTO,
+  type ClavePaleta,
+} from "../theme/paletas";
 import type { Db } from "./tipos";
 
 export type Ajustes = {
@@ -10,6 +15,7 @@ export type Ajustes = {
   horaRecordatorio: string;
   recordatorioActivo: boolean;
   avisarPendientes: boolean;
+  paleta: ClavePaleta;
 };
 
 const RE_HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -29,7 +35,17 @@ export async function leerAjustes(db: Db): Promise<Ajustes> {
     horaRecordatorio: mapa.get("hora_recordatorio") ?? "21:00",
     recordatorioActivo: mapa.get("recordatorio_activo") !== "0",
     avisarPendientes: mapa.get("avisar_pendientes") !== "0",
+    paleta: leerPaleta(mapa.get("paleta")),
   };
+}
+
+function leerPaleta(valor: string | undefined): ClavePaleta {
+  return esClavePaleta(valor) ? valor : PALETA_POR_DEFECTO;
+}
+
+export async function guardarPaleta(db: Db, paleta: string): Promise<void> {
+  if (!esClavePaleta(paleta)) throw new Error(`Paleta desconocida: "${paleta}".`);
+  await guardar(db, "paleta", paleta);
 }
 
 async function guardar(db: Db, clave: string, valor: string): Promise<void> {

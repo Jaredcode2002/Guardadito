@@ -4,8 +4,8 @@ import Animated, { FadeIn, useReducedMotion } from "react-native-reanimated";
 import Svg, { G, Path } from "react-native-svg";
 
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { styles, TAMANO } from "@/styles/features/graficos/Dona.styles";
-import { durations, PAPEL } from "@/theme";
+import { crearEstilos, TAMANO } from "@/styles/features/graficos/Dona.styles";
+import { durations, useEstilos, useTema } from "@/theme";
 
 import {
   sectoresDona,
@@ -18,6 +18,8 @@ const EXTERIOR = 106;
 const INTERIOR = 70;
 
 export function Dona({ grupos }: { grupos: readonly GastoCategoria[] }) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const reducir = useReducedMotion();
   const [elegida, setElegida] = useState<string | null>(null);
   const centro = TAMANO / 2;
@@ -44,7 +46,7 @@ export function Dona({ grupos }: { grupos: readonly GastoCategoria[] }) {
                   d={s.d}
                   fill={g?.color}
                   fillOpacity={atenuado ? 0.3 : 1}
-                  stroke={PAPEL}
+                  stroke={tema.superficie}
                   strokeWidth={2}
                   onPress={() => alternar(s.clave)}
                 />

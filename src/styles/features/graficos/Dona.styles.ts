@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, GRIS, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
 export const TAMANO = 220;
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   contenedor: { gap: 18 },
   grafico: {
     alignSelf: "center",
@@ -17,9 +17,9 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 50,
   },
-  centroEtiqueta: { color: GRIS, fontFamily: fonts.bodyMedium, fontSize: 13 },
+  centroEtiqueta: { color: t.textoSecundario, fontFamily: fonts.bodyMedium, fontSize: 13 },
   centroMonto: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.display,
     fontSize: 24,
   },
@@ -32,16 +32,16 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 14,
   },
-  filaActiva: { backgroundColor: "#EAE2D0" },
+  filaActiva: { backgroundColor: t.borde },
   muestra: { width: 12, height: 12, borderRadius: 6 },
   nombre: {
     flex: 1,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },
   valor: {
-    color: GRIS,
+    color: t.textoSecundario,
     fontFamily: fonts.bodyMedium,
     fontSize: 14,
     fontVariant: ["tabular-nums"],

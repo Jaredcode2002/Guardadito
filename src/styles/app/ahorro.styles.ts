@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, GRIS } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
-  ayuda: { color: GRIS, fontFamily: fonts.body, fontSize: 14, marginTop: 6 },
+export const crearEstilos = (t: Tema) => StyleSheet.create({
+  ayuda: { color: t.textoSecundario, fontFamily: fonts.body, fontSize: 14, marginTop: 6 },
 });

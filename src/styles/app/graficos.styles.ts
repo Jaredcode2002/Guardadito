@@ -1,30 +1,21 @@
 import { StyleSheet } from "react-native";
 
-import {
-  ANCHO_CONTENIDO,
-  BORDE,
-  colors,
-  fonts,
-  GRIS,
-  palette,
-  PAPEL,
-  TEXTO_SUAVE,
-} from "@/theme";
+import { ANCHO_CONTENIDO, fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   columna: { width: "100%", maxWidth: ANCHO_CONTENIDO, alignSelf: "center" },
-  pantalla: { flex: 1, backgroundColor: colors.fondo },
+  pantalla: { flex: 1, backgroundColor: t.fondo },
   centro: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: colors.fondo,
+    backgroundColor: t.fondo,
   },
-  error: { color: colors.peligro, fontFamily: fonts.body, fontSize: 16 },
+  error: { color: t.peligroTexto, fontFamily: fonts.body, fontSize: 16 },
   panel: {
     overflow: "hidden",
-    backgroundColor: colors.panel,
+    backgroundColor: t.panel,
     borderBottomLeftRadius: 40,
     borderBottomRightRadius: 40,
     paddingHorizontal: 22,
@@ -37,7 +28,7 @@ export const styles = StyleSheet.create({
     width: 230,
     height: 230,
     borderRadius: 115,
-    backgroundColor: "rgba(200,241,89,0.07)",
+    backgroundColor: t.brilloPanel,
   },
   encabezado: { flexDirection: "row", alignItems: "center", gap: 4 },
   volver: {
@@ -48,39 +39,39 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tituloPanel: {
-    color: palette.crema,
+    color: t.textoSobrePanel,
     fontFamily: fonts.display,
     fontSize: 34,
     letterSpacing: -0.5,
   },
   etiquetaPanel: {
     marginTop: 18,
-    color: TEXTO_SUAVE,
+    color: t.textoSobrePanelSuave,
     fontFamily: fonts.bodySemiBold,
     fontSize: 12,
     letterSpacing: 1.2,
   },
   total: {
-    color: palette.crema,
+    color: t.textoSobrePanel,
     fontFamily: fonts.display,
     fontSize: 48,
     lineHeight: 56,
   },
   contenido: { paddingHorizontal: 20 },
   encabezadoSeccion: { marginTop: 22, marginBottom: 10 },
-  seccion: { color: palette.tinta, fontFamily: fonts.display, fontSize: 20 },
+  seccion: { color: t.texto, fontFamily: fonts.display, fontSize: 20 },
   tarjeta: {
     marginTop: 12,
     padding: 18,
     borderRadius: 28,
     borderWidth: 1,
-    borderColor: BORDE,
-    backgroundColor: PAPEL,
+    borderColor: t.borde,
+    backgroundColor: t.superficie,
   },
   nota: {
     marginTop: 10,
     marginHorizontal: 4,
-    color: GRIS,
+    color: t.textoSecundario,
     fontFamily: fonts.body,
     fontSize: 13,
   },
@@ -92,15 +83,15 @@ export const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 1.5,
     borderStyle: "dashed",
-    borderColor: "#C9BFA8",
+    borderColor: t.bordeFuerte,
   },
   vacioTitulo: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },
   vacioTexto: {
-    color: GRIS,
+    color: t.textoSecundario,
     fontFamily: fonts.body,
     fontSize: 14,
     textAlign: "center",

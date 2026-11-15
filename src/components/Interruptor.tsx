@@ -7,8 +7,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
-import { styles } from "@/styles/components/Interruptor.styles";
-import { durations } from "@/theme";
+import { crearEstilos } from "@/styles/components/Interruptor.styles";
+import { durations, useEstilos } from "@/theme";
 
 const RECORRIDO = 20;
 
@@ -21,6 +21,7 @@ export function Interruptor({
   onCambiar: (v: boolean) => void;
   etiqueta: string;
 }) {
+  const styles = useEstilos(crearEstilos);
   const reducir = useReducedMotion();
   const posicion = useSharedValue(valor ? 1 : 0);
 

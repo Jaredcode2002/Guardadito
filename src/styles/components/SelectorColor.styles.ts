@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 
-import { palette } from "@/theme";
+import { type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   fila: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   anillo: {
     width: 44,
@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  anilloActivo: { borderColor: palette.tinta },
+  anilloActivo: { borderColor: t.texto },
   muestra: {
     width: 34,
     height: 34,

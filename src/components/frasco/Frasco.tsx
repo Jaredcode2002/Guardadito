@@ -20,16 +20,16 @@ import Svg, {
 } from "react-native-svg";
 
 import type { EstadoFrasco } from "@/lib/frasco";
-import { durations } from "@/theme";
+import { durations, useTema, type Tema } from "@/theme";
 
 import {
   caminoOla,
+  coloresFrasco,
   colorRasgo,
   CUERPO,
   nivelSegunEstado,
-  TEMAS_FRASCO,
   tieneLiquido,
-  type TemaFrasco,
+  type VarianteFrasco,
   VIEWBOX,
   ZONA_BOCA,
   ZONA_GOTA,
@@ -50,7 +50,8 @@ type Props = {
   estado: EstadoFrasco;
   porcentaje: number;
   ancho?: number;
-  tema?: TemaFrasco;
+  variante?: VarianteFrasco;
+  tema?: Tema;
   guino?: boolean;
 };
 
@@ -58,10 +59,12 @@ export function Frasco({
   estado,
   porcentaje,
   ancho = 124,
-  tema = "panel",
+  variante = "panel",
+  tema,
   guino = false,
 }: Props) {
-  const colores = TEMAS_FRASCO[tema];
+  const temaApp = useTema().tema;
+  const colores = coloresFrasco(tema ?? temaApp, variante);
   const reducir = useReducedMotion();
   const idRecorte = `frasco${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   const liquido = tieneLiquido(estado);
@@ -112,8 +115,8 @@ export function Frasco({
     translateY: caida.get() * 4,
   }));
 
-  const ojos = colorRasgo(nivelFinal, ZONA_OJOS, tema);
-  const boca = colorRasgo(nivelFinal, ZONA_BOCA, tema);
+  const ojos = colorRasgo(nivelFinal, ZONA_OJOS, colores);
+  const boca = colorRasgo(nivelFinal, ZONA_BOCA, colores);
 
   return (
     <View
@@ -206,7 +209,7 @@ export function Frasco({
             <Ellipse cx={60} cy={100} rx={6} ry={8} stroke={boca} {...TRAZO} />
             <Path
               d="M92 58 q6 9 0 13 q-6 -4 0 -13z"
-              fill={colorRasgo(nivelFinal, ZONA_GOTA, tema)}
+              fill={colorRasgo(nivelFinal, ZONA_GOTA, colores)}
             />
           </>
         )}

@@ -5,10 +5,11 @@ import { Frasco } from "@/components/frasco/Frasco";
 import type { Resumen } from "@/db";
 import { nombreMes } from "@/lib/fechas";
 import { formatearLempirasCompacto, formatearNumero } from "@/lib/formato";
-import { styles } from "@/styles/features/principal/PanelLateral.styles";
+import { crearEstilos } from "@/styles/features/principal/PanelLateral.styles";
+import { colorDeEstado, useEstilos, useTema } from "@/theme";
 
 import { BarraInferior, type RutaAcceso } from "./BarraInferior";
-import { chipDelPanel, COLOR_LIBRE, textosPanel } from "./textos";
+import { chipDelPanel, textosPanel } from "./textos";
 
 export function PanelLateral({
   resumen,
@@ -23,6 +24,8 @@ export function PanelLateral({
   onAnadir: () => void;
   onAcceso: (ruta: RutaAcceso) => void;
 }) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const insets = useSafeAreaInsets();
   const chip = chipDelPanel(resumen);
   const { detalle, aviso } = textosPanel(resumen);
@@ -47,7 +50,7 @@ export function PanelLateral({
       >
         <View style={styles.encabezado}>
           <Text style={styles.mes}>{nombreMes(resumen.mes)}</Text>
-          <View style={[styles.chip, { backgroundColor: chip.color }]}>
+          <View style={[styles.chip, { backgroundColor: colorDeEstado(tema, chip.estado) }]}>
             <Text style={styles.chipTexto}>{chip.texto}</Text>
           </View>
         </View>
@@ -79,7 +82,7 @@ export function PanelLateral({
           <View style={styles.libreTextos}>
             <Text style={styles.etiqueta}>LIBRE TRAS PENDIENTES</Text>
             <Text
-              style={[styles.libre, { color: COLOR_LIBRE[resumen.estado] }]}
+              style={[styles.libre, { color: colorDeEstado(tema, resumen.estado) }]}
               numberOfLines={1}
               adjustsFontSizeToFit
             >

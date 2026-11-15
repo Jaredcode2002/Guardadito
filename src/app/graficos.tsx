@@ -20,8 +20,8 @@ import { gastosPorCategoria, totalGastado } from "@/features/graficos/logica";
 import { useHistorico } from "@/features/historico/useHistorico";
 import { mesDe, nombreMes } from "@/lib/fechas";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { styles } from "@/styles/app/graficos.styles";
-import { colors, palette } from "@/theme";
+import { crearEstilos } from "@/styles/app/graficos.styles";
+import { useEstilos, useTema } from "@/theme";
 
 type Vista = "barras" | "pastel";
 
@@ -31,13 +31,15 @@ const VISTAS = [
 ] as const;
 
 export default function Graficos() {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const { meses, mes, movimientos, error, elegirMes } = useHistorico();
   const insets = useSafeAreaInsets();
   const [vista, setVista] = useState<Vista>("barras");
   const mesActual = mesDe(momentoActual().hoy);
   const grupos = useMemo(
-    () => (movimientos ? gastosPorCategoria(movimientos) : []),
-    [movimientos],
+    () => (movimientos ? gastosPorCategoria(movimientos, tema.texto) : []),
+    [movimientos, tema.texto],
   );
 
   if (error) {
@@ -51,7 +53,7 @@ export default function Graficos() {
   if (!movimientos || !mes) {
     return (
       <View style={styles.centro}>
-        <ActivityIndicator color={colors.texto} />
+        <ActivityIndicator color={tema.texto} />
       </View>
     );
   }
@@ -77,7 +79,7 @@ export default function Graficos() {
               accessibilityLabel="Volver"
               style={styles.volver}
             >
-              <Icono nombre="atras" color={palette.crema} />
+              <Icono nombre="atras" color={tema.textoSobrePanel} />
             </Pressable>
             <Text style={styles.tituloPanel}>Gráficos</Text>
           </View>

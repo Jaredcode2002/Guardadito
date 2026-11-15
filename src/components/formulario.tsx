@@ -11,23 +11,27 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 import { Icono, type NombreIcono } from "@/components/Icono";
 import { useColorAnimado } from "@/components/useColorAnimado";
-import { styles } from "@/styles/components/formulario.styles";
-import { palette, type Acento } from "@/theme";
+import { crearEstilos } from "@/styles/components/formulario.styles";
+import { useEstilos, useTema, type Acento } from "@/theme";
 
 const PressableAnimado = Animated.createAnimatedComponent(Pressable);
 
 export function Titulo({ children }: { children: ReactNode }) {
+  const styles = useEstilos(crearEstilos);
   return <Text style={styles.titulo}>{children}</Text>;
 }
 
 export function Etiqueta({ children }: { children: ReactNode }) {
+  const styles = useEstilos(crearEstilos);
   return <Text style={styles.etiqueta}>{children}</Text>;
 }
 
 export function CampoTexto(props: TextInputProps) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   return (
     <TextInput
-      placeholderTextColor="#17231C70"
+      placeholderTextColor={tema.textoTenue}
       {...props}
       style={[styles.campo, props.style]}
     />
@@ -35,10 +39,12 @@ export function CampoTexto(props: TextInputProps) {
 }
 
 function InputMonto(props: TextInputProps) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   return (
     <TextInput
       placeholder="0"
-      placeholderTextColor="#17231C40"
+      placeholderTextColor={tema.textoPista}
       keyboardType="decimal-pad"
       accessibilityLabel="Monto en lempiras"
       {...props}
@@ -52,9 +58,10 @@ function CampoMontoConAcento({
   signo,
   ...props
 }: TextInputProps & { acento: Acento; signo?: string }) {
+  const styles = useEstilos(crearEstilos);
   const borde = useColorAnimado(acento.fuerte);
   const fondo = useColorAnimado(acento.suave);
-  const tinta = useColorAnimado(acento.oscuro);
+  const tinta = useColorAnimado(acento.texto);
   const estiloCaja = useAnimatedStyle(() => ({
     borderColor: borde.get(),
     backgroundColor: fondo.get(),
@@ -82,6 +89,7 @@ export function CampoMonto({
   signo,
   ...props
 }: TextInputProps & { acento?: Acento; signo?: string }) {
+  const styles = useEstilos(crearEstilos);
   if (acento) {
     return <CampoMontoConAcento acento={acento} signo={signo} {...props} />;
   }
@@ -106,7 +114,9 @@ function OpcionSelector({
   acento: string;
   onPress: () => void;
 }) {
-  const fondo = useColorAnimado(activa ? acento : palette.panel);
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
+  const fondo = useColorAnimado(activa ? acento : tema.panel);
   const estiloFondo = useAnimatedStyle(() => ({
     backgroundColor: fondo.get(),
   }));
@@ -122,7 +132,7 @@ function OpcionSelector({
       {icono && (
         <Icono
           nombre={icono}
-          color={activa ? palette.tinta : palette.crema}
+          color={activa ? tema.sobreLiquido : tema.textoSobrePanel}
           tamano={18}
         />
       )}
@@ -137,13 +147,15 @@ export function Selector<T extends string>({
   opciones,
   valor,
   onCambiar,
-  acento = palette.lima,
+  acento,
 }: {
   opciones: readonly { valor: T; texto: string; icono?: NombreIcono }[];
   valor: T;
   onCambiar: (v: T) => void;
   acento?: string;
 }) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   return (
     <View style={styles.selector}>
       {opciones.map((o) => (
@@ -152,7 +164,7 @@ export function Selector<T extends string>({
           texto={o.texto}
           icono={o.icono}
           activa={o.valor === valor}
-          acento={acento}
+          acento={acento ?? tema.acento}
           onPress={() => onCambiar(o.valor)}
         />
       ))}
@@ -169,6 +181,7 @@ export function Chip({
   activo?: boolean;
   onPress: () => void;
 }) {
+  const styles = useEstilos(crearEstilos);
   return (
     <Pressable
       onPress={onPress}
@@ -194,7 +207,9 @@ export function BotonPrincipal({
   activo?: boolean;
   acento?: string;
 }) {
-  const fondo = useColorAnimado(acento ?? palette.panel);
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
+  const fondo = useColorAnimado(acento ?? tema.panel);
   const estiloFondo = useAnimatedStyle(() => ({
     backgroundColor: fondo.get(),
   }));
@@ -226,6 +241,7 @@ export function BotonPeligro({
   texto: string;
   onPress: () => void;
 }) {
+  const styles = useEstilos(crearEstilos);
   return (
     <Pressable
       onPress={onPress}
@@ -238,5 +254,6 @@ export function BotonPeligro({
 }
 
 export function MensajeError({ children }: { children: ReactNode }) {
+  const styles = useEstilos(crearEstilos);
   return <Text style={styles.error}>{children}</Text>;
 }

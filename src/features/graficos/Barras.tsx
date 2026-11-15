@@ -9,12 +9,13 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { styles } from "@/styles/features/graficos/Barras.styles";
-import { durations } from "@/theme";
+import { crearEstilos } from "@/styles/features/graficos/Barras.styles";
+import { durations, useEstilos } from "@/theme";
 
 import { textoPorcentaje, type GastoCategoria } from "./logica";
 
 export function Barras({ grupos }: { grupos: readonly GastoCategoria[] }) {
+  const styles = useEstilos(crearEstilos);
   const mayor = Math.max(...grupos.map((g) => g.monto), 1);
   return (
     <View style={styles.lista}>
@@ -32,6 +33,7 @@ function Fila({
   grupo: GastoCategoria;
   proporcion: number;
 }) {
+  const styles = useEstilos(crearEstilos);
   const reducir = useReducedMotion();
   const ancho = useSharedValue(reducir ? proporcion : 0);
 

@@ -1,5 +1,6 @@
 import type { EstadoFrasco } from "@/lib/frasco";
-import { palette } from "@/theme";
+import { conAlfa, masLegible } from "@/lib/tonos";
+import type { Tema } from "@/theme/tema";
 
 export const VIEWBOX = { ancho: 120, alto: 160 } as const;
 
@@ -12,12 +13,6 @@ export const ZONA_BOCA = 92;
 export const ZONA_GOTA = 58;
 
 export type EstadoConLiquido = Extract<EstadoFrasco, "ok" | "mod" | "crit">;
-
-export const COLOR_LIQUIDO: Record<EstadoConLiquido, string> = {
-  ok: palette.lima,
-  mod: palette.ambar,
-  crit: palette.coral,
-};
 
 export function tieneLiquido(estado: EstadoFrasco): estado is EstadoConLiquido {
   return estado === "ok" || estado === "mod" || estado === "crit";
@@ -47,7 +42,7 @@ export function caminoOla(nivelY: number, desfase: number): string {
   return `${d} V${VIEWBOX.alto} H${x} Z`;
 }
 
-export type TemaFrasco = "panel" | "claro" | "toast";
+export type VarianteFrasco = "panel" | "fondo" | "toast";
 
 export type ColoresFrasco = {
   cuerpoRelleno: string;
@@ -62,50 +57,41 @@ export type ColoresFrasco = {
   bordeMoneda: string;
 };
 
-export const TEMAS_FRASCO: Record<TemaFrasco, ColoresFrasco> = {
-  panel: {
-    cuerpoRelleno: "rgba(246,241,231,0.07)",
-    cuerpoBorde: "rgba(246,241,231,0.42)",
-    tapa: palette.crema,
-    rasgoSobreVidrio: palette.crema,
-    rasgoSobreLiquido: palette.tinta,
-    liquido: COLOR_LIQUIDO,
+export function coloresFrasco(t: Tema, variante: VarianteFrasco): ColoresFrasco {
+  if (variante === "toast") {
+    const tinta = t.sobreLiquido;
+    return {
+      cuerpoRelleno: "none",
+      cuerpoBorde: tinta,
+      tapa: tinta,
+      rasgoSobreVidrio: tinta,
+      rasgoSobreLiquido: masLegible([tinta], [t.textoSobrePanel, t.fondo, t.texto, t.panel]),
+      liquido: { ok: tinta, mod: tinta, crit: tinta },
+      opacidadLiquido: 0.85,
+      grieta: tinta,
+      moneda: tinta,
+      bordeMoneda: "none",
+    };
+  }
+  const trazo = variante === "panel" ? t.textoSobrePanel : t.texto;
+  return {
+    cuerpoRelleno: conAlfa(trazo, variante === "panel" ? 0.07 : 0.05),
+    cuerpoBorde: conAlfa(trazo, 0.42),
+    tapa: variante === "panel" ? t.textoSobrePanel : t.panel,
+    rasgoSobreVidrio: trazo,
+    rasgoSobreLiquido: t.sobreLiquido,
+    liquido: t.liquido,
     opacidadLiquido: 1,
-    grieta: palette.crema,
-    moneda: palette.lima,
-    bordeMoneda: palette.tinta,
-  },
-  claro: {
-    cuerpoRelleno: "rgba(23,35,28,0.05)",
-    cuerpoBorde: "rgba(23,35,28,0.42)",
-    tapa: palette.panel,
-    rasgoSobreVidrio: palette.tinta,
-    rasgoSobreLiquido: palette.tinta,
-    liquido: COLOR_LIQUIDO,
-    opacidadLiquido: 1,
-    grieta: palette.tinta,
-    moneda: palette.lima,
-    bordeMoneda: palette.tinta,
-  },
-  toast: {
-    cuerpoRelleno: "none",
-    cuerpoBorde: palette.tinta,
-    tapa: palette.tinta,
-    rasgoSobreVidrio: palette.tinta,
-    rasgoSobreLiquido: palette.crema,
-    liquido: { ok: palette.tinta, mod: palette.tinta, crit: palette.tinta },
-    opacidadLiquido: 0.85,
-    grieta: palette.tinta,
-    moneda: palette.tinta,
-    bordeMoneda: "none",
-  },
-};
+    grieta: trazo,
+    moneda: t.acento,
+    bordeMoneda: t.sobreAcento,
+  };
+}
 
 export function colorRasgo(
   nivelY: number,
   yRasgo: number,
-  tema: TemaFrasco = "panel",
+  colores: ColoresFrasco,
 ): string {
-  const colores = TEMAS_FRASCO[tema];
   return nivelY < yRasgo ? colores.rasgoSobreLiquido : colores.rasgoSobreVidrio;
 }

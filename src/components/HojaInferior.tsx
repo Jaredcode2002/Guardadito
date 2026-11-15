@@ -10,10 +10,11 @@ import {
 import Animated, { SlideInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { styles } from "@/styles/components/HojaInferior.styles";
-import { durations } from "@/theme";
+import { crearEstilos } from "@/styles/components/HojaInferior.styles";
+import { durations, useEstilos } from "@/theme";
 
 export function HojaInferior({ children }: { children: ReactNode }) {
+  const styles = useEstilos(crearEstilos);
   const insets = useSafeAreaInsets();
 
   return (

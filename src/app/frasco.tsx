@@ -6,7 +6,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Frasco } from "@/components/frasco/Frasco";
 import { estadoFrasco, type EstadoFrasco } from "@/lib/frasco";
-import { styles } from "@/styles/app/frasco.styles";
+import { crearEstilos } from "@/styles/app/frasco.styles";
+import { useEstilos, useTema } from "@/theme";
 
 const MUESTRAS: { estado: EstadoFrasco; porcentaje: number }[] = [
   { estado: "ok", porcentaje: 0.68 },
@@ -19,6 +20,8 @@ const MUESTRAS: { estado: EstadoFrasco; porcentaje: number }[] = [
 const PORCENTAJES = [1, 0.68, 0.35, 0.28, 0.08, 0];
 
 export default function Galeria() {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const [porcentaje, setPorcentaje] = useState(0.68);
   const [roto, setRoto] = useState(false);
   const estado = estadoFrasco({
@@ -29,7 +32,7 @@ export default function Galeria() {
 
   return (
     <SafeAreaView style={styles.pantalla}>
-      <StatusBar style="dark" />
+      <StatusBar style={tema.oscuro ? "light" : "dark"} />
       <ScrollView contentContainerStyle={styles.contenido}>
         <Text style={styles.titulo}>Galería del frasco</Text>
 
@@ -82,12 +85,15 @@ function Chip({
   activo: boolean;
   onPress: () => void;
 }) {
+  const styles = useEstilos(crearEstilos);
   return (
     <Pressable
       onPress={onPress}
       style={[styles.chip, activo && styles.chipActivo]}
     >
-      <Text style={styles.chipTexto}>{texto}</Text>
+      <Text style={[styles.chipTexto, activo && styles.chipTextoActivo]}>
+        {texto}
+      </Text>
     </Pressable>
   );
 }

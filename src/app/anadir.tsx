@@ -27,7 +27,7 @@ import {
   descripcionMovimiento,
   estadoVistaPrevia,
   lineasVistaPrevia,
-  TONO_VISTA_PREVIA,
+  tonoVistaPrevia,
 } from "@/features/anadir/vistaPrevia";
 import { avisoDeGasto } from "@/features/avisos/mensajes";
 import { mostrarAviso } from "@/features/avisos/store";
@@ -36,7 +36,7 @@ import { formatearLempirasCompacto, parsearLempiras } from "@/lib/formato";
 import type { PlanDeGasto } from "@/lib/money";
 import { simularMovimiento, type TipoMovimientoNuevo } from "@/lib/simulacion";
 import { styles } from "@/styles/app/anadir.styles";
-import { ACENTO_TIPO } from "@/theme";
+import { acentoTipo, useTema } from "@/theme";
 
 const TIPOS = [
   { valor: "gasto", texto: "Gasto", icono: "bajar" },
@@ -46,6 +46,7 @@ const TIPOS = [
 const SIGNO = { gasto: "−", ingreso: "+" } as const;
 
 export default function Anadir() {
+  const { tema } = useTema();
   const { db, resumen } = useResumen();
   const [tipo, setTipo] = useState<TipoMovimientoNuevo>("gasto");
   const categorias = useCategorias(tipo);
@@ -56,12 +57,12 @@ export default function Anadir() {
   const [confirmando, setConfirmando] = useState<PlanDeGasto | null>(null);
   const cancelarConfirmacion = useCallback(() => setConfirmando(null), []);
 
-  const acento = ACENTO_TIPO[tipo];
+  const acento = acentoTipo(tema)[tipo];
   const monto = parsearLempiras(texto);
   const simulacion =
     resumen && monto !== null ? simularMovimiento(resumen, tipo, monto) : null;
   const estadoPrevio = simulacion ? estadoVistaPrevia(simulacion) : null;
-  const tono = estadoPrevio ? TONO_VISTA_PREVIA[estadoPrevio] : null;
+  const tono = estadoPrevio ? tonoVistaPrevia(tema, estadoPrevio) : null;
   const puedeGuardar = monto !== null && resumen !== null && !guardando;
   const datos = (m: number) => ({
     monto: m,
@@ -159,7 +160,7 @@ export default function Anadir() {
               estado={estadoPrevio}
               porcentaje={simulacion.porcentaje}
               ancho={28}
-              tema="claro"
+              variante="fondo"
             />
             <View style={styles.vistaPreviaTextos}>
               {lineasVistaPrevia(simulacion).map((l) => (

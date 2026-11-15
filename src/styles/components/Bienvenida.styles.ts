@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   fondo: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: palette.crema,
+    backgroundColor: t.fondo,
     zIndex: 100,
     elevation: 100,
   },
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   nombre: { flexDirection: "row" },
   letra: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.logo,
     fontSize: 48,
     lineHeight: 60,

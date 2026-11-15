@@ -29,6 +29,7 @@ import {
   siguienteUmbral,
   textoDiaDelMes,
 } from "@/features/ajustes/logica";
+import { SelectorPaleta } from "@/features/ajustes/SelectorPaleta";
 import { useAjustes } from "@/features/ajustes/useAjustes";
 import { mostrarAviso } from "@/features/avisos/store";
 import { usePermiso } from "@/features/notificaciones/usePermiso";
@@ -36,8 +37,8 @@ import type { Umbrales } from "@/lib/alertas";
 import { hexDeColor } from "@/lib/colores";
 import { formatearLempirasCompacto } from "@/lib/formato";
 import { cambiarHora } from "@/lib/notificaciones";
-import { styles } from "@/styles/app/ajustes.styles";
-import { colors, palette } from "@/theme";
+import { crearEstilos } from "@/styles/app/ajustes.styles";
+import { useEstilos, useTema } from "@/theme";
 
 const TIPOS = [
   { valor: "gasto", texto: "De gasto" },
@@ -45,6 +46,8 @@ const TIPOS = [
 ] as const;
 
 export default function Ajustes() {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const { db, datos, error, recargar } = useAjustes();
   const insets = useSafeAreaInsets();
   const [tipoCategoria, setTipoCategoria] = useState<TipoMovimiento>("gasto");
@@ -73,7 +76,7 @@ export default function Ajustes() {
   if (!datos) {
     return (
       <View style={styles.centro}>
-        <ActivityIndicator color={colors.texto} />
+        <ActivityIndicator color={tema.texto} />
       </View>
     );
   }
@@ -109,7 +112,7 @@ export default function Ajustes() {
               accessibilityLabel="Volver"
               style={styles.volver}
             >
-              <Icono nombre="atras" color={palette.crema} />
+              <Icono nombre="atras" color={tema.textoSobrePanel} />
             </Pressable>
             <Text style={styles.tituloPanel}>Ajustes</Text>
           </View>
@@ -135,7 +138,7 @@ export default function Ajustes() {
             accessibilityRole="button"
             style={styles.botonAhorro}
           >
-            <Icono nombre="mas" color={palette.tinta} tamano={18} />
+            <Icono nombre="mas" color={tema.sobreAcento} tamano={18} />
             <Text style={styles.botonAhorroTexto}>Agregar al ahorro</Text>
           </Pressable>
         </View>
@@ -226,10 +229,13 @@ export default function Ajustes() {
               accessibilityRole="button"
               style={[styles.categoria, styles.categoriaNueva]}
             >
-              <Icono nombre="mas" color={palette.tinta} tamano={16} />
+              <Icono nombre="mas" color={tema.texto} tamano={16} />
               <Text style={styles.categoriaTexto}>Nueva</Text>
             </Pressable>
           </View>
+
+          <Text style={styles.seccion}>Colores</Text>
+          <SelectorPaleta />
 
           <Text style={styles.seccion}>Alertas</Text>
           {permiso && !permiso.concedido && (
@@ -343,13 +349,15 @@ function BotonPunteado({
   texto: string;
   onPress: () => void;
 }) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       style={styles.punteado}
     >
-      <Icono nombre="mas" color={palette.tinta} tamano={18} />
+      <Icono nombre="mas" color={tema.texto} tamano={18} />
       <Text style={styles.punteadoTexto}>{texto}</Text>
     </Pressable>
   );

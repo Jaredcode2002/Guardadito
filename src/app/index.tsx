@@ -33,8 +33,8 @@ import { TarjetaPendiente } from "@/features/principal/TarjetaPendiente";
 import { resumenPendientes } from "@/features/principal/textos";
 import { useResumen } from "@/features/resumen/useResumen";
 import { formatearLempirasCompacto } from "@/lib/formato";
-import { SEPARACION, styles } from "@/styles/app/index.styles";
-import { colors } from "@/theme";
+import { SEPARACION, crearEstilos } from "@/styles/app/index.styles";
+import { useEstilos, useTema } from "@/theme";
 
 const RECIENTES = 8;
 const MARGEN_TABLET = 40;
@@ -44,6 +44,8 @@ function mensajeDeError(e: unknown): string {
 }
 
 export default function Inicio() {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const { db, resumen, pendientes, movimientos, error, recargar } =
     useResumen();
   const insets = useSafeAreaInsets();
@@ -100,7 +102,7 @@ export default function Inicio() {
   if (!resumen) {
     return (
       <View style={styles.centro}>
-        <ActivityIndicator color={colors.texto} />
+        <ActivityIndicator color={tema.texto} />
       </View>
     );
   }

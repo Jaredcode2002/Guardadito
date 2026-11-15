@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 
-import { styles } from "@/styles/components/Paso.styles";
-import { palette } from "@/theme";
+import { crearEstilos } from "@/styles/components/Paso.styles";
+import { useEstilos, useTema } from "@/theme";
 
 import { Icono } from "./Icono";
 
@@ -16,6 +16,7 @@ export function Paso({
   onBajar: (() => void) | null;
   onSubir: (() => void) | null;
 }) {
+  const styles = useEstilos(crearEstilos);
   return (
     <View style={styles.fila}>
       <Boton
@@ -38,6 +39,8 @@ function Boton({
   etiqueta: string;
   onPress: (() => void) | null;
 }) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   return (
     <Pressable
       onPress={onPress ?? undefined}
@@ -46,7 +49,7 @@ function Boton({
       accessibilityLabel={etiqueta}
       style={[styles.boton, !onPress && styles.inactivo]}
     >
-      <Icono nombre={icono} color={palette.tinta} tamano={18} />
+      <Icono nombre={icono} color={tema.texto} tamano={18} />
     </Pressable>
   );
 }

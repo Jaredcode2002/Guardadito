@@ -10,24 +10,35 @@ import {
   suscribirAvisos,
   type TonoAviso,
 } from "@/features/avisos/store";
-import { styles } from "@/styles/components/Toast.styles";
-import { ANCHO_AVISO, durations, palette, spacing } from "@/theme";
+import { crearEstilos } from "@/styles/components/Toast.styles";
+import {
+  ANCHO_AVISO,
+  durations,
+  spacing,
+  useEstilos,
+  useTema,
+  type Tema,
+} from "@/theme";
 
 import { Frasco } from "./frasco/Frasco";
 import { Icono } from "./Icono";
 
 const ALTURA_BARRA = 104;
 
-const COLORES: Record<
-  TonoAviso,
-  { fondo: string; texto: string; accion: string }
-> = {
-  oscuro: { fondo: palette.panel, texto: palette.crema, accion: palette.lima },
-  ambar: { fondo: palette.ambar, texto: palette.tinta, accion: palette.tinta },
-  coral: { fondo: palette.coral, texto: palette.tinta, accion: palette.tinta },
-};
+function coloresAviso(
+  t: Tema,
+  tono: TonoAviso,
+): { fondo: string; texto: string; accion: string } {
+  if (tono === "oscuro") {
+    return { fondo: t.panel, texto: t.textoSobrePanel, accion: t.acento };
+  }
+  const fondo = tono === "ambar" ? t.liquido.mod : t.liquido.crit;
+  return { fondo, texto: t.sobreLiquido, accion: t.sobreLiquido };
+}
 
 export function Toast() {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const aviso = useSyncExternalStore(suscribirAvisos, leerAviso);
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -43,7 +54,7 @@ export function Toast() {
   }, [aviso]);
 
   if (!aviso) return null;
-  const colores = COLORES[aviso.tono];
+  const colores = coloresAviso(tema, aviso.tono);
   const conTitulo = aviso.titulo !== undefined;
 
   return (
@@ -69,7 +80,7 @@ export function Toast() {
           estado={aviso.frasco.estado}
           porcentaje={aviso.frasco.porcentaje}
           ancho={46}
-          tema="toast"
+          variante="toast"
         />
       )}
       <View style={styles.textos}>

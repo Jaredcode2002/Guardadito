@@ -8,7 +8,6 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { SQLiteProvider } from "expo-sqlite";
-import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
 
 import { Bienvenida } from "@/components/Bienvenida";
@@ -16,7 +15,7 @@ import { Toast } from "@/components/Toast";
 import { inicializarDb } from "@/db/inicializar";
 import { GestorNotificaciones } from "@/features/notificaciones/GestorNotificaciones";
 import { configurarNotificaciones } from "@/features/notificaciones/programar";
-import { colors } from "@/theme";
+import { TemaProvider, useTema } from "@/theme";
 
 SplashScreen.preventAutoHideAsync();
 configurarNotificaciones();
@@ -39,8 +38,6 @@ export default function RootLayout() {
     DMSans_600SemiBold,
   });
   const listo = fuentesListas || errorFuentes !== null;
-  const [introLista, setIntroLista] = useState(false);
-  const terminarIntro = useCallback(() => setIntroLista(true), []);
 
   useEffect(() => {
     if (listo) SplashScreen.hideAsync();
@@ -54,11 +51,24 @@ export default function RootLayout() {
       onInit={inicializarDb}
       onError={(e) => console.error("Error al abrir la base de datos", e)}
     >
-      <StatusBar style="dark" />
+      <TemaProvider>
+        <Contenido />
+      </TemaProvider>
+    </SQLiteProvider>
+  );
+}
+
+function Contenido() {
+  const { tema } = useTema();
+  const [introLista, setIntroLista] = useState(false);
+  const terminarIntro = useCallback(() => setIntroLista(true), []);
+
+  return (
+    <>
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: colors.fondo },
+          contentStyle: { backgroundColor: tema.fondo },
         }}
       >
         {HOJAS.map((nombre) => (
@@ -68,6 +78,6 @@ export default function RootLayout() {
       <Toast />
       <GestorNotificaciones activo={introLista} />
       {!introLista && <Bienvenida onTerminar={terminarIntro} />}
-    </SQLiteProvider>
+    </>
   );
 }

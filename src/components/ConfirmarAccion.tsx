@@ -6,8 +6,8 @@ import Animated, {
   useReducedMotion,
 } from "react-native-reanimated";
 
-import { styles } from "@/styles/components/ConfirmarAccion.styles";
-import { durations } from "@/theme";
+import { crearEstilos } from "@/styles/components/ConfirmarAccion.styles";
+import { durations, useEstilos } from "@/theme";
 
 export function ConfirmarAccion({
   titulo,
@@ -24,6 +24,7 @@ export function ConfirmarAccion({
   onCancelar: () => void;
   onConfirmar: () => void;
 }) {
+  const styles = useEstilos(crearEstilos);
   const reducir = useReducedMotion();
 
   useEffect(() => {
@@ -78,7 +79,9 @@ export function ConfirmarAccion({
               (pressed || ocupado) && styles.presionado,
             ]}
           >
-            <Text style={styles.botonTexto}>{textoConfirmar}</Text>
+            <Text style={[styles.botonTexto, styles.destructivoTexto]}>
+              {textoConfirmar}
+            </Text>
           </Pressable>
         </View>
       </View>

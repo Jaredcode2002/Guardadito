@@ -13,7 +13,9 @@ import {
   planearNotificaciones,
   type Disparo,
 } from "@/lib/notificaciones";
-import { palette } from "@/theme";
+import { PALETAS } from "@/theme/paletas";
+
+const MARCA = PALETAS.guardadito;
 
 const CANAL = "recordatorios";
 
@@ -43,7 +45,7 @@ async function asegurarCanal(): Promise<boolean> {
       name: "Recordatorios",
       description: "Recordatorio nocturno y avisos de pendientes",
       importance: Notifications.AndroidImportance.DEFAULT,
-      lightColor: palette.lima,
+      lightColor: MARCA.acento,
     });
     canalDisponible = true;
   } catch {
@@ -122,7 +124,7 @@ async function programarAhora(db: Db): Promise<void> {
   for (const n of plan) {
     await Notifications.scheduleNotificationAsync({
       identifier: n.id,
-      content: { title: n.titulo, body: n.cuerpo, color: palette.panel },
+      content: { title: n.titulo, body: n.cuerpo, color: MARCA.panel },
       trigger: aTrigger(n.disparo, conCanal),
     });
   }

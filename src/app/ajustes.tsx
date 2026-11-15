@@ -29,6 +29,7 @@ import {
   siguienteUmbral,
   textoDiaDelMes,
 } from "@/features/ajustes/logica";
+import { SelectorForma } from "@/features/ajustes/SelectorForma";
 import { SelectorPaleta } from "@/features/ajustes/SelectorPaleta";
 import { useAjustes } from "@/features/ajustes/useAjustes";
 import { mostrarAviso } from "@/features/avisos/store";
@@ -236,6 +237,9 @@ export default function Ajustes() {
 
           <Text style={styles.seccion}>Colores</Text>
           <SelectorPaleta />
+
+          <Text style={styles.seccion}>Forma del frasco</Text>
+          <SelectorForma />
 
           <Text style={styles.seccion}>Alertas</Text>
           {permiso && !permiso.concedido && (

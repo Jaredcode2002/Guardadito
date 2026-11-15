@@ -11,14 +11,15 @@ import Animated, {
 
 import { Frasco } from "@/components/frasco/Frasco";
 import {
-  ALTURA_OJOS,
+  alturaOjos,
+  dibujoLleno,
+  GEOMETRIAS,
   porcentajeParaNivel,
 } from "@/components/frasco/geometria";
 import { crearEstilos } from "@/styles/components/Bienvenida.styles";
-import { useEstilos } from "@/theme";
+import { useEstilos, useTema } from "@/theme";
 
 const NOMBRE = "Guardadito";
-const NIVEL_OJOS = porcentajeParaNivel(ALTURA_OJOS);
 const SALIDA = 250;
 
 const TIEMPOS = {
@@ -34,7 +35,11 @@ const TIEMPOS = {
 export function Bienvenida({ onTerminar }: { onTerminar: () => void }) {
   const styles = useEstilos(crearEstilos);
   const reducir = useReducedMotion();
-  const [porcentaje, setPorcentaje] = useState(reducir ? NIVEL_OJOS : 0);
+  const { forma } = useTema();
+  const dibujo = dibujoLleno(forma);
+  const nivelOjos = porcentajeParaNivel(alturaOjos(dibujo), dibujo);
+  const vacio = GEOMETRIAS[dibujo].tramo.desde;
+  const [porcentaje, setPorcentaje] = useState(reducir ? nivelOjos : vacio);
   const [guino, setGuino] = useState(reducir);
   const [saliendo, setSaliendo] = useState(false);
   const opacidad = useSharedValue(1);
@@ -43,13 +48,13 @@ export function Bienvenida({ onTerminar }: { onTerminar: () => void }) {
     const pasos = reducir
       ? [setTimeout(() => setSaliendo(true), TIEMPOS.salirReducido)]
       : [
-          setTimeout(() => setPorcentaje(NIVEL_OJOS), TIEMPOS.llenar),
+          setTimeout(() => setPorcentaje(nivelOjos), TIEMPOS.llenar),
           setTimeout(() => setGuino(true), TIEMPOS.guino),
           setTimeout(() => setGuino(false), TIEMPOS.abrirOjo),
           setTimeout(() => setSaliendo(true), TIEMPOS.salir),
         ];
     return () => pasos.forEach((p) => clearTimeout(p));
-  }, [reducir]);
+  }, [reducir, nivelOjos]);
 
   useEffect(() => {
     if (!saliendo) return;

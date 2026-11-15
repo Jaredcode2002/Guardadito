@@ -4,6 +4,11 @@ import {
   type Umbrales,
 } from "../lib/alertas";
 import {
+  esFormaFrasco,
+  FORMA_FRASCO_POR_DEFECTO,
+  type FormaFrasco,
+} from "../lib/frasco";
+import {
   esClavePaleta,
   PALETA_POR_DEFECTO,
   type ClavePaleta,
@@ -16,6 +21,7 @@ export type Ajustes = {
   recordatorioActivo: boolean;
   avisarPendientes: boolean;
   paleta: ClavePaleta;
+  formaFrasco: FormaFrasco;
 };
 
 const RE_HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -36,6 +42,7 @@ export async function leerAjustes(db: Db): Promise<Ajustes> {
     recordatorioActivo: mapa.get("recordatorio_activo") !== "0",
     avisarPendientes: mapa.get("avisar_pendientes") !== "0",
     paleta: leerPaleta(mapa.get("paleta")),
+    formaFrasco: leerFormaFrasco(mapa.get("forma_frasco")),
   };
 }
 
@@ -46,6 +53,15 @@ function leerPaleta(valor: string | undefined): ClavePaleta {
 export async function guardarPaleta(db: Db, paleta: string): Promise<void> {
   if (!esClavePaleta(paleta)) throw new Error(`Paleta desconocida: "${paleta}".`);
   await guardar(db, "paleta", paleta);
+}
+
+function leerFormaFrasco(valor: string | undefined): FormaFrasco {
+  return esFormaFrasco(valor) ? valor : FORMA_FRASCO_POR_DEFECTO;
+}
+
+export async function guardarFormaFrasco(db: Db, forma: string): Promise<void> {
+  if (!esFormaFrasco(forma)) throw new Error(`Forma desconocida: "${forma}".`);
+  await guardar(db, "forma_frasco", forma);
 }
 
 async function guardar(db: Db, clave: string, valor: string): Promise<void> {

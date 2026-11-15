@@ -1,4 +1,4 @@
-import { estadoFrasco } from './frasco';
+import { esFormaFrasco, estadoFrasco } from './frasco';
 
 const INICIAL = 1_000_000;
 
@@ -68,5 +68,16 @@ describe('estadoFrasco', () => {
         umbrales: { moderacion: 50, casiCero: 20 },
       }),
     ).toBe('mod');
+  });
+});
+
+describe('esFormaFrasco', () => {
+  it('acepta las tres formas y rechaza lo demás', () => {
+    expect(esFormaFrasco('frasco')).toBe(true);
+    expect(esFormaFrasco('caguama')).toBe(true);
+    expect(esFormaFrasco('pocion')).toBe(true);
+    expect(esFormaFrasco('elixir')).toBe(true);
+    expect(esFormaFrasco('poción')).toBe(false);
+    expect(esFormaFrasco(undefined)).toBe(false);
   });
 });

@@ -11,29 +11,39 @@ import {
   type ReactNode,
 } from "react";
 
-import { guardarPaleta, leerAjustes } from "@/db/ajustes";
+import { guardarFormaFrasco, guardarPaleta, leerAjustes } from "@/db/ajustes";
+import { FORMA_FRASCO_POR_DEFECTO, type FormaFrasco } from "@/lib/frasco";
 
 import type { ClavePaleta } from "./paletas";
 import { crearTema, TEMA_POR_DEFECTO, type Tema } from "./tema";
 
 type ValorTema = {
   tema: Tema;
+  forma: FormaFrasco;
   cambiarPaleta: (clave: ClavePaleta) => Promise<void>;
+  cambiarForma: (forma: FormaFrasco) => Promise<void>;
 };
 
 const ContextoTema = createContext<ValorTema>({
   tema: TEMA_POR_DEFECTO,
+  forma: FORMA_FRASCO_POR_DEFECTO,
   cambiarPaleta: async () => {},
+  cambiarForma: async () => {},
 });
 
 export function TemaProvider({ children }: { children: ReactNode }) {
   const db = useSQLiteContext();
   const [clave, setClave] = useState<ClavePaleta | null>(null);
+  const [forma, setForma] = useState<FormaFrasco>(FORMA_FRASCO_POR_DEFECTO);
 
   useEffect(() => {
     let vigente = true;
     leerAjustes(db)
-      .then((a) => vigente && setClave(a.paleta))
+      .then((a) => {
+        if (!vigente) return;
+        setForma(a.formaFrasco);
+        setClave(a.paleta);
+      })
       .catch(() => vigente && setClave(TEMA_POR_DEFECTO.clave));
     return () => {
       vigente = false;
@@ -54,9 +64,17 @@ export function TemaProvider({ children }: { children: ReactNode }) {
     [db],
   );
 
+  const cambiarForma = useCallback(
+    async (nueva: FormaFrasco) => {
+      await guardarFormaFrasco(db, nueva);
+      setForma(nueva);
+    },
+    [db],
+  );
+
   const valor = useMemo(
-    () => (tema ? { tema, cambiarPaleta } : null),
-    [tema, cambiarPaleta],
+    () => (tema ? { tema, forma, cambiarPaleta, cambiarForma } : null),
+    [tema, forma, cambiarPaleta, cambiarForma],
   );
 
   if (!valor) return null;

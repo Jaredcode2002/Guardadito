@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   barra: {
     height: 68,
     borderRadius: 34,
-    backgroundColor: palette.panel,
+    backgroundColor: t.panel,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  accesoPresionado: { backgroundColor: "rgba(246,241,231,0.1)" },
+  accesoPresionado: { backgroundColor: t.presionadoPanel },
   anadir: {
     height: 52,
     flexDirection: "row",
@@ -36,10 +36,10 @@ export const styles = StyleSheet.create({
     paddingLeft: 14,
     paddingRight: 20,
     borderRadius: 26,
-    backgroundColor: palette.lima,
+    backgroundColor: t.acento,
   },
   anadirTexto: {
-    color: palette.tinta,
+    color: t.sobreAcento,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },

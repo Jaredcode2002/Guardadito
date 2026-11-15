@@ -1,7 +1,8 @@
 import { Pressable, ScrollView, Text } from "react-native";
 
 import { mesCorto, nombreMes, type MesId } from "@/lib/fechas";
-import { styles } from "@/styles/components/SelectorMeses.styles";
+import { crearEstilos } from "@/styles/components/SelectorMeses.styles";
+import { useEstilos } from "@/theme";
 
 export function SelectorMeses({
   meses,
@@ -14,6 +15,7 @@ export function SelectorMeses({
   mesActual: MesId;
   onElegir: (m: MesId) => void;
 }) {
+  const styles = useEstilos(crearEstilos);
   return (
     <ScrollView
       horizontal

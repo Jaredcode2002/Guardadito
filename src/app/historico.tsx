@@ -26,14 +26,16 @@ import { ListaDias } from "@/features/historico/ListaDias";
 import { useHistorico } from "@/features/historico/useHistorico";
 import { mesDe, nombreMes, type MesId } from "@/lib/fechas";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { styles } from "@/styles/app/historico.styles";
-import { colors, palette } from "@/theme";
+import { crearEstilos } from "@/styles/app/historico.styles";
+import { useEstilos, useTema } from "@/theme";
 
 function nombreDelMes(mes: MesId): string {
   return nombreMes(mes).split(" ")[0].toLowerCase();
 }
 
 export default function Historico() {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const { meses, mes, movimientos, error, elegirMes } = useHistorico();
   const insets = useSafeAreaInsets();
   const [categoriaId, setCategoriaId] = useState<number | null>(null);
@@ -62,7 +64,7 @@ export default function Historico() {
   if (!vista || !mes) {
     return (
       <View style={styles.centro}>
-        <ActivityIndicator color={colors.texto} />
+        <ActivityIndicator color={tema.texto} />
       </View>
     );
   }
@@ -88,7 +90,7 @@ export default function Historico() {
               accessibilityLabel="Volver"
               style={styles.volver}
             >
-              <Icono nombre="atras" color={palette.crema} />
+              <Icono nombre="atras" color={tema.textoSobrePanel} />
             </Pressable>
             <Text style={styles.tituloPanel}>Histórico</Text>
           </View>
@@ -108,7 +110,7 @@ export default function Historico() {
             <Total etiqueta="Gastos" monto={totales.gastos} />
           </View>
           {totales.ahorroUsado > 0 && (
-            <View style={[styles.franja, { backgroundColor: palette.ambar }]}>
+            <View style={[styles.franja, styles.franjaUsado]}>
               <Text style={styles.franjaTexto}>
                 Ahorro usado en {nombreDelMes(mes)}
               </Text>
@@ -117,10 +119,10 @@ export default function Historico() {
           )}
           {totales.alAhorro > 0 && (
             <View style={[styles.franja, styles.franjaGuardado]}>
-              <Text style={[styles.franjaTexto, { color: palette.crema }]}>
+              <Text style={[styles.franjaTexto, styles.franjaGuardadoTexto]}>
                 Guardado en el ahorro
               </Text>
-              <Text style={[styles.franjaMonto, { color: palette.lima }]}>
+              <Text style={[styles.franjaMonto, styles.franjaGuardadoMonto]}>
                 {L(totales.alAhorro)}
               </Text>
             </View>
@@ -176,6 +178,7 @@ export default function Historico() {
 }
 
 function Total({ etiqueta, monto }: { etiqueta: string; monto: number }) {
+  const styles = useEstilos(crearEstilos);
   return (
     <View style={styles.total}>
       <Text style={styles.totalEtiqueta}>{etiqueta}</Text>

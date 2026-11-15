@@ -1,13 +1,13 @@
 import { StyleSheet } from "react-native";
 
-import { BORDE, fonts, GRIS, palette, PAPEL } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   dia: {
     marginTop: 16,
     marginBottom: 8,
     marginLeft: 4,
-    color: GRIS,
+    color: t.textoSecundario,
     fontFamily: fonts.bodySemiBold,
     fontSize: 13,
   },
@@ -16,8 +16,8 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 28,
     borderWidth: 1,
-    borderColor: BORDE,
-    backgroundColor: PAPEL,
+    borderColor: t.borde,
+    backgroundColor: t.superficie,
   },
   fila: {
     flexDirection: "row",
@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     gap: 12,
     minHeight: 64,
   },
-  divisor: { borderTopWidth: 1, borderTopColor: BORDE },
+  divisor: { borderTopWidth: 1, borderTopColor: t.borde },
   filaIcono: {
     width: 40,
     height: 40,
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
   filaTituloLinea: { flexDirection: "row", alignItems: "center", gap: 6 },
   filaTitulo: {
     flexShrink: 1,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },
@@ -45,18 +45,19 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 10,
-    backgroundColor: palette.panel,
+    backgroundColor: t.panel,
   },
   etiquetaTexto: {
-    color: palette.lima,
+    color: t.acento,
     fontFamily: fonts.bodySemiBold,
     fontSize: 11,
   },
-  filaSub: { color: GRIS, fontFamily: fonts.body, fontSize: 13 },
+  filaSub: { color: t.textoSecundario, fontFamily: fonts.body, fontSize: 13 },
   filaMonto: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
     fontVariant: ["tabular-nums"],
   },
+  filaMontoIngreso: { color: t.ingresoTexto },
 });

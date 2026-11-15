@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   scroll: { marginTop: 14, marginHorizontal: -22 },
   meses: { gap: 8, paddingHorizontal: 22 },
   mes: {
@@ -11,9 +11,9 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: "rgba(246,241,231,0.16)",
+    borderColor: t.lineaPanel,
   },
-  mesActivo: { borderColor: palette.lima, backgroundColor: palette.lima },
-  texto: { color: palette.crema, fontFamily: fonts.bodyMedium, fontSize: 14 },
-  textoActivo: { color: palette.tinta, fontFamily: fonts.bodySemiBold },
+  mesActivo: { borderColor: t.acento, backgroundColor: t.acento },
+  texto: { color: t.textoSobrePanel, fontFamily: fonts.bodyMedium, fontSize: 14 },
+  textoActivo: { color: t.sobreAcento, fontFamily: fonts.bodySemiBold },
 });

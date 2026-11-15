@@ -1,14 +1,14 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, fontSizes, palette, spacing } from "@/theme";
+import { fonts, fontSizes, spacing, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   toast: {
     position: "absolute",
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.md,
-    shadowColor: palette.panel,
+    shadowColor: t.panel,
     shadowOpacity: 0.22,
     shadowRadius: 15,
     shadowOffset: { width: 0, height: 12 },

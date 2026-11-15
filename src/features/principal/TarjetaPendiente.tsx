@@ -9,8 +9,8 @@ import { Icono } from "@/components/Icono";
 import type { PendienteMes } from "@/db";
 import { abreviaturaMes, diaDe, type Fecha } from "@/lib/fechas";
 import { formatearLempirasCompacto } from "@/lib/formato";
-import { styles } from "@/styles/features/principal/TarjetaPendiente.styles";
-import { durations, palette } from "@/theme";
+import { crearEstilos } from "@/styles/features/principal/TarjetaPendiente.styles";
+import { durations, useEstilos, useTema } from "@/theme";
 
 export function TarjetaPendiente({
   pendiente,
@@ -23,6 +23,8 @@ export function TarjetaPendiente({
   ocupado: boolean;
   onPagar: () => void;
 }) {
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
   const vencido = pendiente.fechaVence < hoy;
 
   return (
@@ -60,7 +62,7 @@ export function TarjetaPendiente({
         ]}
       >
         <View style={styles.botonCirculo}>
-          <Icono nombre="flecha" color={palette.lima} tamano={18} />
+          <Icono nombre="flecha" color={tema.acento} tamano={18} />
         </View>
         <Text style={styles.botonTexto}>Pagar</Text>
       </Pressable>

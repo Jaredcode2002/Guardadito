@@ -1,7 +1,9 @@
-import { palette } from "@/theme";
+import { CLAVES_PALETA, PALETAS } from "@/theme/paletas";
+import { crearTema } from "@/theme/tema";
 
 import {
   caminoOla,
+  coloresFrasco,
   colorRasgo,
   ALTURA_OJOS,
   FONDO_CUERPO,
@@ -66,34 +68,42 @@ describe("caminoOla", () => {
 });
 
 describe("colorRasgo", () => {
+  const tema = crearTema("guardadito");
+  const { texto: tinta, fondo: crema } = PALETAS.guardadito;
+  const panel = coloresFrasco(tema, "panel");
+
   it("oscuro cuando el líquido cubre el rasgo", () => {
-    expect(colorRasgo(nivelLiquido(0.68), ZONA_OJOS)).toBe(palette.tinta);
+    expect(colorRasgo(nivelLiquido(0.68), ZONA_OJOS, panel)).toBe(tinta);
   });
 
   it("claro cuando el rasgo queda sobre el vidrio vacío", () => {
-    expect(colorRasgo(nivelLiquido(0.28), ZONA_OJOS)).toBe(palette.crema);
+    expect(colorRasgo(nivelLiquido(0.28), ZONA_OJOS, panel)).toBe(crema);
   });
 
-  it("en el tema claro los rasgos siempre son oscuros", () => {
-    expect(colorRasgo(nivelLiquido(0.28), ZONA_OJOS, "claro")).toBe(
-      palette.tinta,
-    );
-    expect(colorRasgo(nivelLiquido(0.9), ZONA_OJOS, "claro")).toBe(
-      palette.tinta,
-    );
+  it("sobre el fondo claro los rasgos siempre son oscuros", () => {
+    const fondo = coloresFrasco(tema, "fondo");
+    expect(colorRasgo(nivelLiquido(0.28), ZONA_OJOS, fondo)).toBe(tinta);
+    expect(colorRasgo(nivelLiquido(0.9), ZONA_OJOS, fondo)).toBe(tinta);
   });
 
-  it("en el tema toast los rasgos se aclaran sobre el líquido oscuro", () => {
-    expect(colorRasgo(nivelLiquido(0.9), ZONA_OJOS, "toast")).toBe(
-      palette.crema,
-    );
+  it("en el toast los rasgos se aclaran sobre el líquido oscuro", () => {
+    const toast = coloresFrasco(tema, "toast");
+    expect(colorRasgo(nivelLiquido(0.9), ZONA_OJOS, toast)).toBe(crema);
   });
 
   it("al 45 % toda la cara está fuera; al 55 % la boca ya queda en el líquido", () => {
     const nivel = nivelLiquido(0.45);
-    expect(colorRasgo(nivel, ZONA_OJOS)).toBe(palette.crema);
-    expect(colorRasgo(nivel, ZONA_BOCA)).toBe(palette.crema);
-    expect(colorRasgo(nivelLiquido(0.55), ZONA_BOCA)).toBe(palette.tinta);
+    expect(colorRasgo(nivel, ZONA_OJOS, panel)).toBe(crema);
+    expect(colorRasgo(nivel, ZONA_BOCA, panel)).toBe(crema);
+    expect(colorRasgo(nivelLiquido(0.55), ZONA_BOCA, panel)).toBe(tinta);
+  });
+});
+
+describe("coloresFrasco", () => {
+  it.each(CLAVES_PALETA)("en %s el panel usa el líquido de la paleta", (clave) => {
+    expect(coloresFrasco(crearTema(clave), "panel").liquido).toEqual(
+      PALETAS[clave].liquido,
+    );
   });
 });
 

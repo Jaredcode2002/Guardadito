@@ -1,13 +1,13 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   fondo: {
     ...StyleSheet.absoluteFill,
     justifyContent: "center",
     padding: 24,
-    backgroundColor: "rgba(20,35,27,0.62)",
+    backgroundColor: t.velo,
     zIndex: 10,
     elevation: 10,
   },
@@ -18,12 +18,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     padding: 24,
     borderRadius: 36,
-    backgroundColor: palette.crema,
+    backgroundColor: t.fondo,
   },
   frasco: { alignItems: "center" },
   titulo: {
     marginTop: 10,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.display,
     fontSize: 26,
     lineHeight: 30,
@@ -35,24 +35,24 @@ export const styles = StyleSheet.create({
     paddingTop: 2,
     paddingBottom: 4,
     borderRadius: 26,
-    backgroundColor: palette.coral,
+    backgroundColor: t.liquido.crit,
   },
   pildoraTexto: {
-    color: palette.tinta,
+    color: t.sobreLiquido,
     fontFamily: fonts.display,
     fontSize: 46,
     letterSpacing: -1,
   },
   nota: {
     marginTop: 8,
-    color: "#A12F22",
+    color: t.peligroTexto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
     textAlign: "center",
   },
   detalle: {
     marginTop: 14,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.body,
     fontSize: 15,
     lineHeight: 22,
@@ -65,15 +65,16 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  mejorNo: { marginTop: 20, backgroundColor: palette.lima },
+  mejorNo: { marginTop: 20, backgroundColor: t.acento },
+  mejorNoTexto: { color: t.sobreAcento },
   igual: {
     marginTop: 10,
     borderWidth: 1.5,
-    borderColor: palette.tinta,
+    borderColor: t.texto,
   },
   presionado: { opacity: 0.6 },
   botonTexto: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 16,
   },

@@ -1,6 +1,7 @@
 import {
   guardarAvisarPendientes,
   guardarHoraRecordatorio,
+  guardarPaleta,
   guardarRecordatorioActivo,
   guardarUmbrales,
   leerAjustes,
@@ -24,6 +25,7 @@ describe("ajustes", () => {
       horaRecordatorio: "21:00",
       recordatorioActivo: true,
       avisarPendientes: true,
+      paleta: "guardadito",
     });
   });
 
@@ -32,12 +34,14 @@ describe("ajustes", () => {
     await guardarHoraRecordatorio(db, "22:30");
     await guardarAvisarPendientes(db, false);
     await guardarRecordatorioActivo(db, false);
+    await guardarPaleta(db, "noche");
 
     expect(await leerAjustes(db)).toEqual({
       umbrales: { moderacion: 40, casiCero: 15 },
       horaRecordatorio: "22:30",
       recordatorioActivo: false,
       avisarPendientes: false,
+      paleta: "noche",
     });
   });
 
@@ -62,6 +66,24 @@ describe("ajustes", () => {
       moderacion: 30,
       casiCero: 10,
     });
+  });
+});
+
+describe("paleta", () => {
+  it("rechaza una paleta que no existe sin cambiar la guardada", async () => {
+    await guardarPaleta(db, "mar");
+    await expect(guardarPaleta(db, "arcoiris")).rejects.toThrow(
+      "Paleta desconocida",
+    );
+    expect((await leerAjustes(db)).paleta).toBe("mar");
+  });
+
+  it("si la guardada ya no existe en el catálogo, vuelve a la de por defecto", async () => {
+    await db.runAsync(
+      "INSERT INTO ajuste (clave, valor) VALUES ('paleta', 'vieja')",
+      [],
+    );
+    expect((await leerAjustes(db)).paleta).toBe("guardadito");
   });
 });
 

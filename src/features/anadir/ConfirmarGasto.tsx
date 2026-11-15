@@ -15,8 +15,8 @@ import Animated, {
 
 import { Frasco } from "@/components/frasco/Frasco";
 import type { Centavos, PlanDeGasto } from "@/lib/money";
-import { styles } from "@/styles/features/anadir/ConfirmarGasto.styles";
-import { durations } from "@/theme";
+import { crearEstilos } from "@/styles/features/anadir/ConfirmarGasto.styles";
+import { durations, useEstilos } from "@/theme";
 
 import { textosConfirmacion } from "./confirmacion";
 
@@ -37,6 +37,7 @@ export function ConfirmarGasto({
   onCancelar: () => void;
   onConfirmar: () => void;
 }) {
+  const styles = useEstilos(crearEstilos);
   const t = textosConfirmacion(plan, saldoAhorro);
   const permitido = t.permitido;
   const cerrar = permitido ? "Mejor no gastar" : "Entendido";
@@ -95,7 +96,7 @@ export function ConfirmarGasto({
         accessibilityLabel={t.titulo}
       >
         <View style={styles.frasco}>
-          <Frasco estado="roto" porcentaje={0} ancho={92} tema="claro" />
+          <Frasco estado="roto" porcentaje={0} ancho={92} variante="fondo" />
         </View>
         <Text style={styles.titulo}>{t.titulo}</Text>
         <View style={styles.pildora}>
@@ -113,7 +114,7 @@ export function ConfirmarGasto({
             pressed && styles.presionado,
           ]}
         >
-          <Text style={styles.botonTexto}>{cerrar}</Text>
+          <Text style={[styles.botonTexto, styles.mejorNoTexto]}>{cerrar}</Text>
         </Pressable>
         {t.permitido && (
           <Pressable

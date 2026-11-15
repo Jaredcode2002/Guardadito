@@ -1,13 +1,13 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   fondo: {
     ...StyleSheet.absoluteFill,
     justifyContent: "center",
     padding: 24,
-    backgroundColor: "rgba(20,35,27,0.62)",
+    backgroundColor: t.velo,
     zIndex: 10,
     elevation: 10,
   },
@@ -17,17 +17,17 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 24,
     borderRadius: 36,
-    backgroundColor: palette.crema,
+    backgroundColor: t.fondo,
   },
   titulo: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.display,
     fontSize: 24,
     lineHeight: 28,
   },
   mensaje: {
     marginTop: 10,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.body,
     fontSize: 15,
     lineHeight: 22,
@@ -40,11 +40,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  cancelar: { borderWidth: 1.5, borderColor: palette.tinta },
-  destructivo: { backgroundColor: palette.coral },
+  cancelar: { borderWidth: 1.5, borderColor: t.texto },
+  destructivo: { backgroundColor: t.liquido.crit },
+  destructivoTexto: { color: t.sobreLiquido },
   presionado: { opacity: 0.6 },
   botonTexto: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 16,
   },

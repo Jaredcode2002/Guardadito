@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 
-import { fonts, GRIS, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   lista: { gap: 16 },
   fila: { gap: 6 },
   textos: {
@@ -13,12 +13,12 @@ export const styles = StyleSheet.create({
   },
   nombre: {
     flexShrink: 1,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },
   valor: {
-    color: GRIS,
+    color: t.textoSecundario,
     fontFamily: fonts.bodyMedium,
     fontSize: 14,
     fontVariant: ["tabular-nums"],

@@ -1,19 +1,19 @@
 import { StyleSheet } from "react-native";
 
-import { ANCHO_HOJA, palette } from "@/theme";
+import { ANCHO_HOJA, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   contenedor: {
     flex: 1,
     justifyContent: "flex-end",
-    backgroundColor: "rgba(20,35,27,0.55)",
+    backgroundColor: t.velo,
   },
   hoja: {
     width: "100%",
     maxWidth: ANCHO_HOJA,
     alignSelf: "center",
     maxHeight: "92%",
-    backgroundColor: palette.crema,
+    backgroundColor: t.fondo,
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     paddingTop: 12,
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     width: 44,
     height: 5,
     borderRadius: 3,
-    backgroundColor: "#EAE2D0",
+    backgroundColor: t.borde,
     marginBottom: 16,
   },
 });

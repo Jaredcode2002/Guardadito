@@ -14,7 +14,8 @@ import {
   ALTURA_OJOS,
   porcentajeParaNivel,
 } from "@/components/frasco/geometria";
-import { styles } from "@/styles/components/Bienvenida.styles";
+import { crearEstilos } from "@/styles/components/Bienvenida.styles";
+import { useEstilos } from "@/theme";
 
 const NOMBRE = "Guardadito";
 const NIVEL_OJOS = porcentajeParaNivel(ALTURA_OJOS);
@@ -31,6 +32,7 @@ const TIEMPOS = {
 } as const;
 
 export function Bienvenida({ onTerminar }: { onTerminar: () => void }) {
+  const styles = useEstilos(crearEstilos);
   const reducir = useReducedMotion();
   const [porcentaje, setPorcentaje] = useState(reducir ? NIVEL_OJOS : 0);
   const [guino, setGuino] = useState(reducir);
@@ -74,7 +76,7 @@ export function Bienvenida({ onTerminar }: { onTerminar: () => void }) {
             estado="ok"
             porcentaje={porcentaje}
             ancho={132}
-            tema="claro"
+            variante="fondo"
             guino={guino}
           />
         </Animated.View>

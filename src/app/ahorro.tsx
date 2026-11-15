@@ -15,7 +15,8 @@ import { depositarEnAhorro, registrarAhorroExistente } from "@/db";
 import { mostrarAviso } from "@/features/avisos/store";
 import { useResumen } from "@/features/resumen/useResumen";
 import { formatearLempirasCompacto, parsearLempiras } from "@/lib/formato";
-import { styles } from "@/styles/app/ahorro.styles";
+import { crearEstilos } from "@/styles/app/ahorro.styles";
+import { useEstilos } from "@/theme";
 
 type Origen = "libre" | "existente";
 
@@ -25,6 +26,7 @@ const ORIGENES = [
 ] as const;
 
 export default function Ahorro() {
+  const styles = useEstilos(crearEstilos);
   const { db, resumen } = useResumen();
   const [origen, setOrigen] = useState<Origen>("libre");
   const [texto, setTexto] = useState("");

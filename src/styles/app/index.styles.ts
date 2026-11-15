@@ -1,22 +1,22 @@
 import { StyleSheet } from "react-native";
 
-import { colors, fonts, palette } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
 export const SEPARACION = 12;
 
-export const styles = StyleSheet.create({
-  pantalla: { flex: 1, backgroundColor: colors.fondo },
-  tablet: { flex: 1, flexDirection: "row", backgroundColor: colors.fondo },
+export const crearEstilos = (t: Tema) => StyleSheet.create({
+  pantalla: { flex: 1, backgroundColor: t.fondo },
+  tablet: { flex: 1, flexDirection: "row", backgroundColor: t.fondo },
   derecha: { flex: 1 },
   centro: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: colors.fondo,
+    backgroundColor: t.fondo,
   },
   error: {
-    color: colors.peligro,
+    color: t.peligroTexto,
     fontFamily: fonts.body,
     fontSize: 16,
     textAlign: "center",
@@ -30,16 +30,16 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   encabezadoRecientes: { marginTop: 30 },
-  titulo: { color: palette.tinta, fontFamily: fonts.display, fontSize: 20 },
+  titulo: { color: t.texto, fontFamily: fonts.display, fontSize: 20 },
   tituloTablet: { fontSize: 24 },
   chip: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: "#EAE2D0",
+    backgroundColor: t.borde,
   },
   chipTexto: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodyMedium,
     fontSize: 13,
   },
@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   verTodoTexto: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 14,
     textDecorationLine: "underline",
@@ -63,12 +63,12 @@ export const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 1.5,
     borderStyle: "dashed",
-    borderColor: "#C9BFA8",
+    borderColor: t.bordeFuerte,
   },
   vacioTitulo: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },
-  vacioTexto: { color: "#4A5850", fontFamily: fonts.body, fontSize: 14 },
+  vacioTexto: { color: t.textoSecundario, fontFamily: fonts.body, fontSize: 14 },
 });

@@ -16,6 +16,7 @@ export type GastoCategoria = {
 
 export function gastosPorCategoria(
   movimientos: readonly Movimiento[],
+  colorPendientes: string = COLOR_PENDIENTES,
 ): GastoCategoria[] {
   const grupos = new Map<string, Omit<GastoCategoria, "porcentaje">>();
   const sumar = (clave: string, nombre: string, color: string, monto: Centavos) => {
@@ -31,7 +32,7 @@ export function gastosPorCategoria(
   for (const m of movimientos) {
     if (m.tipo !== "gasto") continue;
     if (m.origen === "pendiente") {
-      sumar("pendientes", "Gastos fijos", COLOR_PENDIENTES, m.monto);
+      sumar("pendientes", "Gastos fijos", colorPendientes, m.monto);
     } else if (m.origen === "normal") {
       if (m.categoriaId === null || m.categoria === null) {
         sumar("sin", "Sin categoría", COLOR_SIN_CATEGORIA, m.monto);

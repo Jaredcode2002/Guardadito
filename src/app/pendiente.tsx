@@ -24,9 +24,11 @@ import { parsearDiaDelMes } from "@/features/ajustes/logica";
 import { mostrarAviso } from "@/features/avisos/store";
 import { formatearNumero, parsearLempiras } from "@/lib/formato";
 import { normalizarNombre } from "@/lib/nombres";
-import { styles } from "@/styles/app/pendiente.styles";
+import { crearEstilos } from "@/styles/app/pendiente.styles";
+import { useEstilos } from "@/theme";
 
 export default function Pendiente() {
+  const styles = useEstilos(crearEstilos);
   const db = useSQLiteContext();
   const { id } = useLocalSearchParams<{ id?: string }>();
   const editando = id !== undefined;

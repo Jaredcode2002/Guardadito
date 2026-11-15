@@ -1,31 +1,20 @@
 import type { EstadoFrasco } from "@/lib/frasco";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
 import { sumar, type Centavos } from "@/lib/money";
-import { palette } from "@/theme";
-
-export const CHIP_ESTADO: Record<EstadoFrasco, { texto: string; color: string }> =
-  {
-    ok: { texto: "En orden", color: palette.lima },
-    mod: { texto: "Ve más despacio", color: palette.ambar },
-    crit: { texto: "Casi en cero", color: palette.coral },
-    zero: { texto: "En cero", color: palette.coral },
-    roto: { texto: "Ahorro tocado", color: palette.coral },
-  };
-
-export const COLOR_LIBRE: Record<EstadoFrasco, string> = {
-  ok: palette.lima,
-  mod: palette.ambar,
-  crit: palette.coral,
-  zero: palette.coral,
-  roto: palette.coral,
+export const CHIP_ESTADO: Record<EstadoFrasco, string> = {
+  ok: "En orden",
+  mod: "Ve más despacio",
+  crit: "Casi en cero",
+  zero: "En cero",
+  roto: "Ahorro tocado",
 };
 
 export function chipDelPanel(d: {
   estado: EstadoFrasco;
   libre: Centavos;
-}): { texto: string; color: string } {
-  if (d.estado === "roto" && d.libre < 0) return { texto: "En negativo", color: palette.coral };
-  return CHIP_ESTADO[d.estado];
+}): { texto: string; estado: EstadoFrasco } {
+  if (d.estado === "roto" && d.libre < 0) return { texto: "En negativo", estado: "crit" };
+  return { texto: CHIP_ESTADO[d.estado], estado: d.estado };
 }
 
 export type DatosPanel = {

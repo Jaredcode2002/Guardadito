@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
 
-import { colors, fonts, palette, TEXTO_SUAVE } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   panel: {
     overflow: "hidden",
-    backgroundColor: colors.panel,
+    backgroundColor: t.panel,
     borderTopRightRadius: 44,
     borderBottomRightRadius: 44,
     paddingRight: 32,
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 150,
-    backgroundColor: "rgba(200,241,89,0.07)",
+    backgroundColor: t.brilloPanel,
   },
   desplazable: { flex: 1 },
   contenido: { paddingBottom: 16 },
@@ -26,25 +26,25 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  mes: { color: TEXTO_SUAVE, fontFamily: fonts.bodyMedium, fontSize: 15 },
+  mes: { color: t.textoSobrePanelSuave, fontFamily: fonts.bodyMedium, fontSize: 15 },
   chip: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
   chipTexto: {
-    color: palette.tinta,
+    color: t.sobreLiquido,
     fontFamily: fonts.bodySemiBold,
     fontSize: 13,
   },
   etiqueta: {
-    color: TEXTO_SUAVE,
+    color: t.textoSobrePanelSuave,
     fontFamily: fonts.bodySemiBold,
     fontSize: 13,
     letterSpacing: 1.3,
   },
   etiquetaDinero: { marginTop: 22 },
   dinero: { flexDirection: "row", alignItems: "baseline", gap: 6 },
-  moneda: { color: TEXTO_SUAVE, fontFamily: fonts.display, fontSize: 30 },
+  moneda: { color: t.textoSobrePanelSuave, fontFamily: fonts.display, fontSize: 30 },
   dineroNumero: {
     flexShrink: 1,
-    color: palette.crema,
+    color: t.textoSobrePanel,
     fontFamily: fonts.display,
     fontSize: 84,
     lineHeight: 92,
@@ -66,13 +66,13 @@ export const styles = StyleSheet.create({
   },
   detalle: {
     marginTop: 4,
-    color: TEXTO_SUAVE,
+    color: t.textoSobrePanelSuave,
     fontFamily: fonts.body,
     fontSize: 14,
   },
   aviso: {
     marginTop: 6,
-    color: palette.coral,
+    color: t.liquido.crit,
     fontFamily: fonts.bodySemiBold,
     fontSize: 14,
   },
@@ -85,11 +85,11 @@ export const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 20,
     borderRadius: 28,
-    backgroundColor: palette.panelSecundario,
+    backgroundColor: t.panelSecundario,
   },
   ahorroTextos: { flex: 1, minWidth: 0 },
   ahorroMonto: {
-    color: palette.crema,
+    color: t.textoSobrePanel,
     fontFamily: fonts.display,
     fontSize: 30,
   },

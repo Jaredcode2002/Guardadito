@@ -2,17 +2,15 @@ import type { EstadoFrasco } from "@/lib/frasco";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
 import { gastoPermitido } from "@/lib/money";
 import type { Simulacion } from "@/lib/simulacion";
+import type { Tema } from "@/theme/tema";
 
-export const TONO_VISTA_PREVIA: Record<
-  EstadoFrasco,
-  { fondo: string; texto: string }
-> = {
-  ok: { fondo: "#E4F3C4", texto: "#2C5A12" },
-  mod: { fondo: "#FBEAC4", texto: "#6B4800" },
-  crit: { fondo: "#FFE1DB", texto: "#8A2A1B" },
-  zero: { fondo: "#FFE1DB", texto: "#8A2A1B" },
-  roto: { fondo: "#FFE1DB", texto: "#8A2A1B" },
-};
+export function tonoVistaPrevia(
+  tema: Tema,
+  estado: EstadoFrasco,
+): { fondo: string; texto: string } {
+  const tono = tema.tono[estado === "ok" || estado === "mod" ? estado : "crit"];
+  return { fondo: tono.suave, texto: tono.texto };
+}
 
 function sinFondos(s: Simulacion): boolean {
   return s.plan !== null && !gastoPermitido(s.plan);

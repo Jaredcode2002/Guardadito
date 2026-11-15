@@ -1,19 +1,19 @@
 import { StyleSheet } from "react-native";
 
-import { colors, fonts, fontSizes, palette, radii, spacing } from "@/theme";
+import { fonts, fontSizes, radii, spacing, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
-  pantalla: { flex: 1, backgroundColor: colors.fondo },
+export const crearEstilos = (t: Tema) => StyleSheet.create({
+  pantalla: { flex: 1, backgroundColor: t.fondo },
   contenido: { padding: spacing.lg, gap: spacing.lg },
   titulo: {
-    color: colors.texto,
+    color: t.texto,
     fontFamily: fonts.display,
     fontSize: fontSizes.xl,
   },
   panel: {
     alignItems: "center",
     gap: spacing.sm,
-    backgroundColor: colors.panel,
+    backgroundColor: t.panel,
     borderRadius: radii.lg,
     padding: spacing.xl,
   },
@@ -24,12 +24,12 @@ export const styles = StyleSheet.create({
   },
   muestra: { alignItems: "center", gap: spacing.xs },
   etiqueta: {
-    color: colors.textoSobrePanel,
+    color: t.textoSobrePanel,
     fontFamily: fonts.bodyMedium,
     fontSize: fontSizes.md,
   },
   etiquetaChica: {
-    color: colors.textoSobrePanel,
+    color: t.textoSobrePanel,
     fontFamily: fonts.body,
     fontSize: fontSizes.xs,
   },
@@ -39,22 +39,23 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: spacing.lg,
     borderRadius: radii.pill,
-    backgroundColor: "#EAE2D0",
+    backgroundColor: t.borde,
   },
-  chipActivo: { backgroundColor: palette.lima },
+  chipActivo: { backgroundColor: t.acento },
   chipTexto: {
-    color: colors.texto,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: fontSizes.sm,
   },
+  chipTextoActivo: { color: t.sobreAcento },
   volver: {
     alignItems: "center",
     paddingVertical: spacing.md,
     borderRadius: radii.pill,
-    backgroundColor: colors.panel,
+    backgroundColor: t.panel,
   },
   volverTexto: {
-    color: colors.textoSobrePanel,
+    color: t.textoSobrePanel,
     fontFamily: fonts.bodySemiBold,
     fontSize: fontSizes.md,
   },

@@ -1,28 +1,21 @@
 import { StyleSheet } from "react-native";
 
-import {
-  ANCHO_CONTENIDO,
-  colors,
-  fonts,
-  GRIS,
-  palette,
-  TEXTO_SUAVE,
-} from "@/theme";
+import { ANCHO_CONTENIDO, fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
+export const crearEstilos = (t: Tema) => StyleSheet.create({
   columna: { width: "100%", maxWidth: ANCHO_CONTENIDO, alignSelf: "center" },
-  pantalla: { flex: 1, backgroundColor: colors.fondo },
+  pantalla: { flex: 1, backgroundColor: t.fondo },
   centro: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-    backgroundColor: colors.fondo,
+    backgroundColor: t.fondo,
   },
-  error: { color: colors.peligro, fontFamily: fonts.body, fontSize: 16 },
+  error: { color: t.peligroTexto, fontFamily: fonts.body, fontSize: 16 },
   panel: {
     overflow: "hidden",
-    backgroundColor: colors.panel,
+    backgroundColor: t.panel,
     borderBottomLeftRadius: 40,
     borderBottomRightRadius: 40,
     paddingHorizontal: 22,
@@ -35,7 +28,7 @@ export const styles = StyleSheet.create({
     width: 230,
     height: 230,
     borderRadius: 115,
-    backgroundColor: "rgba(200,241,89,0.07)",
+    backgroundColor: t.brilloPanel,
   },
   encabezado: { flexDirection: "row", alignItems: "center", gap: 4 },
   volver: {
@@ -46,7 +39,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tituloPanel: {
-    color: palette.crema,
+    color: t.textoSobrePanel,
     fontFamily: fonts.display,
     fontSize: 34,
     letterSpacing: -0.5,
@@ -57,12 +50,12 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 22,
-    backgroundColor: palette.panelSecundario,
+    backgroundColor: t.panelSecundario,
   },
-  totalEtiqueta: { color: TEXTO_SUAVE, fontFamily: fonts.body, fontSize: 12 },
+  totalEtiqueta: { color: t.textoSobrePanelSuave, fontFamily: fonts.body, fontSize: 12 },
   totalMonto: {
     marginTop: 2,
-    color: palette.crema,
+    color: t.textoSobrePanel,
     fontFamily: fonts.display,
     fontSize: 22,
   },
@@ -75,14 +68,17 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 22,
   },
-  franjaGuardado: { backgroundColor: palette.panelSecundario },
+  franjaUsado: { backgroundColor: t.liquido.mod },
+  franjaGuardado: { backgroundColor: t.panelSecundario },
+  franjaGuardadoTexto: { color: t.textoSobrePanel },
+  franjaGuardadoMonto: { color: t.acento },
   franjaTexto: {
-    color: palette.tinta,
+    color: t.sobreLiquido,
     fontFamily: fonts.bodySemiBold,
     fontSize: 14,
   },
   franjaMonto: {
-    color: palette.tinta,
+    color: t.sobreLiquido,
     fontFamily: fonts.display,
     fontSize: 24,
   },
@@ -92,7 +88,7 @@ export const styles = StyleSheet.create({
   resumenFiltro: {
     marginTop: 10,
     marginLeft: 4,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 14,
   },
@@ -105,15 +101,15 @@ export const styles = StyleSheet.create({
     borderRadius: 26,
     borderWidth: 1.5,
     borderStyle: "dashed",
-    borderColor: "#C9BFA8",
+    borderColor: t.bordeFuerte,
   },
   vacioTitulo: {
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },
   vacioTexto: {
-    color: GRIS,
+    color: t.textoSecundario,
     fontFamily: fonts.body,
     fontSize: 14,
     textAlign: "center",

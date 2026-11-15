@@ -2,8 +2,8 @@ import { Text, View } from "react-native";
 
 import { Icono, type NombreIcono } from "@/components/Icono";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { styles } from "@/styles/features/historico/ListaDias.styles";
-import { BORDE, palette } from "@/theme";
+import { crearEstilos } from "@/styles/features/historico/ListaDias.styles";
+import { useEstilos, useTema, type Tema } from "@/theme";
 
 import {
   signoDe,
@@ -12,19 +12,22 @@ import {
   type TipoFila,
 } from "./logica";
 
-const VERDE = "#1F7A52";
-
-const ICONO_FILA: Record<
-  TipoFila,
-  { icono: NombreIcono; fondo: string; trazo: string }
-> = {
-  gasto: { icono: "bajar", fondo: BORDE, trazo: palette.tinta },
-  pendiente: { icono: "bajar", fondo: BORDE, trazo: palette.tinta },
-  ingreso: { icono: "subir", fondo: palette.lima, trazo: palette.tinta },
-  alAhorro: { icono: "mas", fondo: palette.panel, trazo: palette.lima },
-};
+function iconoFila(
+  t: Tema,
+  tipo: TipoFila,
+): { icono: NombreIcono; fondo: string; trazo: string } {
+  switch (tipo) {
+    case "ingreso":
+      return { icono: "subir", fondo: t.acento, trazo: t.sobreAcento };
+    case "alAhorro":
+      return { icono: "mas", fondo: t.panel, trazo: t.acento };
+    default:
+      return { icono: "bajar", fondo: t.borde, trazo: t.texto };
+  }
+}
 
 export function ListaDias({ dias }: { dias: readonly DiaHistorico[] }) {
+  const styles = useEstilos(crearEstilos);
   return (
     <>
       {dias.map((d) => (
@@ -42,7 +45,9 @@ export function ListaDias({ dias }: { dias: readonly DiaHistorico[] }) {
 }
 
 function Fila({ fila, primera }: { fila: FilaHistorico; primera: boolean }) {
-  const icono = ICONO_FILA[fila.tipo];
+  const styles = useEstilos(crearEstilos);
+  const { tema } = useTema();
+  const icono = iconoFila(tema, fila.tipo);
   const signo = signoDe(fila.tipo);
   return (
     <View
@@ -71,7 +76,7 @@ function Fila({ fila, primera }: { fila: FilaHistorico; primera: boolean }) {
       <Text
         style={[
           styles.filaMonto,
-          fila.tipo === "ingreso" && { color: VERDE },
+          fila.tipo === "ingreso" && styles.filaMontoIngreso,
         ]}
       >
         {signo}

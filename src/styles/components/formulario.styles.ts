@@ -1,11 +1,11 @@
 import { StyleSheet } from "react-native";
 
-import { BORDE, fonts, GRIS, palette, PAPEL } from "@/theme";
+import { fonts, type Tema } from "@/theme";
 
-export const styles = StyleSheet.create({
-  titulo: { color: palette.tinta, fontFamily: fonts.display, fontSize: 24 },
+export const crearEstilos = (t: Tema) => StyleSheet.create({
+  titulo: { color: t.texto, fontFamily: fonts.display, fontSize: 24 },
   etiqueta: {
-    color: GRIS,
+    color: t.textoSecundario,
     fontFamily: fonts.bodySemiBold,
     fontSize: 12,
     letterSpacing: 1.2,
@@ -15,11 +15,11 @@ export const styles = StyleSheet.create({
   campo: {
     height: 48,
     borderWidth: 1,
-    borderColor: BORDE,
+    borderColor: t.borde,
     borderRadius: 16,
     paddingHorizontal: 14,
-    backgroundColor: PAPEL,
-    color: palette.tinta,
+    backgroundColor: t.superficie,
+    color: t.texto,
     fontFamily: fonts.body,
     fontSize: 15,
   },
@@ -37,11 +37,11 @@ export const styles = StyleSheet.create({
     fontFamily: fonts.display,
     fontSize: 44,
   },
-  montoL: { color: GRIS, fontFamily: fonts.display, fontSize: 30 },
+  montoL: { color: t.textoSecundario, fontFamily: fonts.display, fontSize: 30 },
   montoInput: {
     flex: 1,
     padding: 0,
-    color: palette.tinta,
+    color: t.texto,
     fontFamily: fonts.display,
     fontSize: 60,
   },
@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
     gap: 4,
     padding: 4,
     borderRadius: 26,
-    backgroundColor: palette.panel,
+    backgroundColor: t.panel,
   },
   opcion: {
     flex: 1,
@@ -61,34 +61,34 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  opcionTexto: { color: palette.crema, fontFamily: fonts.bodyMedium, fontSize: 15 },
-  opcionTextoActivo: { color: palette.tinta, fontFamily: fonts.bodySemiBold },
+  opcionTexto: { color: t.textoSobrePanel, fontFamily: fonts.bodyMedium, fontSize: 15 },
+  opcionTextoActivo: { color: t.sobreLiquido, fontFamily: fonts.bodySemiBold },
   chip: {
     height: 44,
     justifyContent: "center",
     paddingHorizontal: 16,
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: BORDE,
-    backgroundColor: PAPEL,
+    borderColor: t.borde,
+    backgroundColor: t.superficie,
   },
-  chipActivo: { borderColor: palette.panel, backgroundColor: palette.panel },
-  chipTexto: { color: palette.tinta, fontFamily: fonts.bodyMedium, fontSize: 14 },
-  chipTextoActivo: { color: palette.crema, fontFamily: fonts.bodySemiBold },
+  chipActivo: { borderColor: t.panel, backgroundColor: t.panel },
+  chipTexto: { color: t.texto, fontFamily: fonts.bodyMedium, fontSize: 14 },
+  chipTextoActivo: { color: t.textoSobrePanel, fontFamily: fonts.bodySemiBold },
   principal: {
     height: 56,
     marginTop: 18,
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: palette.panel,
+    backgroundColor: t.panel,
   },
   principalTexto: {
-    color: palette.crema,
+    color: t.textoSobrePanel,
     fontFamily: fonts.bodySemiBold,
     fontSize: 16,
   },
-  principalTextoAcento: { color: palette.tinta },
+  principalTextoAcento: { color: t.sobreLiquido },
   inactivo: { opacity: 0.4 },
   peligro: {
     height: 48,
@@ -97,9 +97,9 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  peligroTexto: { color: "#B23A26", fontFamily: fonts.bodySemiBold, fontSize: 15 },
+  peligroTexto: { color: t.peligroTexto, fontFamily: fonts.bodySemiBold, fontSize: 15 },
   error: {
-    color: "#B23A26",
+    color: t.peligroTexto,
     fontFamily: fonts.bodyMedium,
     fontSize: 14,
     marginTop: 10,

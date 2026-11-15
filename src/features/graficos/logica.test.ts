@@ -50,7 +50,7 @@ describe("gastosPorCategoria", () => {
   it("agrupa los gastos reales y los ordena de mayor a menor", () => {
     const grupos = gastosPorCategoria(MES);
     expect(grupos.map((g) => [g.nombre, g.monto, g.color])).toEqual([
-      ["Pendientes", 830_000, COLOR_PENDIENTES],
+      ["Gastos fijos", 830_000, COLOR_PENDIENTES],
       ["Comida de la calle", 310_000, "#2A78D6"],
       ["Ocio", 240_000, "#EB6834"],
       ["Sin categoría", 60_000, COLOR_SIN_CATEGORIA],

@@ -31,7 +31,7 @@ export function gastosPorCategoria(
   for (const m of movimientos) {
     if (m.tipo !== "gasto") continue;
     if (m.origen === "pendiente") {
-      sumar("pendientes", "Pendientes", COLOR_PENDIENTES, m.monto);
+      sumar("pendientes", "Gastos fijos", COLOR_PENDIENTES, m.monto);
     } else if (m.origen === "normal") {
       if (m.categoriaId === null || m.categoria === null) {
         sumar("sin", "Sin categoría", COLOR_SIN_CATEGORIA, m.monto);

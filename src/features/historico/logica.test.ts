@@ -98,12 +98,12 @@ describe("armarFilas", () => {
     });
   });
 
-  it("pendiente pagado con su etiqueta, como en el diseño", () => {
+  it("pendiente pagado aparece como Gasto fijo", () => {
     expect(filas.find((f) => f.id === RENTA.id)).toMatchObject({
       tipo: "pendiente",
       titulo: "Renta",
-      subtitulo: "Pendiente pagado",
-      etiqueta: "Pendiente",
+      subtitulo: "Pagado",
+      etiqueta: "Gasto fijo",
     });
   });
 

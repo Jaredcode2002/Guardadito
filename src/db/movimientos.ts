@@ -94,6 +94,19 @@ export async function listarMovimientosDelMes(
   );
 }
 
+export async function listarMovimientosEntre(
+  db: Db,
+  desde: MesId,
+  hasta: MesId,
+): Promise<Movimiento[]> {
+  return db.getAllAsync<Movimiento>(
+    `${SELECT_MOVIMIENTO}
+     WHERE m.fecha BETWEEN ? AND ?
+     ORDER BY m.fecha ASC, m.id ASC`,
+    [`${desde}-01`, ultimaFechaDelMes(hasta)],
+  );
+}
+
 export async function totalesMovimientos(
   db: Db,
 ): Promise<{ ingresos: Centavos; gastos: Centavos }> {

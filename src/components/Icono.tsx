@@ -21,6 +21,10 @@ const ICONOS = {
   cerrar: { trazos: ["M6 6l12 12M18 6L6 18"], circulos: [] },
   bajar: { trazos: ["M12 5v14M6 13l6 6 6-6"], circulos: [] },
   subir: { trazos: ["M12 19V5M6 11l6-6 6 6"], circulos: [] },
+  basura: {
+    trazos: ["M4 7h16M9 7V4h6v3", "M6 7l1 13h10l1-13M10 11v5M14 11v5"],
+    circulos: [],
+  },
 } satisfies Record<
   string,
   { trazos: string[]; circulos: [number, number, number][] }

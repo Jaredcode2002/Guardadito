@@ -340,23 +340,6 @@ export default function Ajustes() {
               />
             </View>
           </View>
-
-          <Text style={styles.seccion}>Historial</Text>
-          <View style={styles.tarjeta}>
-            <Pressable
-              onPress={() => router.push("/borrar-historial")}
-              accessibilityRole="button"
-              style={styles.fila}
-            >
-              <View style={styles.filaTextos}>
-                <Text style={styles.filaTitulo}>Borrar historial</Text>
-                <Text style={styles.filaSub}>
-                  Borra meses viejos sin cambiar tus saldos de hoy
-                </Text>
-              </View>
-              <Icono nombre="flecha" color={tema.textoSecundario} tamano={20} />
-            </Pressable>
-          </View>
         </View>
       </ScrollView>
     </View>

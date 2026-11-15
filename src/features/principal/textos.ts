@@ -59,7 +59,7 @@ export function textosPanel(d: DatosPanel): {
       aviso:
         d.saldoAhorro > 0
           ? "Lo que gastes sale de tu ahorro"
-          : "Sin ahorro: lo que gastes quedará en negativo",
+          : "Sin ahorro: no podrás gastar hasta tu próximo ingreso",
     };
   }
 

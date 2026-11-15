@@ -1,6 +1,6 @@
 import { avisoDeGasto, type SituacionParaAviso } from "./mensajes";
 
-const SIN_NADA = { ahorroUsado: 0, enNegativo: 0, alerta: null };
+const SIN_NADA = { ahorroUsado: 0, alerta: null };
 
 const situacion = (s: Partial<SituacionParaAviso>): SituacionParaAviso => ({
   libre: 70_000,
@@ -52,7 +52,7 @@ describe("avisoDeGasto", () => {
 
   it("tocar el ahorro tiene prioridad sobre la alerta de cero", () => {
     const a = avisoDeGasto(
-      { monto: 45_000, ahorroUsado: 25_000, enNegativo: 0, alerta: "cero" },
+      { monto: 45_000, ahorroUsado: 25_000, alerta: "cero" },
       situacion({ libre: 0, porcentaje: 0, estado: "roto", saldoAhorro: 575_000 }),
     );
     expect(a).toMatchObject({
@@ -63,22 +63,11 @@ describe("avisoDeGasto", () => {
     });
   });
 
-  it("si el ahorro no alcanzó, dice cuánto faltó", () => {
+  it("si el gasto vació el ahorro, dice que quedó en L 0", () => {
     const a = avisoDeGasto(
-      { monto: 45_000, ahorroUsado: 10_000, enNegativo: 5_000, alerta: null },
-      situacion({ libre: -5_000, porcentaje: 0, estado: "roto", saldoAhorro: 0 }),
+      { monto: 45_000, ahorroUsado: 10_000, alerta: "cero" },
+      situacion({ libre: 0, porcentaje: 0, estado: "roto", saldoAhorro: 0 }),
     );
-    expect(a.texto).toContain("Tu ahorro quedó en L 0 y te faltaron L 50.");
-  });
-
-  it("negativo sin ahorro", () => {
-    const a = avisoDeGasto(
-      { monto: 45_000, ahorroUsado: 0, enNegativo: 15_000, alerta: null },
-      situacion({ libre: -15_000, porcentaje: 0, estado: "roto", saldoAhorro: 0 }),
-    );
-    expect(a).toMatchObject({
-      titulo: "Quedaste en negativo",
-      texto: "Te faltaron L 150. Se repondrá con tu próximo ingreso.",
-    });
+    expect(a.texto).toContain("Tu ahorro quedó en L 0.");
   });
 });

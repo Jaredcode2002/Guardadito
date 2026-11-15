@@ -41,7 +41,7 @@ export type PlanDeGasto = {
   gasto: Centavos;
   desdeLibre: Centavos;
   desdeAhorro: Centavos;
-  enNegativo: Centavos;
+  faltante: Centavos;
 };
 
 export function planificarGasto(
@@ -55,8 +55,12 @@ export function planificarGasto(
     gasto,
     desdeLibre,
     desdeAhorro,
-    enNegativo: gasto - desdeLibre - desdeAhorro,
+    faltante: gasto - desdeLibre - desdeAhorro,
   };
+}
+
+export function gastoPermitido(plan: PlanDeGasto): boolean {
+  return plan.faltante === 0;
 }
 
 export function esMontoValido(monto: number): boolean {

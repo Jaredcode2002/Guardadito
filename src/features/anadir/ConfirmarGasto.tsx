@@ -38,12 +38,18 @@ export function ConfirmarGasto({
   onConfirmar: () => void;
 }) {
   const t = textosConfirmacion(plan, saldoAhorro);
+  const permitido = t.permitido;
+  const cerrar = permitido ? "Mejor no gastar" : "Entendido";
   const reducir = useReducedMotion();
   const x = useSharedValue(0);
 
   useEffect(() => {
     const espera = setTimeout(() => {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      Haptics.notificationAsync(
+        permitido
+          ? Haptics.NotificationFeedbackType.Warning
+          : Haptics.NotificationFeedbackType.Error,
+      );
     }, RETRASO_TEMBLOR);
     if (!reducir) {
       const paso = DURACION_TEMBLOR / PASOS_TEMBLOR.length;
@@ -56,7 +62,7 @@ export function ConfirmarGasto({
       );
     }
     return () => clearTimeout(espera);
-  }, [reducir, x]);
+  }, [permitido, reducir, x]);
 
   useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
@@ -80,7 +86,7 @@ export function ConfirmarGasto({
         style={StyleSheet.absoluteFill}
         onPress={onCancelar}
         accessibilityRole="button"
-        accessibilityLabel="Mejor no gastar"
+        accessibilityLabel={cerrar}
       />
       <Animated.View
         style={[styles.tarjeta, temblor]}
@@ -95,7 +101,7 @@ export function ConfirmarGasto({
         <View style={styles.pildora}>
           <Text style={styles.pildoraTexto}>{t.destacado}</Text>
         </View>
-        {t.negativo && <Text style={styles.negativo}>{t.negativo}</Text>}
+        {t.nota && <Text style={styles.nota}>{t.nota}</Text>}
         <Text style={styles.detalle}>{t.detalle}</Text>
 
         <Pressable
@@ -107,21 +113,23 @@ export function ConfirmarGasto({
             pressed && styles.presionado,
           ]}
         >
-          <Text style={styles.botonTexto}>Mejor no gastar</Text>
+          <Text style={styles.botonTexto}>{cerrar}</Text>
         </Pressable>
-        <Pressable
-          onPress={onConfirmar}
-          disabled={ocupado}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: ocupado }}
-          style={({ pressed }) => [
-            styles.boton,
-            styles.igual,
-            (pressed || ocupado) && styles.presionado,
-          ]}
-        >
-          <Text style={styles.botonTexto}>Registrar de todos modos</Text>
-        </Pressable>
+        {t.permitido && (
+          <Pressable
+            onPress={onConfirmar}
+            disabled={ocupado}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: ocupado }}
+            style={({ pressed }) => [
+              styles.boton,
+              styles.igual,
+              (pressed || ocupado) && styles.presionado,
+            ]}
+          >
+            <Text style={styles.botonTexto}>Registrar de todos modos</Text>
+          </Pressable>
+        )}
       </Animated.View>
     </Animated.View>
   );

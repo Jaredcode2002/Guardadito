@@ -1,15 +1,16 @@
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import type { Centavos, PlanDeGasto } from "@/lib/money";
+import { gastoPermitido, type Centavos, type PlanDeGasto } from "@/lib/money";
 
 export type TextosConfirmacion = {
+  permitido: boolean;
   titulo: string;
   destacado: string;
-  negativo: string | null;
+  nota: string | null;
   detalle: string;
 };
 
 export function requiereConfirmacion(plan: PlanDeGasto): boolean {
-  return plan.desdeAhorro > 0 || plan.enNegativo > 0;
+  return plan.desdeAhorro > 0 || !gastoPermitido(plan);
 }
 
 function inicio(plan: PlanDeGasto): string {
@@ -18,19 +19,28 @@ function inicio(plan: PlanDeGasto): string {
     : `Ya no te queda libre y el gasto es ${L(plan.gasto)}.`;
 }
 
+function recursos(plan: PlanDeGasto): string {
+  const libre =
+    plan.desdeLibre > 0 ? `Tu libre es ${L(plan.desdeLibre)}` : "Ya no te queda libre";
+  const ahorro =
+    plan.desdeAhorro > 0 ? `tu ahorro es ${L(plan.desdeAhorro)}` : "no tienes ahorro";
+  return `${libre}, ${ahorro} y el gasto es ${L(plan.gasto)}.`;
+}
+
 export function textosConfirmacion(
   plan: PlanDeGasto,
   saldoAhorro: Centavos,
 ): TextosConfirmacion {
-  const negativo =
-    plan.enNegativo > 0 ? `y quedarás ${L(plan.enNegativo)} en negativo` : null;
-
-  if (plan.desdeAhorro === 0) {
+  if (!gastoPermitido(plan)) {
     return {
-      titulo: "Este gasto te dejará en negativo",
-      destacado: L(plan.enNegativo),
-      negativo: null,
-      detalle: `${inicio(plan)} No tienes ahorro que lo cubra: el faltante se repone con tu próximo ingreso.`,
+      permitido: false,
+      titulo: "No te alcanza para este gasto",
+      destacado: L(plan.faltante),
+      nota:
+        plan.desdeAhorro > 0
+          ? "es lo que te falta, aun usando tu ahorro"
+          : "es lo que te falta",
+      detalle: `${recursos(plan)} No se registrará: espera tu próximo ingreso o elige un monto menor.`,
     };
   }
 
@@ -38,15 +48,12 @@ export function textosConfirmacion(
     plan.desdeLibre > 0
       ? `Los ${L(plan.desdeAhorro)} que faltan`
       : `Los ${L(plan.desdeAhorro)}`;
-  const detalle =
-    plan.enNegativo > 0
-      ? `${inicio(plan)} Tu ahorro solo alcanza para ${L(plan.desdeAhorro)} y quedaría en L 0. Lo demás se repone con tu próximo ingreso.`
-      : `${inicio(plan)} ${cuanto} saldrán de tu ahorro, que quedaría en ${L(saldoAhorro - plan.desdeAhorro)}.`;
 
   return {
+    permitido: true,
     titulo: "Este gasto tocará tu ahorro",
     destacado: L(plan.desdeAhorro),
-    negativo,
-    detalle,
+    nota: null,
+    detalle: `${inicio(plan)} ${cuanto} saldrán de tu ahorro, que quedaría en ${L(saldoAhorro - plan.desdeAhorro)}.`,
   };
 }

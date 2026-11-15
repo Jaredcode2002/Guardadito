@@ -8,7 +8,6 @@ import type { AvisoNuevo } from "./store";
 export type ResultadoParaAviso = {
   monto: Centavos;
   ahorroUsado: Centavos;
-  enNegativo: Centavos;
   alerta: NivelAlerta | null;
 };
 
@@ -27,24 +26,11 @@ export function avisoDeGasto(
   const frasco = { estado: s.estado, porcentaje: s.porcentaje };
 
   if (r.ahorroUsado > 0) {
-    const resto =
-      r.enNegativo > 0
-        ? ` Tu ahorro quedó en L 0 y te faltaron ${L(r.enNegativo)}.`
-        : ` Tu ahorro quedó en ${L(s.saldoAhorro)}.`;
     return {
       tono: "coral",
       frasco,
       titulo: "Tocaste tu ahorro",
-      texto: `Se registró el gasto de ${L(r.monto)} y ${L(r.ahorroUsado)} salieron de tu ahorro.${resto}`,
-    };
-  }
-
-  if (r.enNegativo > 0) {
-    return {
-      tono: "coral",
-      frasco,
-      titulo: "Quedaste en negativo",
-      texto: `Te faltaron ${L(r.enNegativo)}. Se repondrá con tu próximo ingreso.`,
+      texto: `Se registró el gasto de ${L(r.monto)} y ${L(r.ahorroUsado)} salieron de tu ahorro. Tu ahorro quedó en ${L(s.saldoAhorro)}.`,
     };
   }
 

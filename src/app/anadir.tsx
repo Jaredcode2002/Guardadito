@@ -25,6 +25,7 @@ import { requiereConfirmacion } from "@/features/anadir/confirmacion";
 import { ConfirmarGasto } from "@/features/anadir/ConfirmarGasto";
 import {
   descripcionMovimiento,
+  estadoVistaPrevia,
   lineasVistaPrevia,
   TONO_VISTA_PREVIA,
 } from "@/features/anadir/vistaPrevia";
@@ -55,7 +56,8 @@ export default function Anadir() {
   const monto = parsearLempiras(texto);
   const simulacion =
     resumen && monto !== null ? simularMovimiento(resumen, tipo, monto) : null;
-  const tono = simulacion ? TONO_VISTA_PREVIA[simulacion.estado] : null;
+  const estadoPrevio = simulacion ? estadoVistaPrevia(simulacion) : null;
+  const tono = estadoPrevio ? TONO_VISTA_PREVIA[estadoPrevio] : null;
   const puedeGuardar = monto !== null && resumen !== null && !guardando;
   const datos = (m: number) => ({
     monto: m,
@@ -131,10 +133,10 @@ export default function Anadir() {
         <Etiqueta>MONTO</Etiqueta>
         <CampoMonto value={texto} onChangeText={setTexto} autoFocus />
 
-        {simulacion && tono && (
+        {simulacion && estadoPrevio && tono && (
           <View style={[styles.vistaPrevia, { backgroundColor: tono.fondo }]}>
             <Frasco
-              estado={simulacion.estado}
+              estado={estadoPrevio}
               porcentaje={simulacion.porcentaje}
               ancho={28}
               tema="claro"

@@ -31,15 +31,15 @@ describe("textosPanel", () => {
     });
   });
 
-  it("en cero sin ahorro avisa que quedará en negativo", () => {
+  it("en cero sin ahorro avisa que no podrá gastar", () => {
     expect(
       textosPanel(
         datos({ estado: "zero", libre: 0, porcentaje: 0, saldoAhorro: 0 }),
       ).aviso,
-    ).toBe("Sin ahorro: lo que gastes quedará en negativo");
+    ).toBe("Sin ahorro: no podrás gastar hasta tu próximo ingreso");
   });
 
-  it("roto en negativo dice cuánto falta y cuándo se repone", () => {
+  it("roto con Libre negativo por pendientes dice cuánto falta", () => {
     expect(
       textosPanel(
         datos({ estado: "roto", libre: -70_000, porcentaje: 0, saldoAhorro: 0 }),
@@ -76,7 +76,7 @@ describe("chipDelPanel", () => {
     expect(chipDelPanel({ estado: "ok", libre: 170_000 }).texto).toBe("En orden");
   });
 
-  it("en negativo dice En negativo aunque no se haya tocado ahorro", () => {
+  it("solo dice En negativo si además se tocó el ahorro", () => {
     expect(chipDelPanel({ estado: "roto", libre: -1 }).texto).toBe("En negativo");
     expect(chipDelPanel({ estado: "zero", libre: -1 }).texto).toBe("En cero");
   });

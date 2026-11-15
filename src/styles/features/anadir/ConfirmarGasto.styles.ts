@@ -43,7 +43,7 @@ export const styles = StyleSheet.create({
     fontSize: 46,
     letterSpacing: -1,
   },
-  negativo: {
+  nota: {
     marginTop: 8,
     color: "#A12F22",
     fontFamily: fonts.bodySemiBold,

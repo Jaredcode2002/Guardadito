@@ -1,8 +1,8 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
-import { Alert } from "react-native";
+import { useCallback, useEffect, useState } from "react";
 
+import { ConfirmarAccion } from "@/components/ConfirmarAccion";
 import {
   BotonPeligro,
   BotonPrincipal,
@@ -37,6 +37,9 @@ export default function CategoriaPantalla() {
   const [error, setError] = useState<string | null>(null);
   const [color, setColor] = useState<ColorCategoria | null>(null);
   const [colorOriginal, setColorOriginal] = useState<ColorCategoria | null>(null);
+  const [confirmando, setConfirmando] = useState(false);
+  const [eliminando, setEliminando] = useState(false);
+  const cancelarConfirmacion = useCallback(() => setConfirmando(false), []);
 
   useEffect(() => {
     if (!editando) {
@@ -80,61 +83,71 @@ export default function CategoriaPantalla() {
     }
   }
 
-  function eliminar() {
-    Alert.alert(
-      `¿Eliminar "${original}"?`,
-      "Los movimientos con esta categoría no se borran: quedan sin categoría.",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Eliminar",
-          style: "destructive",
-          onPress: async () => {
-            await eliminarCategoria(db, Number(params.id));
-            mostrarAviso({ tono: "oscuro", texto: `"${original}" eliminada` });
-            router.back();
-          },
-        },
-      ],
-    );
+  async function eliminar() {
+    setEliminando(true);
+    try {
+      await eliminarCategoria(db, Number(params.id));
+      mostrarAviso({ tono: "oscuro", texto: `"${original}" eliminada` });
+      router.back();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setConfirmando(false);
+    } finally {
+      setEliminando(false);
+    }
   }
 
   return (
-    <HojaInferior>
-      <Titulo>
-        {editando
-          ? "Editar categoría"
-          : `Nueva categoría de ${tipo === "gasto" ? "gasto" : "ingreso"}`}
-      </Titulo>
+    <>
+      <HojaInferior>
+        <Titulo>
+          {editando
+            ? "Editar categoría"
+            : `Nueva categoría de ${tipo === "gasto" ? "gasto" : "ingreso"}`}
+        </Titulo>
 
-      <Etiqueta>NOMBRE</Etiqueta>
-      <CampoTexto
-        value={nombre}
-        onChangeText={(t) => {
-          setNombre(t);
-          setError(null);
-        }}
-        placeholder={tipo === "gasto" ? "Ej. Mascotas" : "Ej. Ventas"}
-        accessibilityLabel="Nombre de la categoría"
-        autoFocus
-        onSubmitEditing={guardar}
-      />
+        <Etiqueta>NOMBRE</Etiqueta>
+        <CampoTexto
+          value={nombre}
+          onChangeText={(t) => {
+            setNombre(t);
+            setError(null);
+          }}
+          placeholder={tipo === "gasto" ? "Ej. Mascotas" : "Ej. Ventas"}
+          accessibilityLabel="Nombre de la categoría"
+          autoFocus
+          onSubmitEditing={guardar}
+        />
 
-      <Etiqueta>COLOR</Etiqueta>
-      <SelectorColor valor={color} onCambiar={setColor} />
+        <Etiqueta>COLOR</Etiqueta>
+        <SelectorColor valor={color} onCambiar={setColor} />
 
-      {error && <MensajeError>{error}</MensajeError>}
+        {error && <MensajeError>{error}</MensajeError>}
 
-      <BotonPrincipal
-        texto={editando ? "Guardar cambios" : "Crear categoría"}
-        onPress={guardar}
-        activo={
-          limpio !== null && (limpio !== original || color !== colorOriginal)
-        }
-      />
-      {editando && (
-        <BotonPeligro texto="Eliminar categoría" onPress={eliminar} />
+        <BotonPrincipal
+          texto={editando ? "Guardar cambios" : "Crear categoría"}
+          onPress={guardar}
+          activo={
+            limpio !== null && (limpio !== original || color !== colorOriginal)
+          }
+        />
+        {editando && (
+          <BotonPeligro
+            texto="Eliminar categoría"
+            onPress={() => setConfirmando(true)}
+          />
+        )}
+      </HojaInferior>
+      {confirmando && (
+        <ConfirmarAccion
+          titulo={`¿Eliminar "${original}"?`}
+          mensaje="Los movimientos con esta categoría no se borran: quedan sin categoría."
+          textoConfirmar="Eliminar"
+          ocupado={eliminando}
+          onCancelar={cancelarConfirmacion}
+          onConfirmar={eliminar}
+        />
       )}
-    </HojaInferior>
+    </>
   );
 }

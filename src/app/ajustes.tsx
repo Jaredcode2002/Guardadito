@@ -5,13 +5,12 @@ import {
   ActivityIndicator,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { BORDE, GRIS, PAPEL, Selector } from "@/components/formulario";
+import { Selector } from "@/components/formulario";
 import { Frasco } from "@/components/frasco/Frasco";
 import { Icono } from "@/components/Icono";
 import { Interruptor } from "@/components/Interruptor";
@@ -37,14 +36,13 @@ import type { Umbrales } from "@/lib/alertas";
 import { hexDeColor } from "@/lib/colores";
 import { formatearLempirasCompacto } from "@/lib/formato";
 import { cambiarHora } from "@/lib/notificaciones";
-import { ANCHO_CONTENIDO, colors, fonts, palette } from "@/theme";
+import { styles } from "@/styles/app/ajustes.styles";
+import { colors, palette } from "@/theme";
 
 const TIPOS = [
   { valor: "gasto", texto: "De gasto" },
   { valor: "ingreso", texto: "De ingreso" },
 ] as const;
-
-const TEXTO_SUAVE = "rgba(246,241,231,0.74)";
 
 export default function Ajustes() {
   const { db, datos, error, recargar } = useAjustes();
@@ -356,205 +354,3 @@ function BotonPunteado({
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  columna: { width: "100%", maxWidth: ANCHO_CONTENIDO, alignSelf: "center" },
-  filaHora: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: 10,
-    paddingLeft: 12,
-  },
-  permiso: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 22,
-    backgroundColor: "#FFE1DB",
-  },
-  permisoTexto: {
-    color: "#8A2A1B",
-    fontFamily: fonts.body,
-    fontSize: 13,
-  },
-  permisoBoton: {
-    height: 44,
-    justifyContent: "center",
-    paddingHorizontal: 16,
-    borderRadius: 22,
-    backgroundColor: palette.panel,
-  },
-  permisoBotonTexto: {
-    color: palette.crema,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 14,
-  },
-  pantalla: { flex: 1, backgroundColor: colors.fondo },
-  centro: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-    backgroundColor: colors.fondo,
-  },
-  error: { color: colors.peligro, fontFamily: fonts.body, fontSize: 16 },
-  panel: {
-    overflow: "hidden",
-    backgroundColor: colors.panel,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-    paddingHorizontal: 22,
-    paddingBottom: 22,
-  },
-  decoracion: {
-    position: "absolute",
-    right: -70,
-    top: -90,
-    width: 230,
-    height: 230,
-    borderRadius: 115,
-    backgroundColor: "rgba(200,241,89,0.07)",
-  },
-  encabezado: { flexDirection: "row", alignItems: "center", gap: 4 },
-  volver: {
-    width: 44,
-    height: 44,
-    marginLeft: -10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tituloPanel: {
-    color: palette.crema,
-    fontFamily: fonts.display,
-    fontSize: 34,
-    letterSpacing: -0.5,
-  },
-  ahorro: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 16,
-    marginTop: 16,
-  },
-  ahorroTextos: { flex: 1 },
-  etiquetaPanel: {
-    color: TEXTO_SUAVE,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 12,
-    letterSpacing: 1.2,
-  },
-  ahorroMonto: {
-    color: palette.lima,
-    fontFamily: fonts.display,
-    fontSize: 38,
-    lineHeight: 44,
-  },
-  ahorroNota: { color: TEXTO_SUAVE, fontFamily: fonts.body, fontSize: 13 },
-  botonAhorro: {
-    alignSelf: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    height: 44,
-    marginTop: 16,
-    paddingHorizontal: 16,
-    borderRadius: 22,
-    backgroundColor: palette.lima,
-  },
-  botonAhorroTexto: {
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 14,
-  },
-  contenido: { paddingHorizontal: 20 },
-  seccion: {
-    color: palette.tinta,
-    fontFamily: fonts.display,
-    fontSize: 20,
-    marginTop: 22,
-    marginBottom: 10,
-  },
-  tarjeta: {
-    backgroundColor: PAPEL,
-    borderWidth: 1,
-    borderColor: BORDE,
-    borderRadius: 28,
-    paddingHorizontal: 18,
-    paddingVertical: 4,
-  },
-  vacio: {
-    color: GRIS,
-    fontFamily: fonts.body,
-    fontSize: 14,
-    paddingVertical: 14,
-  },
-  fila: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-    minHeight: 60,
-    paddingVertical: 6,
-  },
-  divisor: { borderTopWidth: 1, borderTopColor: BORDE },
-  filaTextos: { flex: 1, minWidth: 0, paddingVertical: 4 },
-  filaTitulo: { color: palette.tinta, fontFamily: fonts.bodySemiBold, fontSize: 15 },
-  filaSub: { color: GRIS, fontFamily: fonts.body, fontSize: 13, marginTop: 1 },
-  apagado: { opacity: 0.45 },
-  filaDerecha: { flexDirection: "row", alignItems: "center", gap: 10 },
-  filaMonto: {
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 15,
-    fontVariant: ["tabular-nums"],
-  },
-  punteado: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    height: 48,
-    marginTop: 6,
-    marginBottom: 10,
-    borderWidth: 1.5,
-    borderStyle: "dashed",
-    borderColor: GRIS,
-    borderRadius: 24,
-  },
-  punteadoTexto: {
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 14,
-  },
-  categorias: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 12,
-  },
-  categoria: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    height: 44,
-    paddingHorizontal: 16,
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: BORDE,
-    backgroundColor: PAPEL,
-  },
-  categoriaNueva: {
-    borderStyle: "dashed",
-    borderColor: GRIS,
-    backgroundColor: "transparent",
-  },
-  punto: { width: 10, height: 10, borderRadius: 5, marginRight: 4 },
-  categoriaTexto: {
-    color: palette.tinta,
-    fontFamily: fonts.bodyMedium,
-    fontSize: 14,
-  },
-});

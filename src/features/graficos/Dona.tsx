@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import Animated, { FadeIn, useReducedMotion } from "react-native-reanimated";
 import Svg, { G, Path } from "react-native-svg";
 
-import { GRIS, PAPEL } from "@/components/formulario";
 import { formatearLempirasCompacto as L } from "@/lib/formato";
-import { durations, fonts, palette } from "@/theme";
+import { styles, TAMANO } from "@/styles/features/graficos/Dona.styles";
+import { durations, PAPEL } from "@/theme";
 
 import {
   sectoresDona,
@@ -14,7 +14,6 @@ import {
   type GastoCategoria,
 } from "./logica";
 
-const TAMANO = 220;
 const EXTERIOR = 106;
 const INTERIOR = 70;
 
@@ -94,47 +93,3 @@ export function Dona({ grupos }: { grupos: readonly GastoCategoria[] }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  contenedor: { gap: 18 },
-  grafico: {
-    alignSelf: "center",
-    width: TAMANO,
-    height: TAMANO,
-  },
-  centro: {
-    ...StyleSheet.absoluteFill,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 50,
-  },
-  centroEtiqueta: { color: GRIS, fontFamily: fonts.bodyMedium, fontSize: 13 },
-  centroMonto: {
-    color: palette.tinta,
-    fontFamily: fonts.display,
-    fontSize: 24,
-  },
-  leyenda: { gap: 2 },
-  fila: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    minHeight: 44,
-    paddingHorizontal: 10,
-    borderRadius: 14,
-  },
-  filaActiva: { backgroundColor: "#EAE2D0" },
-  muestra: { width: 12, height: 12, borderRadius: 6 },
-  nombre: {
-    flex: 1,
-    color: palette.tinta,
-    fontFamily: fonts.bodySemiBold,
-    fontSize: 15,
-  },
-  valor: {
-    color: GRIS,
-    fontFamily: fonts.bodyMedium,
-    fontSize: 14,
-    fontVariant: ["tabular-nums"],
-  },
-});

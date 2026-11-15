@@ -8,6 +8,11 @@ export const palette = {
   coral: '#FF7A66',
 } as const;
 
+export const GRIS = '#4A5850';
+export const PAPEL = '#FFFDF8';
+export const BORDE = '#EAE2D0';
+export const TEXTO_SUAVE = 'rgba(246,241,231,0.74)';
+
 export const colors = {
   fondo: palette.crema,
   texto: palette.tinta,

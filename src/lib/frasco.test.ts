@@ -26,9 +26,9 @@ describe('estadoFrasco', () => {
     expect(estado(0)).toBe('zero');
   });
 
-  it('roto con Libre negativo aunque no se haya tocado ahorro', () => {
-    expect(estado(-50_000)).toBe('roto');
-    expect(estado(-1)).toBe('roto');
+  it('zero con Libre negativo si no se tocó el ahorro', () => {
+    expect(estado(-50_000)).toBe('zero');
+    expect(estado(-1)).toBe('zero');
   });
 
   it('zero si el mes empieza en negativo por los pendientes, sin gastar nada', () => {
@@ -37,14 +37,18 @@ describe('estadoFrasco', () => {
     ).toBe('zero');
   });
 
-  it('roto si un gasto hunde un mes que ya empezó en negativo', () => {
+  it('zero si un pendiente agregado a mitad de mes deja el Libre bajo el inicial', () => {
     expect(
       estadoFrasco({ libre: -150_000, libreInicial: -100_000, ahorroTocadoSinReponer: false }),
-    ).toBe('roto');
+    ).toBe('zero');
+  });
+
+  it('roto con Libre negativo si además se tocó el ahorro', () => {
+    expect(estado(-50_000, true)).toBe('roto');
   });
 
   it('deja de estar roto cuando un ingreso saca el Libre del negativo', () => {
-    expect(estado(500_000)).toBe('ok');
+    expect(estado(500_000, true)).toBe('ok');
   });
 
   it('roto si se usó ahorro y el Libre sigue en 0', () => {

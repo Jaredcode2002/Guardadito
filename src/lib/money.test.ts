@@ -5,6 +5,7 @@ import {
   calcularLibre,
   calcularLibreInicial,
   esMontoValido,
+  gastoPermitido,
   planificarGasto,
   porcentajeRestante,
   sumar,
@@ -115,7 +116,7 @@ describe('planificarGasto', () => {
       gasto: 500_000,
       desdeLibre: 500_000,
       desdeAhorro: 0,
-      enNegativo: 0,
+      faltante: 0,
     });
   });
 
@@ -124,33 +125,54 @@ describe('planificarGasto', () => {
       gasto: 800_000,
       desdeLibre: 500_000,
       desdeAhorro: 300_000,
-      enNegativo: 0,
+      faltante: 0,
     });
   });
 
-  it('si el ahorro no alcanza, se vacía y el resto queda en negativo', () => {
+  it('si el ahorro no alcanza, marca lo que falta', () => {
     expect(planificarGasto(800_000, 500_000, 100_000)).toEqual({
       gasto: 800_000,
       desdeLibre: 500_000,
       desdeAhorro: 100_000,
-      enNegativo: 200_000,
+      faltante: 200_000,
     });
   });
 
-  it('con Libre negativo y sin ahorro, todo el gasto queda en negativo', () => {
+  it('con Libre negativo y sin ahorro, falta todo el gasto', () => {
     expect(planificarGasto(80_000, -20_000, 0)).toEqual({
       gasto: 80_000,
       desdeLibre: 0,
       desdeAhorro: 0,
-      enNegativo: 80_000,
+      faltante: 80_000,
     });
   });
 
-  it('las tres partes siempre suman el gasto y el Libre queda en −enNegativo', () => {
-    const libre = 500_000;
-    const p = planificarGasto(800_000, libre, 100_000);
-    expect(p.desdeLibre + p.desdeAhorro + p.enNegativo).toBe(p.gasto);
-    expect(libre - p.gasto + p.desdeAhorro).toBe(-p.enNegativo);
+  it('las tres partes siempre suman el gasto', () => {
+    const p = planificarGasto(800_000, 500_000, 100_000);
+    expect(p.desdeLibre + p.desdeAhorro + p.faltante).toBe(p.gasto);
+  });
+});
+
+describe('gastoPermitido', () => {
+  it('se permite si cabe en el Libre', () => {
+    expect(gastoPermitido(planificarGasto(500_000, 500_000, 0))).toBe(true);
+  });
+
+  it('se permite si cabe usando ahorro, justo hasta el último centavo', () => {
+    expect(gastoPermitido(planificarGasto(600_000, 500_000, 100_000))).toBe(true);
+  });
+
+  it('no se permite si se pasa por un centavo de Libre + ahorro', () => {
+    expect(gastoPermitido(planificarGasto(600_001, 500_000, 100_000))).toBe(false);
+  });
+
+  it('sin ahorro, no se permite nada por encima del Libre', () => {
+    expect(gastoPermitido(planificarGasto(1, 0, 0))).toBe(false);
+  });
+
+  it('con Libre negativo, el ahorro igual puede cubrir el gasto completo', () => {
+    expect(gastoPermitido(planificarGasto(80_000, -20_000, 80_000))).toBe(true);
+    expect(gastoPermitido(planificarGasto(80_000, -20_000, 79_999))).toBe(false);
   });
 });
 

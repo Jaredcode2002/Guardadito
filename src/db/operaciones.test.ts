@@ -201,7 +201,7 @@ describe("gastos y ahorro", () => {
       gasto: 2_000_000,
       desdeLibre: 1_900_000,
       desdeAhorro: 100_000,
-      enNegativo: 0,
+      faltante: 0,
     });
     const r = await registrarGasto(
       db,
@@ -210,7 +210,6 @@ describe("gastos y ahorro", () => {
     );
 
     expect(r.ahorroUsado).toBe(100_000);
-    expect(r.enNegativo).toBe(0);
     expect(r.alerta).toBe("cero");
     expect(await resumen()).toMatchObject({
       libre: 0,
@@ -226,36 +225,61 @@ describe("gastos y ahorro", () => {
     ]);
   });
 
-  it("si el ahorro no alcanza, se vacía y el resto deja el Dinero en negativo", async () => {
+  it("si el gasto usa justo todo el ahorro, se registra y el ahorro queda en 0", async () => {
     await empezarNoviembreConSueldo();
-    await guardarAhorroInicial(30_000);
+    await guardarAhorroInicial(100_000);
 
     const r = await registrarGasto(db, { monto: 2_000_000 }, el("2026-11-15"));
 
-    expect(r.ahorroUsado).toBe(30_000);
-    expect(r.enNegativo).toBe(70_000);
+    expect(r.ahorroUsado).toBe(100_000);
     expect(await resumen()).toMatchObject({
-      dinero: 30_000,
-      libre: -70_000,
+      libre: 0,
       saldoAhorro: 0,
       estado: "roto",
     });
   });
 
-  it("sin ahorro, el gasto se registra y el Dinero queda en negativo", async () => {
+  it("si el ahorro no alcanza, no se registra nada", async () => {
+    await empezarNoviembreConSueldo();
+    await guardarAhorroInicial(30_000);
+
+    expect((await previsualizarGasto(db, 2_000_000)).faltante).toBe(70_000);
+    await expect(
+      registrarGasto(db, { monto: 2_000_000 }, el("2026-11-15")),
+    ).rejects.toThrow("No te alcanza: faltan L 700.");
+
+    expect(await listarMovimientosDelMes(db, NOV)).toHaveLength(1);
+    expect(await resumen()).toMatchObject({
+      libre: 1_900_000,
+      saldoAhorro: 30_000,
+      ahorroTocadoSinReponer: false,
+      estado: "ok",
+    });
+  });
+
+  it("sin ahorro, no se puede gastar ni un centavo más que el Libre", async () => {
     await empezarNoviembreConSueldo();
 
-    const r = await registrarGasto(db, { monto: 2_000_000 }, el("2026-11-15"));
+    await expect(
+      registrarGasto(db, { monto: 1_900_001 }, el("2026-11-15")),
+    ).rejects.toThrow("No te alcanza");
 
-    expect(r.ahorroUsado).toBe(0);
-    expect(r.enNegativo).toBe(100_000);
+    expect(await listarMovimientosDelMes(db, NOV)).toHaveLength(1);
+    expect((await resumen()).libre).toBe(1_900_000);
+  });
+
+  it("con Libre negativo por pendientes, el ahorro puede cubrir el gasto completo", async () => {
+    await abrirMesesPendientes(db, el("2026-11-01"));
+    await guardarAhorroInicial(50_000);
+
+    const r = await registrarGasto(db, { monto: 50_000 }, el("2026-11-15"));
+
+    expect(r.ahorroUsado).toBe(50_000);
     expect(await resumen()).toMatchObject({
       libre: -100_000,
       saldoAhorro: 0,
-      ahorroTocadoSinReponer: false,
       estado: "roto",
     });
-    expect(await listarMovimientosDelMes(db, NOV)).toHaveLength(2);
   });
 
   it("ningún retiro puede dejar el ahorro bajo 0", async () => {

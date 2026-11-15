@@ -16,7 +16,7 @@ describe("simularMovimiento", () => {
       libreInicial: 250_000,
       porcentaje: 0.5,
       estado: "ok",
-      plan: { desdeAhorro: 0, enNegativo: 0 },
+      plan: { desdeAhorro: 0, faltante: 0 },
     });
   });
 
@@ -28,16 +28,26 @@ describe("simularMovimiento", () => {
     expect(simularMovimiento(BASE, "gasto", 300_000)).toMatchObject({
       libre: 0,
       estado: "roto",
-      plan: { desdeAhorro: 50_000, enNegativo: 0 },
+      plan: { desdeAhorro: 50_000, faltante: 0 },
     });
   });
 
-  it("sin ahorro suficiente, el resto queda en negativo", () => {
-    const sinAhorro = { ...BASE, saldoAhorro: 20_000 };
-    expect(simularMovimiento(sinAhorro, "gasto", 300_000)).toMatchObject({
-      libre: -30_000,
-      estado: "roto",
-      plan: { desdeAhorro: 20_000, enNegativo: 30_000 },
+  it("sin ahorro suficiente, el gasto no cabe y nada cambia", () => {
+    const pocoAhorro = { ...BASE, saldoAhorro: 20_000 };
+    expect(simularMovimiento(pocoAhorro, "gasto", 300_000)).toMatchObject({
+      libre: 250_000,
+      porcentaje: 1,
+      estado: "ok",
+      plan: { desdeAhorro: 20_000, faltante: 30_000 },
+    });
+  });
+
+  it("un gasto que no cabe no marca el ahorro como tocado", () => {
+    const enCero = { ...BASE, libre: 0, saldoAhorro: 0 };
+    expect(simularMovimiento(enCero, "gasto", 10_000)).toMatchObject({
+      libre: 0,
+      estado: "zero",
+      plan: { faltante: 10_000 },
     });
   });
 

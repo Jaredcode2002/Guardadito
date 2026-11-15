@@ -1,6 +1,7 @@
 import type { Umbrales } from "./alertas";
 import { estadoFrasco, type EstadoFrasco } from "./frasco";
 import {
+  gastoPermitido,
   planificarGasto,
   porcentajeRestante,
   type Centavos,
@@ -48,7 +49,8 @@ export function simularMovimiento(
   }
 
   const plan = planificarGasto(monto, s.libre, s.saldoAhorro);
-  const libre = s.libre - monto + plan.desdeAhorro;
+  const permitido = gastoPermitido(plan);
+  const libre = permitido ? s.libre - monto + plan.desdeAhorro : s.libre;
   return {
     libre,
     libreInicial: s.libreInicial,
@@ -56,7 +58,8 @@ export function simularMovimiento(
     estado: estadoFrasco({
       libre,
       libreInicial: s.libreInicial,
-      ahorroTocadoSinReponer: s.ahorroTocadoSinReponer || plan.desdeAhorro > 0,
+      ahorroTocadoSinReponer:
+        s.ahorroTocadoSinReponer || (permitido && plan.desdeAhorro > 0),
       umbrales: s.umbrales,
     }),
     plan,

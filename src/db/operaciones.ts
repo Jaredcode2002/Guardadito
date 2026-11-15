@@ -1,7 +1,9 @@
 import { evaluarAlertas, type NivelAlerta } from "../lib/alertas";
 import { planDeCierre } from "../lib/cierre";
 import { mesDe, mesesPorAbrir, type Fecha, type MesId } from "../lib/fechas";
+import { formatearLempirasCompacto } from "../lib/formato";
 import {
+  gastoPermitido,
   planificarGasto,
   type Centavos,
   type PlanDeGasto,
@@ -36,7 +38,6 @@ export type DatosMovimiento = {
 export type ResultadoGasto = {
   gastoId: number;
   ahorroUsado: Centavos;
-  enNegativo: Centavos;
   alerta: NivelAlerta | null;
 };
 
@@ -144,20 +145,22 @@ export async function registrarGasto(
   const resultado: ResultadoGasto = {
     gastoId: 0,
     ahorroUsado: 0,
-    enNegativo: 0,
     alerta: null,
   };
   const fecha = datos.fecha ?? momento.hoy;
 
   await db.withTransactionAsync(async () => {
     const plan = await previsualizarGasto(db, datos.monto);
+    if (!gastoPermitido(plan)) {
+      throw new Error(
+        `No te alcanza: faltan ${formatearLempirasCompacto(plan.faltante)}.`,
+      );
+    }
     resultado.gastoId = await insertarMovimiento(
       db,
       { ...datos, tipo: "gasto", fecha },
       momento.ahora,
     );
-
-    resultado.enNegativo = plan.enNegativo;
 
     if (plan.desdeAhorro > 0) {
       const ingresoId = await insertarMovimiento(

@@ -25,8 +25,9 @@ export const crearEstilos = (t: Tema) => StyleSheet.create({
   },
   botones: { flexDirection: "row", gap: 10, marginTop: 2 },
   principal: {
-    flex: 1,
+    flexGrow: 1,
     height: 48,
+    paddingHorizontal: 18,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 24,
@@ -38,8 +39,9 @@ export const crearEstilos = (t: Tema) => StyleSheet.create({
     fontSize: 15,
   },
   secundario: {
-    flex: 1,
+    flexGrow: 1,
     height: 48,
+    paddingHorizontal: 18,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 24,

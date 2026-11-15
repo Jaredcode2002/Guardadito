@@ -37,7 +37,9 @@ export function Respaldo({
           {ocupado === "carpeta" ? (
             <ActivityIndicator color={tema.sobreAcento} />
           ) : (
-            <Text style={styles.principalTexto}>Guardar en carpeta</Text>
+            <Text style={styles.principalTexto} numberOfLines={1} adjustsFontSizeToFit>
+              Guardar en carpeta
+            </Text>
           )}
         </Pressable>
         <Pressable
@@ -50,7 +52,9 @@ export function Respaldo({
           {ocupado === "compartir" ? (
             <ActivityIndicator color={tema.texto} />
           ) : (
-            <Text style={styles.secundarioTexto}>Compartir</Text>
+            <Text style={styles.secundarioTexto} numberOfLines={1} adjustsFontSizeToFit>
+              Compartir
+            </Text>
           )}
         </Pressable>
       </View>

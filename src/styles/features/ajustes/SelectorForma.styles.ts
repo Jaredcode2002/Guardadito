@@ -21,15 +21,29 @@ export const crearEstilos = (t: Tema) => StyleSheet.create({
     paddingBottom: 6,
     backgroundColor: t.panel,
   },
-  pie: {
-    flexDirection: "row",
+  marca: {
+    position: "absolute",
+    top: 6,
+    right: 6,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    gap: 2,
+    backgroundColor: t.acento,
+  },
+  pie: {
+    alignItems: "center",
+    justifyContent: "center",
     minHeight: 44,
     paddingHorizontal: 4,
   },
-  nombre: { fontFamily: fonts.bodySemiBold, fontSize: 13, color: t.texto },
+  nombre: {
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 13,
+    color: t.texto,
+    textAlign: "center",
+  },
   estados: {
     flexDirection: "row",
     justifyContent: "space-between",

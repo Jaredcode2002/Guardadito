@@ -1,5 +1,6 @@
 import {
   guardarAvisarPendientes,
+  guardarFormaFrasco,
   guardarHoraRecordatorio,
   guardarPaleta,
   guardarRecordatorioActivo,
@@ -26,6 +27,7 @@ describe("ajustes", () => {
       recordatorioActivo: true,
       avisarPendientes: true,
       paleta: "guardadito",
+      formaFrasco: "frasco",
     });
   });
 
@@ -35,6 +37,7 @@ describe("ajustes", () => {
     await guardarAvisarPendientes(db, false);
     await guardarRecordatorioActivo(db, false);
     await guardarPaleta(db, "noche");
+    await guardarFormaFrasco(db, "caguama");
 
     expect(await leerAjustes(db)).toEqual({
       umbrales: { moderacion: 40, casiCero: 15 },
@@ -42,6 +45,7 @@ describe("ajustes", () => {
       recordatorioActivo: false,
       avisarPendientes: false,
       paleta: "noche",
+      formaFrasco: "caguama",
     });
   });
 
@@ -84,6 +88,24 @@ describe("paleta", () => {
       [],
     );
     expect((await leerAjustes(db)).paleta).toBe("guardadito");
+  });
+});
+
+describe("forma del frasco", () => {
+  it("rechaza una forma que no existe sin cambiar la guardada", async () => {
+    await guardarFormaFrasco(db, "pocion");
+    await expect(guardarFormaFrasco(db, "botella")).rejects.toThrow(
+      "Forma desconocida",
+    );
+    expect((await leerAjustes(db)).formaFrasco).toBe("pocion");
+  });
+
+  it("si la guardada ya no existe, vuelve al frasco", async () => {
+    await db.runAsync(
+      "INSERT INTO ajuste (clave, valor) VALUES ('forma_frasco', 'vieja')",
+      [],
+    );
+    expect((await leerAjustes(db)).formaFrasco).toBe("frasco");
   });
 });
 

@@ -130,6 +130,27 @@ export default function Historico() {
         </View>
 
         <View style={styles.contenido}>
+          <View style={styles.opciones}>
+            <Pressable
+              onPress={() => router.push("/exportar")}
+              accessibilityRole="button"
+              style={({ pressed }) => [styles.opcion, pressed && styles.presionada]}
+            >
+              <Icono nombre="bajar" color={tema.texto} tamano={18} />
+              <Text style={styles.opcionTexto}>Exportar CSV</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => router.push("/borrar-historial")}
+              accessibilityRole="button"
+              style={({ pressed }) => [styles.opcion, pressed && styles.presionada]}
+            >
+              <Icono nombre="basura" color={tema.peligroTexto} tamano={18} />
+              <Text style={[styles.opcionTexto, styles.opcionPeligro]}>
+                Borrar historial
+              </Text>
+            </Pressable>
+          </View>
+
           {vista.categorias.length > 0 && (
             <ScrollView
               horizontal

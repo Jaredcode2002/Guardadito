@@ -24,6 +24,19 @@ export const styles = StyleSheet.create({
     fontSize: 15,
   },
   monto: { flexDirection: "row", alignItems: "center", gap: 8 },
+  montoAcento: {
+    gap: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+    borderWidth: 1.5,
+    borderRadius: 22,
+  },
+  montoSigno: {
+    width: 26,
+    textAlign: "center",
+    fontFamily: fonts.display,
+    fontSize: 44,
+  },
   montoL: { color: GRIS, fontFamily: fonts.display, fontSize: 30 },
   montoInput: {
     flex: 1,
@@ -41,12 +54,13 @@ export const styles = StyleSheet.create({
   },
   opcion: {
     flex: 1,
+    flexDirection: "row",
+    gap: 8,
     height: 44,
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
   },
-  opcionActiva: { backgroundColor: palette.lima },
   opcionTexto: { color: palette.crema, fontFamily: fonts.bodyMedium, fontSize: 15 },
   opcionTextoActivo: { color: palette.tinta, fontFamily: fonts.bodySemiBold },
   chip: {
@@ -74,6 +88,7 @@ export const styles = StyleSheet.create({
     fontFamily: fonts.bodySemiBold,
     fontSize: 16,
   },
+  principalTextoAcento: { color: palette.tinta },
   inactivo: { opacity: 0.4 },
   peligro: {
     height: 48,

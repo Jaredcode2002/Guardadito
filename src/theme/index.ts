@@ -1,4 +1,13 @@
-export { BORDE, colors, GRIS, PAPEL, palette, TEXTO_SUAVE } from './colors';
+export {
+  ACENTO_TIPO,
+  BORDE,
+  colors,
+  GRIS,
+  PAPEL,
+  palette,
+  TEXTO_SUAVE,
+  type Acento,
+} from './colors';
 export {
   ANCHO_AVISO,
   ANCHO_CONTENIDO,

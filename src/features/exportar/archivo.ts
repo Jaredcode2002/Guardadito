@@ -23,6 +23,19 @@ export async function guardarEnCarpeta(
   return true;
 }
 
+export async function leerArchivoElegido(
+  mimeTypes: string[],
+): Promise<string | null> {
+  try {
+    const elegido = await File.pickFileAsync({ mimeTypes });
+    if (elegido.canceled) return null;
+    return await elegido.result.text();
+  } catch (e) {
+    if (esCancelacion(e)) return null;
+    throw e;
+  }
+}
+
 export async function compartirArchivo(
   nombre: string,
   contenido: string,

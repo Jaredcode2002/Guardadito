@@ -50,6 +50,40 @@ export type TablaRespaldo = keyof typeof TABLAS_RESPALDO;
 
 export const NOMBRES_TABLAS = Object.keys(TABLAS_RESPALDO) as TablaRespaldo[];
 
+export type EsquemaRespaldo = Partial<Record<TablaRespaldo, readonly string[]>>;
+
+const ESQUEMA_V2: EsquemaRespaldo = {
+  ...TABLAS_RESPALDO,
+  categoria: TABLAS_RESPALDO.categoria.filter((c) => c !== "color"),
+};
+
+const ESQUEMA_V1: EsquemaRespaldo = {
+  mes: TABLAS_RESPALDO.mes,
+  movimiento: [
+    ...TABLAS_RESPALDO.movimiento.filter((c) => c !== "categoria_id"),
+    "categoria",
+  ],
+  plantilla_pendiente: TABLAS_RESPALDO.plantilla_pendiente,
+  pendiente_mes: TABLAS_RESPALDO.pendiente_mes,
+  ahorro_movimiento: TABLAS_RESPALDO.ahorro_movimiento,
+  ajuste: TABLAS_RESPALDO.ajuste,
+};
+
+export const ESQUEMAS_RESPALDO: readonly EsquemaRespaldo[] = [
+  ESQUEMA_V1,
+  ESQUEMA_V2,
+  TABLAS_RESPALDO,
+  TABLAS_RESPALDO,
+];
+
+export function esquemaDeVersion(version: number): EsquemaRespaldo | null {
+  return ESQUEMAS_RESPALDO[version - 1] ?? null;
+}
+
+export function tablasDeEsquema(esquema: EsquemaRespaldo): TablaRespaldo[] {
+  return NOMBRES_TABLAS.filter((t) => esquema[t] !== undefined);
+}
+
 export const CLAVES_AJUSTE_LOCALES = ["ultimo_respaldo"] as const;
 
 export const TIPO_RESPALDO = "application/json";
@@ -70,7 +104,7 @@ export type Respaldo = {
   app: typeof MARCA_APP;
   version: number;
   creadoEn: string;
-  tablas: TablasRespaldo;
+  tablas: Partial<TablasRespaldo>;
 };
 
 export type ResultadoValidacion =
@@ -102,7 +136,7 @@ export function generarRespaldo(datos: {
 
 export function validarRespaldo(
   texto: string,
-  versionEsperada: number,
+  versionActual: number,
 ): ResultadoValidacion {
   let datos: unknown;
   try {
@@ -114,14 +148,19 @@ export function validarRespaldo(
   if (!esObjeto(datos) || datos.app !== MARCA_APP) {
     return { ok: false, error: "El archivo no es un respaldo de Guardadito." };
   }
-  if (!Number.isInteger(datos.version)) {
+  const version = datos.version;
+  if (typeof version !== "number" || !Number.isInteger(version) || version < 1) {
     return { ok: false, error: "El respaldo no indica su versión." };
   }
-  if (datos.version !== versionEsperada) {
+  if (version > versionActual) {
     return {
       ok: false,
-      error: `El respaldo es de otra versión de la app (v${String(datos.version)}, se esperaba v${versionEsperada}).`,
+      error: `El respaldo es de una versión más nueva de la app (v${version}; esta llega a v${versionActual}). Actualiza Guardadito para restaurarlo.`,
     };
+  }
+  const esquema = esquemaDeVersion(version);
+  if (!esquema) {
+    return { ok: false, error: `No se reconoce la versión v${version} del respaldo.` };
   }
   if (typeof datos.creadoEn !== "string" || Number.isNaN(Date.parse(datos.creadoEn))) {
     return { ok: false, error: "El respaldo no tiene una fecha válida." };
@@ -130,12 +169,13 @@ export function validarRespaldo(
     return { ok: false, error: "El respaldo no tiene tablas." };
   }
 
-  for (const tabla of NOMBRES_TABLAS) {
+  const tablas = tablasDeEsquema(esquema);
+  for (const tabla of tablas) {
     const filas = datos.tablas[tabla];
     if (!Array.isArray(filas)) {
       return { ok: false, error: `Falta la tabla "${tabla}" en el respaldo.` };
     }
-    const columnas: readonly string[] = TABLAS_RESPALDO[tabla];
+    const columnas = esquema[tabla] ?? [];
     for (const [i, fila] of filas.entries()) {
       const problema = problemaDeFila(fila, columnas);
       if (problema) {
@@ -148,7 +188,7 @@ export function validarRespaldo(
   }
 
   const sobrantes = Object.keys(datos.tablas).filter(
-    (t) => !NOMBRES_TABLAS.includes(t as TablaRespaldo),
+    (t) => !tablas.includes(t as TablaRespaldo),
   );
   if (sobrantes.length > 0) {
     return {

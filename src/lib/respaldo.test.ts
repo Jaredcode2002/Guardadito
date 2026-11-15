@@ -1,7 +1,10 @@
 import {
+  ESQUEMAS_RESPALDO,
+  esquemaDeVersion,
   generarRespaldo,
   nombreArchivoRespaldo,
   NOMBRES_TABLAS,
+  TABLAS_RESPALDO,
   validarRespaldo,
   type TablasRespaldo,
 } from "./respaldo";
@@ -93,7 +96,7 @@ describe("validarRespaldo", () => {
     const texto = generarRespaldo({ version: 4, creadoEn: CREADO, tablas: tablasDeEjemplo() });
     const r = validarRespaldo(texto, 4);
     expect(r.ok).toBe(true);
-    if (r.ok) expect(r.respaldo.tablas.movimiento[0].monto).toBe(15050);
+    if (r.ok) expect(r.respaldo.tablas.movimiento?.[0].monto).toBe(15050);
   });
 
   it("rechaza JSON dañado", () => {
@@ -112,10 +115,54 @@ describe("validarRespaldo", () => {
     }
   });
 
-  it("rechaza otra versión del esquema", () => {
-    const datos = { ...valido(), version: 3 };
+  it("rechaza un respaldo de una versión más nueva que la app", () => {
+    const datos = { ...valido(), version: 5 };
     const r = validarRespaldo(JSON.stringify(datos), 4);
-    expect(r).toEqual({ ok: false, error: expect.stringContaining("v3") });
+    expect(r).toEqual({ ok: false, error: expect.stringContaining("más nueva") });
+  });
+
+  it("acepta una versión más vieja con las columnas de esa versión", () => {
+    const v2 = valido();
+    v2.version = 2;
+    delete v2.tablas.categoria[0].color;
+    expect(validarRespaldo(JSON.stringify(v2), 4).ok).toBe(true);
+
+    const v1 = valido();
+    v1.version = 1;
+    delete v1.tablas.categoria;
+    delete v1.tablas.movimiento[0].categoria_id;
+    v1.tablas.movimiento[0].categoria = "Comida";
+    expect(validarRespaldo(JSON.stringify(v1), 4).ok).toBe(true);
+  });
+
+  it("una versión vieja se valida con sus columnas, no con las actuales", () => {
+    const v2 = { ...valido(), version: 2 };
+    expect(validarRespaldo(JSON.stringify(v2), 4)).toEqual({
+      ok: false,
+      error: 'Fila 1 de "categoria": columnas desconocidas (color).',
+    });
+
+    const v1 = { ...valido(), version: 1 };
+    expect(validarRespaldo(JSON.stringify(v1), 4)).toEqual({
+      ok: false,
+      error: 'Fila 1 de "movimiento": faltan columnas (categoria).',
+    });
+  });
+
+  it("rechaza versiones menores que 1", () => {
+    for (const version of [0, -1, 1.5]) {
+      const datos = { ...valido(), version };
+      expect(validarRespaldo(JSON.stringify(datos), 4)).toEqual({
+        ok: false,
+        error: "El respaldo no indica su versión.",
+      });
+    }
+  });
+
+  it("hay un esquema por cada versión", () => {
+    expect(esquemaDeVersion(1)?.categoria).toBeUndefined();
+    expect(esquemaDeVersion(4)).toBe(TABLAS_RESPALDO);
+    expect(esquemaDeVersion(ESQUEMAS_RESPALDO.length + 1)).toBeNull();
   });
 
   it("rechaza versión o fecha ausentes", () => {

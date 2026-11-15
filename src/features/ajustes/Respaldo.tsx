@@ -1,15 +1,23 @@
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
+import { Icono } from "@/components/Icono";
 import { textoUltimoRespaldo } from "@/features/ajustes/logica";
 import { useRespaldo } from "@/features/respaldo/useRespaldo";
+import type { EstadoRestaurar } from "@/features/respaldo/useRestaurar";
 import { crearEstilos } from "@/styles/features/ajustes/Respaldo.styles";
 import { useEstilos, useTema } from "@/theme";
 
-export function Respaldo() {
+export function Respaldo({
+  restaurando,
+  onRestaurar,
+}: {
+  restaurando: EstadoRestaurar;
+  onRestaurar: () => void;
+}) {
   const styles = useEstilos(crearEstilos);
   const { tema } = useTema();
   const { ultimo, ocupado, respaldar } = useRespaldo();
-  const apagado = ocupado !== null;
+  const apagado = ocupado !== null || restaurando !== null;
 
   return (
     <View style={styles.tarjeta}>
@@ -46,6 +54,28 @@ export function Respaldo() {
           )}
         </Pressable>
       </View>
+
+      <View style={styles.divisor} />
+      <Text style={styles.texto}>
+        ¿Cambiaste de teléfono? Elige un respaldo, también desde Google Drive,
+        para traer tus datos.
+      </Text>
+      <Pressable
+        onPress={onRestaurar}
+        disabled={apagado}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: apagado, busy: restaurando !== null }}
+        style={[styles.restaurar, apagado && styles.inactivo]}
+      >
+        {restaurando !== null ? (
+          <ActivityIndicator color={tema.texto} />
+        ) : (
+          <>
+            <Icono nombre="bajar" color={tema.texto} tamano={18} />
+            <Text style={styles.secundarioTexto}>Restaurar desde archivo</Text>
+          </>
+        )}
+      </Pressable>
     </View>
   );
 }

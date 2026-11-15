@@ -22,6 +22,7 @@ type ValorTema = {
   forma: FormaFrasco;
   cambiarPaleta: (clave: ClavePaleta) => Promise<void>;
   cambiarForma: (forma: FormaFrasco) => Promise<void>;
+  recargar: () => Promise<void>;
 };
 
 const ContextoTema = createContext<ValorTema>({
@@ -29,6 +30,7 @@ const ContextoTema = createContext<ValorTema>({
   forma: FORMA_FRASCO_POR_DEFECTO,
   cambiarPaleta: async () => {},
   cambiarForma: async () => {},
+  recargar: async () => {},
 });
 
 export function TemaProvider({ children }: { children: ReactNode }) {
@@ -48,6 +50,12 @@ export function TemaProvider({ children }: { children: ReactNode }) {
     return () => {
       vigente = false;
     };
+  }, [db]);
+
+  const recargar = useCallback(async () => {
+    const a = await leerAjustes(db);
+    setForma(a.formaFrasco);
+    setClave(a.paleta);
   }, [db]);
 
   const tema = useMemo(() => (clave ? crearTema(clave) : null), [clave]);
@@ -73,8 +81,8 @@ export function TemaProvider({ children }: { children: ReactNode }) {
   );
 
   const valor = useMemo(
-    () => (tema ? { tema, forma, cambiarPaleta, cambiarForma } : null),
-    [tema, forma, cambiarPaleta, cambiarForma],
+    () => (tema ? { tema, forma, cambiarPaleta, cambiarForma, recargar } : null),
+    [tema, forma, cambiarPaleta, cambiarForma, recargar],
   );
 
   if (!valor) return null;

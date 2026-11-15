@@ -51,5 +51,16 @@ export const crearEstilos = (t: Tema) => StyleSheet.create({
     fontFamily: fonts.bodySemiBold,
     fontSize: 15,
   },
+  divisor: { height: 1, backgroundColor: t.borde, marginVertical: 4 },
+  restaurar: {
+    height: 48,
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 24,
+    borderWidth: 1.5,
+    borderColor: t.bordeFuerte,
+  },
   inactivo: { opacity: 0.5 },
 });

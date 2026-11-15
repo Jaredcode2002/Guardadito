@@ -3,7 +3,12 @@ import { esMontoValido, type Centavos } from "../lib/money";
 import type { Db } from "./tipos";
 
 export type TipoMovimiento = "ingreso" | "gasto";
-export type OrigenMovimiento = "normal" | "ahorro" | "pendiente" | "sobrante";
+export type OrigenMovimiento =
+  | "normal"
+  | "ahorro"
+  | "pendiente"
+  | "sobrante"
+  | "arrastre";
 
 export type NuevoMovimiento = {
   tipo: TipoMovimiento;
@@ -83,7 +88,7 @@ export async function listarMovimientosDelMes(
 ): Promise<Movimiento[]> {
   return db.getAllAsync<Movimiento>(
     `${SELECT_MOVIMIENTO}
-     WHERE m.fecha BETWEEN ? AND ?
+     WHERE m.fecha BETWEEN ? AND ? AND m.origen <> 'arrastre'
      ORDER BY m.fecha DESC, m.id DESC`,
     [`${mes}-01`, ultimaFechaDelMes(mes)],
   );

@@ -198,3 +198,123 @@ describe('migración v2: categorías', () => {
     expect(fila?.categoria_id).toBeNull();
   });
 });
+
+describe('migración v4: origen y motivo "arrastre"', () => {
+  async function baseV3() {
+    const vieja = crearDbEnMemoria();
+    await migrar(vieja, MIGRACIONES.slice(0, 3));
+    await vieja.runAsync(
+      `INSERT INTO mes (id, libre_inicial_base, abierto_en) VALUES ('2026-10', 0, ?)`,
+      [AHORA],
+    );
+    const ocio = await vieja.getFirstAsync<{ id: number }>(
+      `SELECT id FROM categoria WHERE nombre = 'Ocio'`,
+      [],
+    );
+    const { lastInsertRowId: gasto } = await vieja.runAsync(
+      `INSERT INTO movimiento (tipo, monto, descripcion, categoria_id, origen, fecha, creado_en)
+       VALUES ('gasto', 1500, 'Cine', ?, 'normal', '2026-10-03', ?)`,
+      [ocio!.id, AHORA],
+    );
+    const { lastInsertRowId: ingreso } = await vieja.runAsync(
+      `INSERT INTO movimiento (tipo, monto, origen, fecha, creado_en)
+       VALUES ('ingreso', 900, 'ahorro', '2026-10-04', ?)`,
+      [AHORA],
+    );
+    await vieja.runAsync(
+      `INSERT INTO ahorro_movimiento (monto, motivo, movimiento_id, fecha, creado_en)
+       VALUES (5000, 'saldo_inicial', NULL, '2026-10-01', ?),
+              (-900, 'gasto', ?, '2026-10-04', ?)`,
+      [AHORA, ingreso, AHORA],
+    );
+    await vieja.runAsync(
+      `INSERT INTO pendiente_mes (mes_id, nombre, monto, fecha_vence, pagado_en, movimiento_id)
+       VALUES ('2026-10', 'Luz', 1500, '2026-10-10', ?, ?)`,
+      [AHORA, gasto],
+    );
+    return vieja;
+  }
+
+  const leerTodo = (d: ReturnType<typeof crearDbEnMemoria>) =>
+    Promise.all([
+      d.getAllAsync('SELECT * FROM movimiento ORDER BY id', []),
+      d.getAllAsync('SELECT * FROM ahorro_movimiento ORDER BY id', []),
+      d.getAllAsync('SELECT * FROM pendiente_mes ORDER BY id', []),
+    ]);
+
+  it('reconstruye las tablas sin perder filas ni vínculos', async () => {
+    const vieja = await baseV3();
+    const antes = await leerTodo(vieja);
+
+    await migrar(vieja);
+
+    expect(await leerTodo(vieja)).toEqual(antes);
+    const fila = await vieja.getFirstAsync<{ user_version: number }>('PRAGMA user_version', []);
+    expect(fila?.user_version).toBe(4);
+    const restos = await vieja.getAllAsync(
+      `SELECT name FROM sqlite_master WHERE name LIKE '%_nuevo'`,
+      [],
+    );
+    expect(restos).toEqual([]);
+    vieja.cerrar();
+  });
+
+  it('deja las llaves foráneas encendidas y el CASCADE sigue funcionando', async () => {
+    const vieja = await baseV3();
+    await migrar(vieja);
+
+    const fk = await vieja.getFirstAsync<{ foreign_keys: number }>('PRAGMA foreign_keys', []);
+    expect(fk?.foreign_keys).toBe(1);
+    await vieja.runAsync(`DELETE FROM movimiento WHERE origen = 'ahorro'`, []);
+    const n = await vieja.getFirstAsync<{ n: number }>(
+      'SELECT COUNT(*) AS n FROM ahorro_movimiento',
+      [],
+    );
+    expect(n?.n).toBe(1);
+    vieja.cerrar();
+  });
+
+  it('conserva los índices', async () => {
+    const indices = await db.getAllAsync<{ name: string }>(
+      `SELECT name FROM sqlite_master WHERE type = 'index' AND name LIKE 'idx_%' ORDER BY name`,
+      [],
+    );
+    expect(indices.map((i) => i.name)).toEqual([
+      'idx_ahorro_movimiento_fecha',
+      'idx_movimiento_categoria',
+      'idx_movimiento_fecha',
+      'idx_pendiente_mes_mes',
+    ]);
+  });
+
+  it('acepta "arrastre" y sigue rechazando orígenes y motivos desconocidos', async () => {
+    await expect(
+      db.runAsync(
+        `INSERT INTO movimiento (tipo, monto, origen, fecha, creado_en)
+         VALUES ('gasto', 100, 'arrastre', '2026-11-01', ?)`,
+        [AHORA],
+      ),
+    ).resolves.toBeDefined();
+    await expect(
+      db.runAsync(
+        `INSERT INTO ahorro_movimiento (monto, motivo, fecha, creado_en)
+         VALUES (100, 'arrastre', '2026-11-01', ?)`,
+        [AHORA],
+      ),
+    ).resolves.toBeDefined();
+    await expect(
+      db.runAsync(
+        `INSERT INTO movimiento (tipo, monto, origen, fecha, creado_en)
+         VALUES ('gasto', 100, 'regalo', '2026-11-01', ?)`,
+        [AHORA],
+      ),
+    ).rejects.toThrow(/CHECK/);
+    await expect(
+      db.runAsync(
+        `INSERT INTO ahorro_movimiento (monto, motivo, fecha, creado_en)
+         VALUES (100, 'regalo', '2026-11-01', ?)`,
+        [AHORA],
+      ),
+    ).rejects.toThrow(/CHECK/);
+  });
+});

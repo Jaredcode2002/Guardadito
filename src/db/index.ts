@@ -2,6 +2,7 @@ export * from "./ahorro";
 export * from "./ajustes";
 export * from "./categorias";
 export * from "./configuracion";
+export * from "./historial";
 export * from "./meses";
 export * from "./inicializar";
 export * from "./migraciones";
